@@ -9,7 +9,8 @@ namespace Taj
     {
         static void Main(string[] args)
         {
-
+            var pal = new Palace(new Uri("tcp://chat.epalaces.com:9998"));
+            Console.ReadKey();
         }
     }
 }
