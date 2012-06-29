@@ -14,8 +14,14 @@ namespace Taj.Messages
         //    sint32 refNum;      /* arbitrary integer operand */
         //    uint8  msg[length]; /* message body */
         //}
-
         public ClientMsg(BinaryReader br)
+        {
+            if (br != null)
+                Populate(br);
+            else
+                throw new ArgumentNullException("br");
+        }
+        protected virtual void Populate(BinaryReader br)
         {
             eventType = br.ReadUInt32();
             length = br.ReadUInt32();
@@ -23,6 +29,8 @@ namespace Taj.Messages
 
             msg = new byte[length];
             br.Read(msg, 0, (int)length);
+
+            ready = true;
         }
 
         public UInt32 eventType { get; private set; }
@@ -34,7 +42,7 @@ namespace Taj.Messages
         {
             get
             {
-                return sizeof(UInt32) * 2 + sizeof(Int32) * 1 + msg.Length;
+                return ready ? (sizeof(UInt32) * 2 + sizeof(Int32) * 1 + msg.Length) : -1;
             }
         }
     }

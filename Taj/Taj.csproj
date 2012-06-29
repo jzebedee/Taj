@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Messages\ClientMsg.cs" />
+    <Compile Include="Messages\Handshake.cs" />
     <Compile Include="Messages\Server.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="Program.cs" />

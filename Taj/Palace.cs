@@ -63,47 +63,10 @@ namespace Taj
 
         void Handshake(BinaryReader reader)
         {
-            var msg = new ClientMsg(reader);
+            var msg = new Handshake(reader);
             Console.WriteLine(msg);
 
-            /*Server smsg = (Server)Enum.Parse(typeof(Server), msgid.ToString());
-            switch (smsg)
-            {
-                case Server.Handshake_BigEndian:
-                    break;
-                case Server.Handshake_LittleEndian:
-                    break;
-            }
-            /*
-                    private function handshake():void {
-                        var messageID:int;
-                        var size:int;
-                        var p:int;
-			
-                        messageID = socket.readInt();
-			
-                        switch (messageID) {
-                            case IncomingMessageTypes.UNKNOWN_SERVER: //1886610802
-                                Alert.show("Got MSG_TROPSER.  Don't know how to proceed.","Logon Error");
-                                break;
-                            case IncomingMessageTypes.LITTLE_ENDIAN_SERVER: // MSG_DIYIT
-                                socket.endian = Endian.LITTLE_ENDIAN;
-                                size = socket.readInt();
-                                p = socket.readInt();
-                                logOn(size, p);
-                                break;
-                            case IncomingMessageTypes.BIG_ENDIAN_SERVER: // MSG_TIYID
-                                socket.endian = Endian.BIG_ENDIAN;
-                                size = socket.readInt();
-                                p = socket.readInt();
-                                logOn(size, p);
-                                break;
-                            default:
-                                trace("Unexpected MessageID while logging on: " + messageID.toString());
-                                break;
-                        }
-                    }
-            */
+            
         }
 
         void Flush()
