@@ -3,20 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ServiceModel;
+using System.IO;
 using System.Net.Sockets;
+using System.Threading.Tasks;
+using System.Threading;
+using Taj.Messages;
 
 namespace Taj
 {
+    /*
+    sint8 signed, 8-bit (1-byte) integer
+    uint8 unsigned, 8-bit (1-byte) integer
+    char 1-byte character (sign not relevant)
+    sint16 signed, 16-bit (2-byte) integer
+    uint16 unsigned, 16-bit (2-byte) integer
+    sint32 signed, 32-bit (4-byte) integer
+    uint32 unsigned, 32-bit (4-byte) integer
+    */
     public class Palace : IDisposable
     {
         readonly TcpClient connection;
-        readonly NetworkStream stream;
+        readonly Task Listener;
 
         public Palace(Uri target)
         {
             connection = new TcpClient(target.Host, target.Port);
-            stream = connection.GetStream();
-            Handshake();
+
+            Listener = Task.Factory.StartNew(Listen, TaskCreationOptions.LongRunning);
         }
         ~Palace()
         {
@@ -30,45 +43,67 @@ namespace Taj
         protected virtual void Dispose(bool disposing)
         {
             connection.Close();
-            stream.Dispose();
 
             if (disposing)
                 GC.SuppressFinalize(this);
         }
 
-        void Handshake()
+        void Listen()
         {
+            byte[] buf;
 
-/*
-		private function handshake():void {
-			var messageID:int;
-			var size:int;
-			var p:int;
+            using (var stream = connection.GetStream())
+            {
+                using (var reader = new BinaryReader(stream))
+                {
+                    Handshake(reader);
+                }
+            }
+        }
+
+        void Handshake(BinaryReader reader)
+        {
+            var msg = new ClientMsg(reader);
+            Console.WriteLine(msg);
+
+            /*Server smsg = (Server)Enum.Parse(typeof(Server), msgid.ToString());
+            switch (smsg)
+            {
+                case Server.Handshake_BigEndian:
+                    break;
+                case Server.Handshake_LittleEndian:
+                    break;
+            }
+            /*
+                    private function handshake():void {
+                        var messageID:int;
+                        var size:int;
+                        var p:int;
 			
-			messageID = socket.readInt();
+                        messageID = socket.readInt();
 			
-			switch (messageID) {
-				case IncomingMessageTypes.UNKNOWN_SERVER: //1886610802
-					Alert.show("Got MSG_TROPSER.  Don't know how to proceed.","Logon Error");
-					break;
-				case IncomingMessageTypes.LITTLE_ENDIAN_SERVER: // MSG_DIYIT
-					socket.endian = Endian.LITTLE_ENDIAN;
-					size = socket.readInt();
-					p = socket.readInt();
-					logOn(size, p);
-					break;
-				case IncomingMessageTypes.BIG_ENDIAN_SERVER: // MSG_TIYID
-					socket.endian = Endian.BIG_ENDIAN;
-					size = socket.readInt();
-					p = socket.readInt();
-					logOn(size, p);
-					break;
-				default:
-					trace("Unexpected MessageID while logging on: " + messageID.toString());
-					break;
-			}
-		}
-*/
+                        switch (messageID) {
+                            case IncomingMessageTypes.UNKNOWN_SERVER: //1886610802
+                                Alert.show("Got MSG_TROPSER.  Don't know how to proceed.","Logon Error");
+                                break;
+                            case IncomingMessageTypes.LITTLE_ENDIAN_SERVER: // MSG_DIYIT
+                                socket.endian = Endian.LITTLE_ENDIAN;
+                                size = socket.readInt();
+                                p = socket.readInt();
+                                logOn(size, p);
+                                break;
+                            case IncomingMessageTypes.BIG_ENDIAN_SERVER: // MSG_TIYID
+                                socket.endian = Endian.BIG_ENDIAN;
+                                size = socket.readInt();
+                                p = socket.readInt();
+                                logOn(size, p);
+                                break;
+                            default:
+                                trace("Unexpected MessageID while logging on: " + messageID.toString());
+                                break;
+                        }
+                    }
+            */
         }
 
         void Flush()
