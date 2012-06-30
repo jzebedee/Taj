@@ -11,7 +11,9 @@ namespace Taj
         {
             var pal = new Palace(new Uri("tcp://chat.epalaces.com:9998"));
 
-            while (Console.ReadKey().Key != ConsoleKey.Escape) ;
+            while (true)
+                System.Threading.Thread.Sleep(1000);
+            //while (Console.ReadKey().Key != ConsoleKey.Escape) ;
         }
     }
 }

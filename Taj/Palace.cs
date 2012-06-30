@@ -57,12 +57,22 @@ namespace Taj
             using (var stream = connection.GetStream())
             {
                 var tuple = Handshake(stream);
-                using(var reader = tuple.Item1)
+                using (var reader = tuple.Item1)
                 {
                     using (var writer = tuple.Item2)
                     {
-                        var lol = new ClientMsg(reader);
-                        Console.WriteLine(lol);
+                        while (true)
+                        {
+                            var lol = new ClientMsg(reader);
+                            Console.WriteLine("{0} | {1} | {2}", lol.eventType, lol.length, lol.refNum);
+                            
+                            var sb = new StringBuilder();
+                            foreach (var b in reader.ReadBytes((int)lol.length))
+                                sb.Append(b);
+
+                            Console.WriteLine("** {0}", sb.ToString());
+                            Console.WriteLine("--");
+                        }
                     }
                 }
             }
@@ -108,6 +118,7 @@ namespace Taj
                 }
             }
             bw.Write(msgBuffer, 0, msgBuffer.Length);
+            bw.Flush();
 
             return Tuple.Create(br, bw);
         }

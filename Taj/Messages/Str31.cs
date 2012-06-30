@@ -22,14 +22,15 @@ namespace Taj.Messages
             set
             {
                 if (value.Length > 31)
-                    throw new ArgumentOutOfRangeException();
+                    //throw new ArgumentOutOfRangeException();
+                    value = value.Substring(0, 31);
 
                 length = Convert.ToByte(value.Length);
 
                 fixed (sbyte* pMsg = msg)
                 {
                     sbyte* rpMsg = pMsg;
-                    foreach (var b in Encoding.ASCII.GetBytes(value))
+                    foreach (var b in Encoding.GetEncoding("Windows-1252").GetBytes(value))
                         *rpMsg++ = (sbyte)b;
                 }
             }
