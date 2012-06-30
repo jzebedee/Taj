@@ -3,8 +3,8 @@
     public static class MessageTypes
     {
         public const int
-            Handshake_BigEndian = 0x74697972,
-            Handshake_LittleEndian = 0x72796974;
+            Handshake_BigEndian = 0x72796974,
+            Handshake_LittleEndian = 0x74697972;
 
         public const int
             Outgoing_Logon = 0x72656769;

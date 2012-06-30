@@ -61,21 +61,26 @@ namespace Taj
                 {
                     using (var writer = tuple.Item2)
                     {
-                        while (true)
+                        while (connection.Connected)
                         {
-                            var lol = new ClientMsg(reader);
-                            Console.WriteLine("{0} | {1} | {2}", lol.eventType, lol.length, lol.refNum);
-                            
-                            var sb = new StringBuilder();
-                            foreach (var b in reader.ReadBytes((int)lol.length))
-                                sb.Append(b);
+                            if (stream.DataAvailable)
+                            {
+                                var lol = new ClientMsg(reader);
+                                Console.WriteLine("{0} | {1} | {2}", lol.eventType, lol.length, lol.refNum);
 
-                            Console.WriteLine("** {0}", sb.ToString());
-                            Console.WriteLine("--");
+                                var sb = new StringBuilder();
+                                foreach (var b in reader.ReadBytes((int)lol.length))
+                                    sb.Append(b);
+
+                                Console.WriteLine("** {0}", sb.ToString());
+                                Console.WriteLine("--");
+                            }
                         }
+                        Console.WriteLine("% No more data available.");
                     }
                 }
             }
+            Console.WriteLine("% Listener terminated.");
         }
 
         Tuple<EndianBinaryReader, EndianBinaryWriter> Handshake(Stream palstream)
