@@ -13,13 +13,15 @@ namespace Taj.Messages
         {
             msg = new ClientMsg
             {
-                eventType = 0x0, //Outgoing msg type for logon
+                eventType = MessageTypes.Outgoing_Logon,
                 length = 128,
-                refNum = 0
+                refNum = 0 //intentional
             };
             rec = new AuxRegistrationRec
             {
-                crc = 0,
+                crc = 0x5905f923, //cribbed guest from OP
+                counter = 0xcf07309c, //cribbed guest from OP
+                userName = new Str31 { Content = "Hello" }
             };
         }
 

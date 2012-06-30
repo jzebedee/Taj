@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="Messages\ClientMsg.cs" />
     <Compile Include="Messages\MSG_LOGON.cs" />
-    <Compile Include="Messages\Server.cs" />
+    <Compile Include="Messages\MessageTypes.cs" />
     <Compile Include="Messages\Str31.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="Program.cs" />

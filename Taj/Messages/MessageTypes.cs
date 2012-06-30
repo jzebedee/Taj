@@ -1,10 +1,13 @@
 ﻿namespace Taj.Messages
 {
-    public static class Server
+    public static class MessageTypes
     {
         public const int
             Handshake_BigEndian = 0x74697972,
             Handshake_LittleEndian = 0x72796974;
+
+        public const int
+            Outgoing_Logon = 0x72656769;
         /*
 		// ----------------------------------------------------------------------
 		// From Server

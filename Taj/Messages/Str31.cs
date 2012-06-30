@@ -19,6 +19,20 @@ namespace Taj.Messages
                 fixed (sbyte* pMsg = msg)
                     return new string(pMsg, 0, length);
             }
+            set
+            {
+                if (value.Length > 31)
+                    throw new ArgumentOutOfRangeException();
+
+                length = Convert.ToByte(value.Length);
+
+                fixed (sbyte* pMsg = msg)
+                {
+                    sbyte* rpMsg = pMsg;
+                    foreach (var b in Encoding.ASCII.GetBytes(value))
+                        *rpMsg++ = (sbyte)b;
+                }
+            }
         }
     }
 }
