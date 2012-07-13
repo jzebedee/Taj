@@ -7,13 +7,13 @@ using System.Runtime.InteropServices;
 namespace Taj.Messages
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct MSG_LOGON
+    public struct ClientMsg_logOn
     {
-        public MSG_LOGON(int x)
+        public ClientMsg_logOn(string name)
         {
             msg = new ClientMsg
             {
-                eventType = MessageTypes.Outgoing_Logon,
+                eventType = MessageTypes.Logon,
                 length = 128,
                 refNum = 0 //intentional
             };
@@ -21,7 +21,7 @@ namespace Taj.Messages
             {
                 crc = 0x5905f923,       //cribbed guest from OP
                 counter = 0xcf07309c,   //cribbed guest from OP
-                userName = new Str31 { Content = "Hello" },
+                userName = new Str31 { Content = name },
                 wizPassword = new Str31 { },
                 auxFlags = 0x80000004,  //AUXFLAGS_AUTHENTICATE | AUXFLAGS_WIN32
                 puidCtr = 0xf5dc385e,   //cribbed guest from OP

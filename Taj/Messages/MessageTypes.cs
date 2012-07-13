@@ -7,7 +7,10 @@
             Handshake_LittleEndian = 0x74697972;
 
         public const int
-            Outgoing_Logon = 0x72656769;
+            Logon = 0x72656769;
+
+        public const int
+            Talk = 0x74616C6B;
         /*
 		// ----------------------------------------------------------------------
 		// From Server

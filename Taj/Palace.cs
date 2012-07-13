@@ -65,14 +65,25 @@ namespace Taj
                         {
                             if (stream.DataAvailable)
                             {
-                                var lol = new ClientMsg(reader);
-                                Console.WriteLine("{0} | {1} | {2}", lol.eventType, lol.length, lol.refNum);
+                                var msg = new ClientMsg(reader);
+                                Console.WriteLine("{0} | {1} | {2}", msg.eventType, msg.length, msg.refNum);
 
-                                var sb = new StringBuilder();
-                                foreach (var b in reader.ReadBytes((int)lol.length))
-                                    sb.Append(b);
+                                switch (msg.eventType)
+                                {
+                                    case MessageTypes.Talk:
+                                        Console.WriteLine("EvT: Talk");
+                                        //var talk = reader.ReadStruct<ClientMsg_talk>((int)msg.length);
+                                        Console.WriteLine("msg: `{0}`", reader.ReadCString());
+                                        break;
+                                    default:
+                                        Console.WriteLine("Unknown EvT: {0}", msg.eventType);
+                                        var sb = new StringBuilder();
+                                        foreach (var b in reader.ReadBytes((int)msg.length))
+                                            sb.Append(b);
 
-                                Console.WriteLine("** {0}", sb.ToString());
+                                        Console.WriteLine("** {0}", sb.ToString());
+                                        break;
+                                }
                                 Console.WriteLine("--");
                             }
                         }
@@ -97,12 +108,18 @@ namespace Taj
                 MiscUtil.Conversion.EndianBitConverter endianness;
 
                 int eventType = BitConverter.ToInt32(buf, 0);
-                if (eventType == MessageTypes.Handshake_BigEndian)
-                    endianness = MiscUtil.Conversion.EndianBitConverter.Big;
-                else if (eventType == MessageTypes.Handshake_LittleEndian)
-                    endianness = MiscUtil.Conversion.EndianBitConverter.Little;
-                else
-                    throw new NotImplementedException(string.Format("unrecognized MSG_TIYID: {0}", eventType));
+                switch (eventType)
+                {
+                    case MessageTypes.Handshake_BigEndian:
+                        endianness = MiscUtil.Conversion.EndianBitConverter.Big;
+                        break;
+                    case MessageTypes.Handshake_LittleEndian:
+                        endianness = MiscUtil.Conversion.EndianBitConverter.Little;
+                        break;
+                    default:
+                        throw new NotImplementedException(string.Format("unrecognized MSG_TIYID: {0}", eventType));
+                        break;
+                }
 
                 br = new EndianBinaryReader(endianness, palstream);
                 bw = new EndianBinaryWriter(endianness, palstream);
@@ -114,12 +131,12 @@ namespace Taj
             byte[] msgBuffer;
             unsafe
             {
-                msgBuffer = new byte[sizeof(MSG_LOGON)];
+                msgBuffer = new byte[sizeof(ClientMsg_logOn)];
 
-                var logonMsg = new MSG_LOGON(0);
+                var logonMsg = new ClientMsg_logOn("Superduper");
                 fixed (byte* pBuf = msgBuffer)
                 {
-                    *((MSG_LOGON*)pBuf) = logonMsg;
+                    *((ClientMsg_logOn*)pBuf) = logonMsg;
                 }
             }
             bw.Write(msgBuffer, 0, msgBuffer.Length);
