@@ -59,10 +59,10 @@ namespace Taj
 
             using (var stream = connection.GetStream())
             {
-                var tuple = Handshake(stream);
-                using (reader = tuple.Item1)
+                Handshake(stream);
+                using (reader)
                 {
-                    using (writer = tuple.Item2)
+                    using (writer)
                     {
                         while (connection.Connected)
                         {
@@ -117,12 +117,9 @@ namespace Taj
         //    bw.Flush();
         //}
 
-        Tuple<EndianBinaryReader, EndianBinaryWriter> Handshake(Stream palstream)
+        void Handshake(Stream palstream)
         {
             //We do this 'dirty' because of the extra handling for the yet-unknown endianness
-
-            EndianBinaryReader br;
-            EndianBinaryWriter bw;
 
             {
                 byte[] buf = new byte[4];
@@ -144,17 +141,15 @@ namespace Taj
                         break;
                 }
 
-                br = new EndianBinaryReader(endianness, palstream);
-                bw = new EndianBinaryWriter(endianness, palstream);
+                reader = new EndianBinaryReader(endianness, palstream);
+                writer = new EndianBinaryWriter(endianness, palstream);
             }
 
-            var length = br.ReadUInt32();
-            var refNum = br.ReadUInt32(); //userID for client
+            var length = reader.ReadUInt32();
+            var refNum = reader.ReadUInt32(); //userID for client
 
             var logonMsg = new ClientMsg_logOn("Superduper");
             Write(logonMsg);
-
-            return Tuple.Create(br, bw);
         }
     }
 }
