@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Runtime.InteropServices;
+using MiscUtil.IO;
 
 namespace Taj.Messages
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct ClientMsg_talk
+    public class ClientMsg_talk : FormattedMessage
     {
-        public ClientMsg_talk(string message)
+        public ClientMsg_talk(EndianBinaryReader br)
         {
-            if (message.Length > 255)
-                message = message.Substring(0, 255);
+            var msg = new ClientMsg(br);
 
-            //text = message;
+            var sb = new StringBuilder();
+            for (int i = 0; i < msg.length; i++)
+                sb.Append(br.ReadByte());
+
+            Text = sb.ToString();
         }
 
-        //[MarshalAs(UnmanagedType.)]
-        //public string text;
+        public string Text { get; set; }
     }
 }

@@ -9,12 +9,11 @@ using MiscUtil.IO;
 namespace Taj.Messages
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct ClientMsg
+    public unsafe struct ClientMsg
     {
         public UInt32 eventType;
-        public UInt32 length;
+        public Int32 length;
         public Int32 refNum;
-        //public byte[] msg;
 
         //struct ClientMsg {
         //    uint32 eventType;   /* 32-bit opcode */
@@ -26,9 +25,15 @@ namespace Taj.Messages
         public ClientMsg(EndianBinaryReader br)
         {
             eventType = br.ReadUInt32();
-            length = br.ReadUInt32();
+            length = br.ReadInt32();
             refNum = br.ReadInt32();
-            //msg = br.ReadBytes((int)length);
+
+            //fixed (byte* pbr = br.ReadBytes(length))
+            //{
+            //    byte* pb = pbr;
+            //    for (int i = 0; i < length; i++)
+            //        *msg++ = *pb++;
+            //}
         }
     }
 }

@@ -3,20 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using MiscUtil.IO;
 
 namespace Taj.Messages
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct ClientMsg_logOn
+    public unsafe struct ClientMsg_logOn : IFormattedMessage
     {
         public ClientMsg_logOn(string name)
         {
-            msg = new ClientMsg
-            {
-                eventType = MessageTypes.Logon,
-                length = 128,
-                refNum = 0 //intentional
-            };
             rec = new AuxRegistrationRec
             {
                 crc = 0x5905f923,       //cribbed guest from OP
@@ -42,10 +37,29 @@ namespace Taj.Messages
                 ul2DGraphicsCaps = 0,
                 ul3DEngineCaps = 0,
             };
+
+            cmsg = new ClientMsg
+            {
+                eventType = MessageTypes.Logon,
+                length = 128,
+                refNum = 0, //intentional
+            };
         }
 
-        ClientMsg msg;
+        ClientMsg cmsg;
         AuxRegistrationRec rec;
+
+        public byte[] GetBytes()
+        {
+            byte[] msgBuffer = new byte[sizeof(ClientMsg_logOn)];
+            fixed (byte* pBuf = msgBuffer)
+            {
+                byte* pB = pBuf;
+                *((ClientMsg_logOn*)pB) = this;
+            }
+
+            return msgBuffer;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, Size = 128)]

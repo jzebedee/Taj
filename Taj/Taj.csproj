@@ -48,10 +48,10 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Messages\ClientMsg.cs" />
-    <Compile Include="Messages\ClientMsg_logOff_notify.cs" />
-    <Compile Include="Messages\ClientMsg_logOff_request.cs" />
     <Compile Include="Messages\ClientMsg_logOn.cs" />
     <Compile Include="Messages\ClientMsg_talk.cs" />
+    <Compile Include="Messages\FormattedMessage.cs" />
+    <Compile Include="Messages\IFormattedMessage.cs" />
     <Compile Include="Messages\MessageTypes.cs" />
     <Compile Include="Messages\Str31.cs" />
     <Compile Include="Palace.cs" />

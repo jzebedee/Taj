@@ -5,7 +5,8 @@ using System.Text;
 
 namespace Taj.Messages
 {
-    class ClientMsg_logOff_notify
+    public interface IFormattedMessage
     {
+        byte[] GetBytes();
     }
 }

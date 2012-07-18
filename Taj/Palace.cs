@@ -27,6 +27,9 @@ namespace Taj
         readonly TcpClient connection;
         readonly Task Listener;
 
+        EndianBinaryReader reader;
+        EndianBinaryWriter writer;
+
         public Palace(Uri target)
         {
             connection = new TcpClient(target.Host, target.Port);
@@ -57,9 +60,9 @@ namespace Taj
             using (var stream = connection.GetStream())
             {
                 var tuple = Handshake(stream);
-                using (var reader = tuple.Item1)
+                using (reader = tuple.Item1)
                 {
-                    using (var writer = tuple.Item2)
+                    using (writer = tuple.Item2)
                     {
                         while (connection.Connected)
                         {
@@ -93,6 +96,26 @@ namespace Taj
             }
             Console.WriteLine("% Listener terminated.");
         }
+
+        public void Write(IFormattedMessage msg)
+        {
+            byte[] msgBuffer = msg.GetBytes();
+            writer.Write(msgBuffer, 0, msgBuffer.Length);
+            writer.Flush();
+        }
+
+        //public unsafe void Write<T>(T* msg) where T : struct
+        //{
+        //    byte[] msgBuffer = new byte[sizeof(T)];
+        //    fixed (byte* pBuf = msgBuffer)
+        //    {
+        //        byte* pB = pBuf;
+        //        *((T*)pB) = msg;
+        //    }
+
+        //    bw.Write(msgBuffer, 0, msgBuffer.Length);
+        //    bw.Flush();
+        //}
 
         Tuple<EndianBinaryReader, EndianBinaryWriter> Handshake(Stream palstream)
         {
@@ -128,19 +151,8 @@ namespace Taj
             var length = br.ReadUInt32();
             var refNum = br.ReadUInt32(); //userID for client
 
-            byte[] msgBuffer;
-            unsafe
-            {
-                msgBuffer = new byte[sizeof(ClientMsg_logOn)];
-
-                var logonMsg = new ClientMsg_logOn("Superduper");
-                fixed (byte* pBuf = msgBuffer)
-                {
-                    *((ClientMsg_logOn*)pBuf) = logonMsg;
-                }
-            }
-            bw.Write(msgBuffer, 0, msgBuffer.Length);
-            bw.Flush();
+            var logonMsg = new ClientMsg_logOn("Superduper");
+            Write(logonMsg);
 
             return Tuple.Create(br, bw);
         }
