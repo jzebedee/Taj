@@ -69,19 +69,19 @@ namespace Taj
                             if (stream.DataAvailable)
                             {
                                 var msg = new ClientMsg(reader);
-                                Console.WriteLine("{0} | {1} | {2}", msg.eventType, msg.length, msg.refNum);
+                                Console.WriteLine("{0:X8} | {1} | {2}", msg.eventType, msg.length, msg.refNum);
 
                                 switch (msg.eventType)
                                 {
                                     case MessageTypes.Talk:
                                         Console.WriteLine("EvT: Talk");
-                                        //var talk = reader.ReadStruct<ClientMsg_talk>((int)msg.length);
+                                        //var talk = reader.ReadStruct<ClientMsg_talk>(msg.length);
                                         Console.WriteLine("msg: `{0}`", reader.ReadCString());
                                         break;
                                     default:
-                                        Console.WriteLine("Unknown EvT: {0}", msg.eventType);
+                                        Console.WriteLine("Unknown EvT");
                                         var sb = new StringBuilder();
-                                        foreach (var b in reader.ReadBytes((int)msg.length))
+                                        foreach (var b in reader.ReadBytes(msg.length))
                                             sb.Append(b);
 
                                         Console.WriteLine("** {0}", sb.ToString());
@@ -103,19 +103,6 @@ namespace Taj
             writer.Write(msgBuffer, 0, msgBuffer.Length);
             writer.Flush();
         }
-
-        //public unsafe void Write<T>(T* msg) where T : struct
-        //{
-        //    byte[] msgBuffer = new byte[sizeof(T)];
-        //    fixed (byte* pBuf = msgBuffer)
-        //    {
-        //        byte* pB = pBuf;
-        //        *((T*)pB) = msg;
-        //    }
-
-        //    bw.Write(msgBuffer, 0, msgBuffer.Length);
-        //    bw.Flush();
-        //}
 
         void Handshake(Stream palstream)
         {
