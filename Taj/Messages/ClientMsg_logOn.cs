@@ -12,6 +12,13 @@ namespace Taj.Messages
     {
         public ClientMsg_logOn(string name)
         {
+            cmsg = new ClientMsg
+            {
+                eventType = MessageTypes.Logon,
+                length = sizeof(AuxRegistrationRec), //128, sizeof(AuxRegistrationRec)
+                refNum = 0, //intentional
+            };
+
             rec = new AuxRegistrationRec
             {
                 crc = 0x5905f923,       //cribbed guest from OP
@@ -31,6 +38,7 @@ namespace Taj.Messages
                 reserved = null,
 
                 ulRequestedProtocolVersion = 0,
+
                 ulUploadCaps = 0x1,     //ULCAPS_ASSETS_PALACE
                 ulDownloadCaps = 0x111, //DLCAPS_ASSETS_PALACE | DLCAPS_FILES_PALACE | DLCAPS_FILES_HTTPSRVR
                 ul2DEngineCaps = 0,
@@ -38,12 +46,11 @@ namespace Taj.Messages
                 ul3DEngineCaps = 0,
             };
 
-            cmsg = new ClientMsg
+            fixed (byte* pRes = rec.reserved)
             {
-                eventType = MessageTypes.Logon,
-                length = 128,
-                refNum = 0, //intentional
-            };
+                var rsvdID_buffer = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL");
+                rsvdID_buffer.PopulatePtrBuffer(pRes);
+            }
         }
 
         ClientMsg cmsg;

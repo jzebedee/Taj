@@ -37,5 +37,12 @@ namespace Taj
                 pin_bytes.Free();
             }
         }
+
+        public static unsafe void PopulatePtrBuffer(this byte[] buf, byte* ptrBuf)
+        {
+            byte* rpBuf = ptrBuf;
+            foreach (var b in buf)
+                *rpBuf++ = b;
+        }
     }
 }
