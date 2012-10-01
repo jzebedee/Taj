@@ -16,19 +16,10 @@ using System.Diagnostics;
 
 namespace Taj
 {
-    /*
-    sint8 signed, 8-bit (1-byte) integer
-    uint8 unsigned, 8-bit (1-byte) integer
-    char 1-byte character (sign not relevant)
-    sint16 signed, 16-bit (2-byte) integer
-    uint16 unsigned, 16-bit (2-byte) integer
-    sint32 signed, 32-bit (4-byte) integer
-    uint32 unsigned, 32-bit (4-byte) integer
-    */
     public class Palace : IDisposable
     {
-        readonly TcpClient connection;
-        readonly Task Listener;
+        TcpClient connection;
+        Task Listener;
 
         EndianBinaryReader reader;
         EndianBinaryWriter writer;
@@ -58,69 +49,62 @@ namespace Taj
 
         void Listen()
         {
-            byte[] buf;
-
-            using (var stream = connection.GetStream())
+            try
             {
-                Handshake(stream);
-                using (reader)
+                using (var stream = connection.GetStream())
                 {
-                    using (writer)
+                    Handshake(stream);
+                    using (reader)
                     {
-                        while (connection.Connected)
+                        using (writer)
                         {
-                            if (stream.DataAvailable)
+                            while (connection.Connected)
                             {
-                                var msg = new ClientMsg(reader);
-#if TRACE
-                                Trace.WriteLine(string.Format("{0:X8} | {1} | {2}", msg.eventType, msg.length, msg.refNum));
-#endif
-
-                                switch (msg.eventType)
+                                if (stream.DataAvailable)
                                 {
-                                    case MessageTypes.Talk:
+                                    var msg = reader.ReadStruct<ClientMessage>();
+                                    switch (msg.eventType)
+                                    {
 #if TRACE
-                                        Trace.WriteLine("EvT: Talk");
+                                        case MessageTypes.Talk:
+                                            Trace.WriteLine("EvT: Talk");
+                                            var msg_talk = new MH_Talk(reader);
+                                            Trace.WriteLine(string.Format("msg: `{0}`", msg_talk.Text));
+                                            break;
 #endif
-                                        //var talk = reader.ReadStruct<ClientMsg_talk>(msg.length);
 #if TRACE
-                                        Trace.WriteLine(string.Format("msg: `{0}`", reader.ReadCString()));
+                                        case MessageTypes.ServerVersion:
+                                            var mh_sv = new MH_ServerVersion(msg);
+                                            Trace.WriteLine("EvT: ServerVersion");
+                                            Trace.WriteLine(string.Format("v{0}", mh_sv.Version));
+                                            break;
 #endif
-                                        break;
-                                    default:
 #if TRACE
-                                        Trace.WriteLine("Unknown EvT");
+                                        default:
+                                            Trace.WriteLine(string.Format("Unknown EvT: {0}", msg.eventType));
+                                            reader.Read(new byte[msg.length], 0, msg.length);
+                                            break;
 #endif
-                                        var sb = new StringBuilder();
-                                        foreach (var b in reader.ReadBytes(msg.length))
-                                            sb.Append(b);
-
+                                    }
 #if TRACE
-                                        Trace.WriteLine(string.Format("** {0}", sb.ToString()));
+                                    Trace.WriteLine("--");
 #endif
-                                        break;
                                 }
-#if TRACE
-                                Trace.WriteLine("--");
-#endif
+
+                                //if (DateTime.Now.Second % 3 == 0)
+                                //{
+                                //    var new_out_msg = new MH_Talk("Hello. It is currently " + DateTime.Now.ToShortTimeString());
+                                //    new_out_msg.Write(writer);
+                                //}
                             }
                         }
-#if TRACE
-                        Trace.WriteLine("% No more data available.");
-#endif
                     }
                 }
             }
-#if TRACE
-            Trace.WriteLine("% Listener terminated.");
-#endif
-        }
-
-        public void Write(IFormattedMessage msg)
-        {
-            byte[] msgBuffer = msg.GetBytes();
-            writer.Write(msgBuffer, 0, msgBuffer.Length);
-            writer.Flush();
+            catch (IOException e)
+            {
+                Trace.TraceError(e.ToString());
+            }
         }
 
         void Handshake(Stream palstream)
@@ -154,8 +138,8 @@ namespace Taj
             var length = reader.ReadUInt32();
             var refNum = reader.ReadUInt32(); //userID for client
 
-            var logonMsg = new ClientMsg_logOn("Superduper");
-            Write(logonMsg);
+            var logon = new MHC_Logon("Superduper");
+            logon.Write(writer);
         }
     }
 }
