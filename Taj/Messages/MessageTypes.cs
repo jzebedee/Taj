@@ -4,13 +4,16 @@
     {
         public const int
             Handshake_BigEndian = 0x72796974,
-            Handshake_LittleEndian = 0x74697972;
+            Handshake_LittleEndian = 0x74697972,
+            
+            Logon = 0x72656769,
 
-        public const int
-            Logon = 0x72656769;
-
-        public const int
+            ServerVersion = 0x76657273,
+            ServerInfo = 0x73696E66,
+            
             Talk = 0x74616C6B;
+
+
         /*
 		// ----------------------------------------------------------------------
 		// From Server
@@ -18,14 +21,10 @@
 		
 		// Server Types
 		public static const UNKNOWN_SERVER:int = 1886610802;
-		public static const LITTLE_ENDIAN_SERVER:int = 1920559476;
-		public static const BIG_ENDIAN_SERVER:int = 1953069426;
 		
 		// Login
 		public static const ALTERNATE_LOGON_REPLY:int = 1919250482;
 		
-		public static const SERVER_VERSION:int = 1986359923;
-		public static const SERVER_INFO:int = 1936289382;
 		public static const USER_STATUS:int = 1968403553;
 		public static const USER_LOGGED_ON_AND_MAX:int = 1819240224;
 		public static const GOT_HTTP_SERVER_LOCATION:int = 1213486160;
@@ -42,7 +41,6 @@
 		
 		public static const XTALK:int = 0x78746c6b; // Encrypted
 		public static const XWHISPER:int = 0x78776973; // Encrypted
-		public static const TALK:int = 0x74616C6B; // Unencrypted
 		public static const WHISPER:int = 0x77686973; // Unencrypted
 		public static const MOVEMENT:int = 1967943523;
 		public static const USER_COLOR:int = 1970500163;

@@ -38,11 +38,39 @@ namespace Taj
             }
         }
 
-        public static unsafe void PopulatePtrBuffer(this byte[] buf, byte* ptrBuf)
+        public static void WriteStruct<T>(this EndianBinaryWriter writer, T obj) where T : struct
         {
-            byte* rpBuf = ptrBuf;
-            foreach (var b in buf)
-                *rpBuf++ = b;
+            var size = Marshal.SizeOf(obj);
+            byte[] buf = new byte[size];
+
+            IntPtr ptrAlloc = IntPtr.Zero;
+
+            try
+            {
+                ptrAlloc = Marshal.AllocHGlobal(size);
+
+                Marshal.StructureToPtr(obj, ptrAlloc, true);
+                Marshal.Copy(ptrAlloc, buf, 0, size);
+            }
+            finally
+            {
+                if (ptrAlloc != IntPtr.Zero)
+                    Marshal.FreeHGlobal(ptrAlloc);
+            }
+
+            writer.Write(buf);
+        }
+
+        public static byte[] ToStr31(this string str)
+        {
+            if (str.Length > 31)
+                str.Substring(0, 31);
+
+            byte[] ret = new byte[32];
+            ret[0] = Convert.ToByte(str.Length);
+
+            Array.Copy(Encoding.GetEncoding("Windows-1252").GetBytes(str), 0, ret, 1, str.Length);
+            return ret;
         }
     }
 }
