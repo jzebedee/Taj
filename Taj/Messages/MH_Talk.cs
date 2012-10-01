@@ -25,15 +25,12 @@ namespace Taj.Messages
 
         public void Write(EndianBinaryWriter writer)
         {
-            //writer.WriteStruct(new ClientMessage
-            //{
-            //    eventType = MessageTypes.Talk,
-            //    length = Text.Length,
-            //    refNum = 0,
-            //});
-            writer.Write(MessageTypes.Talk);
-            writer.Write(Text.Length);
-            writer.Write(0);
+            writer.WriteStruct(new ClientMessage
+            {
+                eventType = MessageTypes.Talk,
+                length = Text.Length+1,
+                refNum = 0,
+            });
             writer.Write(Encoding.GetEncoding("Windows-1252").GetBytes(Text + "\0"));
             writer.Flush();
         }

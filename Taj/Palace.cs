@@ -91,11 +91,11 @@ namespace Taj
 #endif
                                 }
 
-                                //if (DateTime.Now.Second % 3 == 0)
-                                //{
-                                //    var new_out_msg = new MH_Talk("Hello. It is currently " + DateTime.Now.ToShortTimeString());
-                                //    new_out_msg.Write(writer);
-                                //}
+                                if (DateTime.Now.Second % 3 == 0)
+                                {
+                                    var new_out_msg = new MH_Talk("Hello. It is currently " + DateTime.Now.ToShortTimeString());
+                                    new_out_msg.Write(writer);
+                                }
                             }
                         }
                     }
