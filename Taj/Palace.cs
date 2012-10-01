@@ -10,6 +10,9 @@ using System.Threading;
 using Taj.Messages;
 using MiscUtil.IO;
 using System.Runtime.InteropServices;
+#if TRACE
+using System.Diagnostics;
+#endif
 
 namespace Taj
 {
@@ -69,32 +72,48 @@ namespace Taj
                             if (stream.DataAvailable)
                             {
                                 var msg = new ClientMsg(reader);
-                                Console.WriteLine("{0:X8} | {1} | {2}", msg.eventType, msg.length, msg.refNum);
+#if TRACE
+                                Trace.WriteLine(string.Format("{0:X8} | {1} | {2}", msg.eventType, msg.length, msg.refNum));
+#endif
 
                                 switch (msg.eventType)
                                 {
                                     case MessageTypes.Talk:
-                                        Console.WriteLine("EvT: Talk");
+#if TRACE
+                                        Trace.WriteLine("EvT: Talk");
+#endif
                                         //var talk = reader.ReadStruct<ClientMsg_talk>(msg.length);
-                                        Console.WriteLine("msg: `{0}`", reader.ReadCString());
+#if TRACE
+                                        Trace.WriteLine(string.Format("msg: `{0}`", reader.ReadCString()));
+#endif
                                         break;
                                     default:
-                                        Console.WriteLine("Unknown EvT");
+#if TRACE
+                                        Trace.WriteLine("Unknown EvT");
+#endif
                                         var sb = new StringBuilder();
                                         foreach (var b in reader.ReadBytes(msg.length))
                                             sb.Append(b);
 
-                                        Console.WriteLine("** {0}", sb.ToString());
+#if TRACE
+                                        Trace.WriteLine(string.Format("** {0}", sb.ToString()));
+#endif
                                         break;
                                 }
-                                Console.WriteLine("--");
+#if TRACE
+                                Trace.WriteLine("--");
+#endif
                             }
                         }
-                        Console.WriteLine("% No more data available.");
+#if TRACE
+                        Trace.WriteLine("% No more data available.");
+#endif
                     }
                 }
             }
-            Console.WriteLine("% Listener terminated.");
+#if TRACE
+            Trace.WriteLine("% Listener terminated.");
+#endif
         }
 
         public void Write(IFormattedMessage msg)
