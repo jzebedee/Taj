@@ -41,6 +41,11 @@ namespace Taj.Messages
             };
         }
 
+        public MHC_Logon(EndianBinaryReader reader)
+        {
+            rec = reader.ReadStruct<AuxRegistrationRec>();
+        }
+
         public void Write(EndianBinaryWriter writer)
         {
             writer.WriteStruct(new ClientMessage

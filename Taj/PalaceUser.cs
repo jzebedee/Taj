@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Taj
 {
-    public class Palace
+    public class PalaceUser
     {
-        public Version Version { get; set; }
+
     }
 }

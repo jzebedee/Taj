@@ -7,6 +7,7 @@
             Handshake_LittleEndian = 0x74697972,
             
             Logon = 0x72656769,
+            AlternateLogonReply = 0x72657032,
 
             ServerVersion = 0x76657273,
             ServerInfo = 0x73696E66,
