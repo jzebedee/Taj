@@ -92,7 +92,11 @@ namespace Taj
                                             break;
                                         case MessageTypes.MSG_SERVERINFO:
                                             Debug.WriteLine(string.Format("EvT: ServerInfo."));
-                                            var msg_svinfo = new MH_ServerInfo(msg,reader);
+                                            var msg_svinfo = new MH_ServerInfo(msg, reader);
+                                            break;
+                                        case MessageTypes.MSG_HTTPSERVER:
+                                            Debug.WriteLine(string.Format("EvT: HTTPServer."));
+                                            var msg_httpsv = new MH_HTTPServer(msg, reader);
                                             break;
                                         default:
                                             Debug.WriteLine(string.Format("Unknown EvT: 0x{0:X8}", msg.eventType));
