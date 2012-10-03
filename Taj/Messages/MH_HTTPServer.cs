@@ -9,10 +9,12 @@ namespace Taj.Messages
 {
     public class MH_HTTPServer
     {
-        public MH_HTTPServer(ClientMessage cmsg, EndianBinaryReader reader)
+        public readonly Uri Location;
+
+        public MH_HTTPServer(EndianBinaryReader reader)
         {
-            Debug.WriteLine("MH_HTTPServer is unimplemented, and skipping itself ahead.");
-            reader.ReadBytes(cmsg.length);
+            var uri_string = reader.ReadCString();
+            Location = new Uri(uri_string);
         }
     }
 }

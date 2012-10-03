@@ -15,7 +15,7 @@ namespace Taj
             var builder = new StringBuilder();
 
             byte cur;
-            while ((cur = reader.ReadByte()) != '\0') builder.Append(cur);
+            while ((cur = reader.ReadByte()) != '\0') builder.Append((char)cur);
 
             return builder.ToString();
         }

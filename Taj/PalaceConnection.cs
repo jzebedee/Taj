@@ -96,7 +96,9 @@ namespace Taj
                                             break;
                                         case MessageTypes.MSG_HTTPSERVER:
                                             Debug.WriteLine(string.Format("EvT: HTTPServer."));
-                                            var msg_httpsv = new MH_HTTPServer(msg, reader);
+                                            var msg_httpsv = new MH_HTTPServer(reader);
+                                            Debug.WriteLine(string.Format("HTTPServer URI: {0}", msg_httpsv.Location));
+                                            CurrentPalace.HTTPServer = msg_httpsv.Location;
                                             break;
                                         default:
                                             Debug.WriteLine(string.Format("Unknown EvT: 0x{0:X8}", msg.eventType));
