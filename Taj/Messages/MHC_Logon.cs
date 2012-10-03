@@ -15,7 +15,7 @@ namespace Taj.Messages
 
         AuxRegistrationRec rec;
 
-        public MHC_Logon(string name, uint puidCtr = guest_puidCtr, uint puidCRC = guest_puidCRC)
+        public MHC_Logon(string name, short desiredRoom = 0, uint puidCtr = guest_puidCtr, uint puidCRC = guest_puidCRC)
         {
             rec = new AuxRegistrationRec
             {
@@ -31,7 +31,7 @@ namespace Taj.Messages
                 totalElapsed = 0,       //garbage
                 demoLimit = 0,          //garbage
 
-                desiredRoom = 0,
+                desiredRoom = desiredRoom,
 
                 reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"),
 

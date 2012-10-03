@@ -171,7 +171,9 @@ namespace Taj
             var refNum = reader.ReadUInt32(); //userID for client
             Identity.ID = refNum;
 
-            var logon = new MHC_Logon(Identity.Name);
+            //TODO: take out the debug room
+            //oceansapart.epalaces.com:9998/124
+            var logon = new MHC_Logon(Identity.Name, 124);
             logon.Write(writer);
         }
     }
