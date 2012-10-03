@@ -29,7 +29,7 @@ namespace Taj.Messages
             {
                 eventType = MessageTypes.MSG_TALK,
                 length = Text.Length+1,
-                refNum = 0,
+                refNum = 0, //TODO: set refnum to userid
             });
             writer.Write(Encoding.GetEncoding("Windows-1252").GetBytes(Text + "\0"));
             writer.Flush();

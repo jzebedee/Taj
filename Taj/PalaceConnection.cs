@@ -93,6 +93,11 @@ namespace Taj
                                             var msg_talk = new MH_Talk(reader);
                                             Debug.WriteLine(string.Format("msg: `{0}`", msg_talk.Text));
                                             break;
+                                        case MessageTypes.MSG_XTALK:
+                                            Debug.WriteLine("EvT: XTalk");
+                                            var msg_xtalk = new MH_XTalk(msg, reader);
+                                            Debug.WriteLine(string.Format("msg: `{0}`", msg_xtalk.Text));
+                                            break;
                                         case MessageTypes.MSG_ROOMDESC:
                                             Debug.WriteLine(string.Format("EvT: RoomDesc."));
                                             var msg_roomdesc = new MH_RoomDesc(msg, reader);

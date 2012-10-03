@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Messages\ClientMessage.cs" />
+    <Compile Include="Messages\MH_XTalk.cs" />
     <Compile Include="Messages\MH_UserNew.cs" />
     <Compile Include="Messages\MH_UserList.cs" />
     <Compile Include="Messages\MH_RoomDesc.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Messages\MH_UserStatus.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
+    <Compile Include="PalaceEncryption.cs" />
     <Compile Include="PalaceUser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
