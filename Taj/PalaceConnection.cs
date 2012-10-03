@@ -93,6 +93,9 @@ namespace Taj
                                             Debug.WriteLine(string.Format("EvT: RoomDesc."));
                                             var msg_roomdesc = new MH_RoomDesc(msg, reader);
                                             break;
+                                        case MessageTypes.MSG_ROOMDESCEND:
+                                            Debug.WriteLine(string.Format("EvT: RoomDescEnd."));
+                                            break;
                                         case MessageTypes.MSG_VERSION:
                                             var mh_sv = new MH_ServerVersion(msg);
                                             CurrentPalace.Version = mh_sv.Version;
