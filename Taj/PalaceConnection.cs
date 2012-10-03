@@ -76,6 +76,10 @@ namespace Taj
                                             Debug.WriteLine(string.Format("EvT: UserStatus."));
                                             var msg_ustatus = new MH_UserStatus(msg, reader);
                                             break;
+                                        case MessageTypes.MSG_USERLOG:
+                                            Debug.WriteLine(string.Format("EvT: UserLog."));
+                                            var msg_ulog = new MH_UserLog(msg, reader);
+                                            break;
                                         case MessageTypes.MSG_TALK:
                                             Debug.WriteLine("EvT: Talk");
                                             var msg_talk = new MH_Talk(reader);
