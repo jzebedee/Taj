@@ -72,6 +72,10 @@ namespace Taj
                                             var msg_logon = new MHC_Logon(reader);
                                             Debug.WriteLine("AltLogonReply. But we're too cool to reconnect.");
                                             break;
+                                        case MessageTypes.MSG_USERSTATUS:
+                                            Debug.WriteLine(string.Format("EvT: UserStatus."));
+                                            var msg_ustatus = new MH_UserStatus(msg, reader);
+                                            break;
                                         case MessageTypes.MSG_TALK:
                                             Debug.WriteLine("EvT: Talk");
                                             var msg_talk = new MH_Talk(reader);
