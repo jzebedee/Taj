@@ -7,6 +7,7 @@ namespace Taj
 {
     public class PalaceUser
     {
-
+        public string Name { get; set; }
+        public uint ID { get; set; }
     }
 }

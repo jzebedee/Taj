@@ -27,7 +27,7 @@ namespace Taj.Messages
         {
             writer.WriteStruct(new ClientMessage
             {
-                eventType = MessageTypes.Talk,
+                eventType = MessageTypes.MSG_TALK,
                 length = Text.Length+1,
                 refNum = 0,
             });

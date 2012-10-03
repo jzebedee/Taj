@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-#if TRACE
 using System.Diagnostics;
-#endif
 
 namespace Taj
 {
@@ -12,8 +10,10 @@ namespace Taj
     {
         static void Main(string[] args)
         {
+            var identity = new PalaceUser() { Name = "Superduper" };
+
             //var pal = new Palace(new Uri("tcp://chat.epalaces.com:9998"));
-            var pal = new PalaceConnection(new Uri("tcp://oceansapart.epalaces.com:9998"));
+            var pal = new PalaceConnection(new Uri("tcp://oceansapart.epalaces.com:9998"), identity);
 
 #if TRACE
             System.IO.File.Delete("trace.log");

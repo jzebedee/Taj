@@ -10,9 +10,7 @@ using System.Threading;
 using Taj.Messages;
 using MiscUtil.IO;
 using System.Runtime.InteropServices;
-#if TRACE
 using System.Diagnostics;
-#endif
 
 namespace Taj
 {
@@ -24,12 +22,14 @@ namespace Taj
         EndianBinaryReader reader;
         EndianBinaryWriter writer;
 
-        public Palace CurrentPalace { get; set; }
+        public Palace CurrentPalace { get; protected set; }
+        public readonly PalaceUser Identity;
 
-        public PalaceConnection(Uri target)
+        public PalaceConnection(Uri target, PalaceUser identity)
         {
             connection = new TcpClient(target.Host, target.Port);
 
+            Identity = identity;
             Listener = Task.Factory.StartNew(Listen, TaskCreationOptions.LongRunning);
         }
         ~PalaceConnection()
@@ -68,34 +68,30 @@ namespace Taj
                                     var msg = reader.ReadStruct<ClientMessage>();
                                     switch (msg.eventType)
                                     {
-                                        case MessageTypes.AlternateLogonReply:
+                                        case MessageTypes.MSG_ALTLOGONREPLY:
                                             var msg_logon = new MHC_Logon(reader);
-                                            Console.WriteLine(msg_logon);
+                                            Debug.WriteLine("AltLogonReply. But we're too cool to reconnect.");
                                             break;
-#if TRACE
-                                        case MessageTypes.Talk:
-                                            Trace.WriteLine("EvT: Talk");
+                                        case MessageTypes.MSG_TALK:
+                                            Debug.WriteLine("EvT: Talk");
                                             var msg_talk = new MH_Talk(reader);
-                                            Trace.WriteLine(string.Format("msg: `{0}`", msg_talk.Text));
+                                            Debug.WriteLine(string.Format("msg: `{0}`", msg_talk.Text));
                                             break;
-#endif
-                                        case MessageTypes.ServerVersion:
+                                        case MessageTypes.MSG_VERSION:
                                             var mh_sv = new MH_ServerVersion(msg);
                                             CurrentPalace.Version = mh_sv.Version;
-#if TRACE
-                                            Trace.WriteLine(string.Format("EvT: ServerVersion. v{0}.", mh_sv.Version));
-#endif
+                                            Debug.WriteLine(string.Format("EvT: ServerVersion. v{0}.", mh_sv.Version));
                                             break;
-#if TRACE
+                                        case MessageTypes.MSG_SERVERINFO:
+                                            Debug.WriteLine(string.Format("EvT: ServerInfo."));
+                                            var msg_svinfo = new MH_ServerInfo(msg,reader);
+                                            break;
                                         default:
-                                            Trace.WriteLine(string.Format("Unknown EvT: {0}", msg.eventType));
+                                            Debug.WriteLine(string.Format("Unknown EvT: 0x{0:X8}", msg.eventType));
                                             reader.Read(new byte[msg.length], 0, msg.length);
                                             break;
-#endif
                                     }
-#if TRACE
-                                    Trace.WriteLine("--");
-#endif
+                                    Debug.WriteLine("--");
                                 }
 
                                 //if (DateTime.Now.Second % 3 == 0)
@@ -127,14 +123,14 @@ namespace Taj
                 int eventType = BitConverter.ToInt32(buf, 0);
                 switch (eventType)
                 {
-                    case MessageTypes.Handshake_BigEndian:
+                    case MessageTypes.MSG_DIYIT:
                         endianness = MiscUtil.Conversion.EndianBitConverter.Big;
                         break;
-                    case MessageTypes.Handshake_LittleEndian:
+                    case MessageTypes.MSG_TIYID:
                         endianness = MiscUtil.Conversion.EndianBitConverter.Little;
                         break;
                     default:
-                        throw new NotImplementedException(string.Format("unrecognized MSG_TIYID: {0}", eventType));
+                        throw new NotImplementedException(string.Format("unrecognized handshake event: 0x{0:X8}", eventType));
                         break;
                 }
 
@@ -144,8 +140,9 @@ namespace Taj
 
             var length = reader.ReadUInt32();
             var refNum = reader.ReadUInt32(); //userID for client
+            Identity.ID = refNum;
 
-            var logon = new MHC_Logon("Superduper");
+            var logon = new MHC_Logon(Identity.Name);
             logon.Write(writer);
         }
     }

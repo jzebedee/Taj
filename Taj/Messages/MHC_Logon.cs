@@ -9,9 +9,13 @@ namespace Taj.Messages
 {
     public struct MHC_Logon : IMessageHandler
     {
+        const uint
+            guest_puidCtr = 0xf5dc385e,
+            guest_puidCRC = 0xc144c580;
+
         AuxRegistrationRec rec;
 
-        public MHC_Logon(string name)
+        public MHC_Logon(string name, uint puidCtr = guest_puidCtr, uint puidCRC = guest_puidCRC)
         {
             rec = new AuxRegistrationRec
             {
@@ -20,12 +24,12 @@ namespace Taj.Messages
                 userName = name.ToStr31(),
                 wizPassword = string.Empty.ToStr31(),
                 auxFlags = 0x80000004,  //AUXFLAGS_AUTHENTICATE | AUXFLAGS_WIN32
-                puidCtr = 0xf5dc385e,   //cribbed guest from OP
-                puidCRC = 0xc144c580,   //cribbed guest from OP
+                puidCtr = puidCtr,   //cribbed guest from OP
+                puidCRC = puidCRC,   //cribbed guest from OP
 
-                demoElapsed = 0,    //garbage
-                totalElapsed = 0,   //garbage
-                demoLimit = 0,      //garbage
+                demoElapsed = 0,        //garbage
+                totalElapsed = 0,       //garbage
+                demoLimit = 0,          //garbage
 
                 desiredRoom = 0,
 
@@ -50,39 +54,11 @@ namespace Taj.Messages
         {
             writer.WriteStruct(new ClientMessage
                 {
-                    eventType = MessageTypes.Logon,
+                    eventType = MessageTypes.MSG_LOGON,
                     length = 128,
                     refNum = 0, //intentional
                 });
             writer.WriteStruct(rec);
-
-            ////writer.Write(MessageTypes.Logon);
-            ////writer.Write(128);
-            ////writer.Write(0);
-
-            //writer.Write(0x5905f923);
-            //writer.Write(0xcf07309c);
-            //writer.Write("Superduper".ToStr31());
-            //writer.Write(string.Empty.ToStr31());
-            //writer.Write(0x80000004);
-            //writer.Write(0xf5dc385e);
-            //writer.Write(0xc144c580);
-
-            //writer.Write(0);
-            //writer.Write(0);
-            //writer.Write(0);
-
-            //writer.Write((short)0);
-
-            //writer.Write(Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"));
-
-            //writer.Write(0);
-
-            //writer.Write(0x1);
-            //writer.Write(0x111);
-            //writer.Write(0);
-            //writer.Write(0);
-            //writer.Write(0);
 
             writer.Flush();
         }

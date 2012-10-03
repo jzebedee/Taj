@@ -52,6 +52,7 @@
     <Compile Include="Messages\ClientMessage.cs" />
     <Compile Include="Messages\MHC_Logon.cs" />
     <Compile Include="Messages\IMessageHandler.cs" />
+    <Compile Include="Messages\MH_ServerInfo.cs" />
     <Compile Include="Messages\MH_ServerVersion.cs" />
     <Compile Include="Messages\MH_Talk.cs" />
     <Compile Include="Messages\MessageTypes.cs" />
