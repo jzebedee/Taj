@@ -63,6 +63,11 @@ namespace Taj
                         using (writer)
                         {
                             CurrentPalace = new Palace();
+
+                            var op_msg = new MH_SMsg("This client is running Taj DEBUG build. Please notify Scorpion of any questions or concerns.");
+                            op_msg.Write(writer);
+                            Debug.WriteLine("OP_SMSG sent");
+
                             while (connection.Connected)
                             {
                                 if (stream.DataAvailable)

@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Messages\ClientMessage.cs" />
+    <Compile Include="Messages\MH_SMsg.cs" />
     <Compile Include="Messages\MH_XTalk.cs" />
     <Compile Include="Messages\MH_UserNew.cs" />
     <Compile Include="Messages\MH_UserList.cs" />

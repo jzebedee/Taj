@@ -9,6 +9,8 @@ namespace Taj.Messages
 {
     public class MH_Talk : IMessageHandler
     {
+        protected virtual uint MH_EventType { get { return MessageTypes.MSG_TALK; } }
+
         public MH_Talk(string msg)
         {
             if (msg.Length > 255)
@@ -27,8 +29,8 @@ namespace Taj.Messages
         {
             writer.WriteStruct(new ClientMessage
             {
-                eventType = MessageTypes.MSG_TALK,
-                length = Text.Length+1,
+                eventType = MH_EventType,
+                length = Text.Length + 1,
                 refNum = 0, //TODO: set refnum to userid
             });
             writer.Write(Encoding.GetEncoding("Windows-1252").GetBytes(Text + "\0"));
