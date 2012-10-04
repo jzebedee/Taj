@@ -19,7 +19,7 @@ namespace Taj.Messages
         public MH_XTalk(ClientMessage cmsg, EndianBinaryReader reader)
         {
             var len = reader.ReadInt16();
-            byte[] xmsg = reader.ReadBytes(len-3);
+            byte[] xmsg = reader.ReadBytes(len - 3);
             reader.ReadByte();
             Text = Decrypt(xmsg);
         }
@@ -30,7 +30,7 @@ namespace Taj.Messages
         }
         private byte[] Encrypt(string msg)
         {
-            return new byte[0];
+            return new PalaceEncryption().Encrypt(msg);
         }
 
         public string Text { get; private set; }
@@ -46,7 +46,8 @@ namespace Taj.Messages
                 refNum = 0, //TODO: set refnum to userid
             });
             writer.Write((short)xmsg.Length);
-            writer.Write(xmsg); //do we need to handle encoding here?
+            writer.Write(xmsg);
+            writer.Write((byte)0);
             writer.Flush();
         }
     }
