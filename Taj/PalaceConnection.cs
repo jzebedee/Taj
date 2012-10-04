@@ -51,6 +51,8 @@ namespace Taj
 
         void Listen()
         {
+            bool rateLimiter = false;
+
             try
             {
                 using (var stream = connection.GetStream())
@@ -128,11 +130,20 @@ namespace Taj
                                     Debug.WriteLine("--");
                                 }
 
-                                //if (DateTime.Now.Second % 3 == 0)
-                                //{
-                                //    var new_out_msg = new MH_Talk("Hello. It is currently " + DateTime.Now.ToShortTimeString());
-                                //    new_out_msg.Write(writer);
-                                //}
+                                if (false && DateTime.Now.Second % 4 == 0)
+                                {
+                                    if (!rateLimiter)
+                                    {
+                                        var new_out_msg = new MH_Talk("Hello. It is currently " + DateTime.Now.ToLongTimeString());
+                                        new_out_msg.Write(writer);
+
+                                        rateLimiter = true;
+                                    }
+                                }
+                                else
+                                {
+                                    rateLimiter = false;
+                                }
                             }
                         }
                     }
@@ -178,7 +189,7 @@ namespace Taj
 
             //TODO: take out the debug room
             //oceansapart.epalaces.com:9998/124
-            var logon = new MHC_Logon(Identity.Name, 124);
+            var logon = new MHC_Logon(Identity.Name, 124); //112 landing, 124 jl room
             logon.Write(writer);
         }
     }
