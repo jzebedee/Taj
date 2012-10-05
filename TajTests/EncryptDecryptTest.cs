@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MiscUtil.Conversion;
 using MiscUtil.IO;
@@ -47,26 +46,5 @@ namespace TajTests
                 }
             }
         }
-    }
-
-    internal class MockPalaceConnection : IPalaceConnection
-    {
-        #region IPalaceConnection Members
-
-        public PalaceUser Identity
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public Palace Palace
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public EndianBinaryReader Reader { get; set; }
-
-        public EndianBinaryWriter Writer { get; set; }
-
-        #endregion
     }
 }

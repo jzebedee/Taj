@@ -21,19 +21,19 @@ namespace Taj.Messages
             : base(con, cmsg)
         {
             Text = Reader.ReadCString();
-            Target = new PalaceUser { ID = cmsg.refNum };
+            Target = new PalaceUser {ID = cmsg.refNum};
         }
 
         #region IOutgoingMessage Members
 
         public void Write()
         {
-            var msgBytes = Encoding.GetEncoding("Windows-1252").GetBytes(Text + '\0');
+            byte[] msgBytes = Encoding.GetEncoding("Windows-1252").GetBytes(Text + '\0');
 
             Writer.WriteStruct(new ClientMessage
                                    {
                                        eventType = MessageTypes.MSG_WHISPER,
-                                       length = sizeof(int) + msgBytes.Length,
+                                       length = sizeof (int) + msgBytes.Length,
                                        refNum = Identity.ID, //TODO: set refnum to userid
                                    });
             Writer.Write(Target.ID);

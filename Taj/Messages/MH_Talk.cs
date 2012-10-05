@@ -30,7 +30,7 @@ namespace Taj.Messages
 
         public void Write()
         {
-            var msgBytes = Encoding.GetEncoding("Windows-1252").GetBytes(Text + '\0');
+            byte[] msgBytes = Encoding.GetEncoding("Windows-1252").GetBytes(Text + '\0');
 
             Writer.WriteStruct(new ClientMessage
                                    {

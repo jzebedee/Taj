@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Taj.Messages
+﻿namespace Taj.Messages
 {
     public class MH_PingPong : MessageHeader, IOutgoingMessage
     {
-        readonly int _pingNum;
+        private readonly int _pingNum;
 
         public MH_PingPong(PalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
             _pingNum = cmsg.refNum;
         }
+
+        #region IOutgoingMessage Members
 
         public void Write()
         {
@@ -25,5 +22,7 @@ namespace Taj.Messages
                                    });
             Writer.Flush();
         }
+
+        #endregion
     }
 }

@@ -211,7 +211,7 @@ namespace Taj
 
             {
                 var buf = new byte[4];
-                palstream.Read(buf, 0, sizeof(Int32));
+                palstream.Read(buf, 0, sizeof (Int32));
 
                 EndianBitConverter endianness;
 
