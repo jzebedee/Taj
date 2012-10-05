@@ -7,12 +7,14 @@ using System.Diagnostics;
 
 namespace Taj.Messages
 {
-    public class MH_UserLog
+    public class MH_UserLog : MessageHeader
     {
-        public MH_UserLog(ClientMessage cmsg, EndianBinaryReader reader)
+        public MH_UserLog(PalaceConnection con, ClientMessage cmsg) : base(con,cmsg)
         {
-            Debug.WriteLine("MH_UserLog is unimplemented, and skipping itself ahead.");
-            reader.ReadBytes(cmsg.length);
+            var userID = cmsg.refNum;
+            var numUsers = Reader.ReadInt32();
+
+            //TODO: implement
         }
     }
 }

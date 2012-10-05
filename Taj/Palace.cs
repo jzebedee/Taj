@@ -9,5 +9,6 @@ namespace Taj
     {
         public Version Version { get; set; }
         public Uri HTTPServer { get; set; }
+        public int Users { get; set; }
     }
 }

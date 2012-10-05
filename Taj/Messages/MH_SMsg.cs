@@ -11,12 +11,12 @@ namespace Taj.Messages
     {
         protected override uint MH_EventType { get { return MessageTypes.MSG_SMSG; } }
 
-        public MH_SMsg(string msg)
-            : base(msg)
+        public MH_SMsg(PalaceConnection con, string msg)
+            : base(con,msg)
         {
         }
-        public MH_SMsg(EndianBinaryReader reader)
-            : base(reader)
+        public MH_SMsg(PalaceConnection con)
+            : base(con)
         {
         }
     }

@@ -7,12 +7,13 @@ using System.Diagnostics;
 
 namespace Taj.Messages
 {
-    public class MH_ServerInfo
+    public class MH_ServerInfo : MessageHeader
     {
-        public MH_ServerInfo(ClientMessage cmsg, EndianBinaryReader reader)
+        public MH_ServerInfo(PalaceConnection con, ClientMessage cmsg)
+            : base(con, cmsg)
         {
             Debug.WriteLine("MH_ServerInfo is unimplemented, and skipping itself ahead.");
-            reader.ReadBytes(cmsg.length);
+            Reader.ReadBytes(cmsg.length);
         }
     }
 }

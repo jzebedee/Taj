@@ -7,12 +7,13 @@ using System.Diagnostics;
 
 namespace Taj.Messages
 {
-    public class MH_UserList
+    public class MH_UserList : MessageHeader
     {
-        public MH_UserList(ClientMessage cmsg, EndianBinaryReader reader)
+        public MH_UserList(PalaceConnection con, ClientMessage cmsg)
+            : base(con, cmsg)
         {
             Debug.WriteLine("MH_UserList is unimplemented, and skipping itself ahead.");
-            reader.ReadBytes(cmsg.length);
+            Reader.ReadBytes(cmsg.length);
         }
     }
 }

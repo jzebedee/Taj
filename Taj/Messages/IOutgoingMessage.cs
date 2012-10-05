@@ -6,9 +6,8 @@ using MiscUtil.IO;
 
 namespace Taj.Messages
 {
-    public interface IMessageHandler
+    public interface IOutgoingMessage
     {
-        //void Read(EndianBinaryReader reader);
-        void Write(EndianBinaryWriter writer);
+        void Write();
     }
 }

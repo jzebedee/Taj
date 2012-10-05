@@ -7,13 +7,13 @@ using System.Diagnostics;
 
 namespace Taj.Messages
 {
-    public class MH_HTTPServer
+    public class MH_HTTPServer : MessageHeader
     {
         public readonly Uri Location;
 
-        public MH_HTTPServer(EndianBinaryReader reader)
+        public MH_HTTPServer(PalaceConnection con) : base(con)
         {
-            var uri_string = reader.ReadCString();
+            var uri_string = Reader.ReadCString();
             Location = new Uri(uri_string);
         }
     }

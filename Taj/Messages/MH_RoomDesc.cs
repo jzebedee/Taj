@@ -7,12 +7,12 @@ using System.Diagnostics;
 
 namespace Taj.Messages
 {
-    public class MH_RoomDesc
+    public class MH_RoomDesc : MessageHeader
     {
-        public MH_RoomDesc(ClientMessage cmsg, EndianBinaryReader reader)
+        public MH_RoomDesc(PalaceConnection con, ClientMessage cmsg) : base(con,cmsg)
         {
             Debug.WriteLine("MH_RoomDesc is unimplemented, and skipping itself ahead.");
-            reader.ReadBytes(cmsg.length);
+            Reader.ReadBytes(cmsg.length);
         }
     }
 }

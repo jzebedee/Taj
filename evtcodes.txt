@@ -1,0 +1,46 @@
+AltLogonReply. But we're too cool to reconnect.
+--
+EvT: ServerVersion. v1.22.
+--
+EvT: ServerInfo.
+MH_ServerInfo is unimplemented, and skipping itself ahead.
+--
+EvT: UserStatus.
+MH_UserStatus is unimplemented, and skipping itself ahead.
+--
+EvT: UserLog.
+MH_UserLog is unimplemented, and skipping itself ahead.
+--
+EvT: HTTPServer.
+HTTPServer URI: http://oceansapart.epalacesmedia.com/
+--
+EvT: RoomDesc.
+MH_RoomDesc is unimplemented, and skipping itself ahead.
+--
+EvT: UserList.
+MH_UserList is unimplemented, and skipping itself ahead.
+--
+EvT: RoomDescEnd.
+--
+EvT: UserNew.
+MH_UserNew is unimplemented, and skipping itself ahead.
+--
+Unknown EvT: 0x78746C6B
+--
+Unknown EvT: 0x78776973
+--
+Unknown EvT: 0x754C6F63
+--
+Unknown EvT: 0x75737250
+--
+Unknown EvT: 0x754C6F63
+--
+Unknown EvT: 0x75737250
+--
+Unknown EvT: 0x75737250
+--
+EvT: Talk
+msg: `)kiss`
+--
+Unknown EvT: 0x75737250
+--

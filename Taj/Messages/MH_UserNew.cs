@@ -7,12 +7,12 @@ using System.Diagnostics;
 
 namespace Taj.Messages
 {
-    public class MH_UserNew
+    public class MH_UserNew : MessageHeader
     {
-        public MH_UserNew(ClientMessage cmsg, EndianBinaryReader reader)
+        public MH_UserNew(PalaceConnection con, ClientMessage cmsg) : base(con,cmsg)
         {
             Debug.WriteLine("MH_UserNew is unimplemented, and skipping itself ahead.");
-            reader.ReadBytes(cmsg.length);
+            Reader.ReadBytes(cmsg.length);
         }
     }
 }

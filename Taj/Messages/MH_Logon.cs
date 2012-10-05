@@ -7,7 +7,7 @@ using MiscUtil.IO;
 
 namespace Taj.Messages
 {
-    public struct MHC_Logon : IMessageHandler
+    public class MH_Logon : MessageHeader, IOutgoingMessage
     {
         const uint
             guest_puidCtr = 0xf5dc385e,
@@ -15,7 +15,7 @@ namespace Taj.Messages
 
         AuxRegistrationRec rec;
 
-        public MHC_Logon(string name, short desiredRoom = 0, uint puidCtr = guest_puidCtr, uint puidCRC = guest_puidCRC)
+        public MH_Logon(PalaceConnection con, string name, short desiredRoom = 0, uint puidCtr = guest_puidCtr, uint puidCRC = guest_puidCRC) : base(con,false)
         {
             rec = new AuxRegistrationRec
             {
@@ -44,23 +44,22 @@ namespace Taj.Messages
                 ul3DEngineCaps = 0,
             };
         }
-
-        public MHC_Logon(EndianBinaryReader reader)
+        public MH_Logon(PalaceConnection con) : base(con)
         {
-            rec = reader.ReadStruct<AuxRegistrationRec>();
+            rec = Reader.ReadStruct<AuxRegistrationRec>();
         }
 
-        public void Write(EndianBinaryWriter writer)
+        public void Write()
         {
-            writer.WriteStruct(new ClientMessage
+            Writer.WriteStruct(new ClientMessage
                 {
                     eventType = MessageTypes.MSG_LOGON,
                     length = 128,
                     refNum = 0, //intentional
                 });
-            writer.WriteStruct(rec);
+            Writer.WriteStruct(rec);
 
-            writer.Flush();
+            Writer.Flush();
         }
     }
 

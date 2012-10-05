@@ -7,30 +7,17 @@ using MiscUtil.IO;
 
 namespace Taj.Messages
 {
-    public class MH_ServerVersion : IMessageHandler
+    public class MH_ServerVersion : MessageHeader
     {
-        Version rVer;
-
-        public MH_ServerVersion(ClientMessage cmsg)
+        public MH_ServerVersion(PalaceConnection con, ClientMessage cmsg) : base(con)
         {
             short
                 refVerLo = (short)(cmsg.refNum),
                 refVerHi = (short)(cmsg.refNum >> 16);
 
-            rVer = new Version(refVerHi, refVerLo);
+            Version = new Version(refVerHi, refVerLo);
         }
 
-        public Version Version
-        {
-            get
-            {
-                return rVer;
-            }
-        }
-
-        public void Write(EndianBinaryWriter writer)
-        {
-            throw new NotImplementedException();
-        }
+        public readonly Version Version;
     }
 }

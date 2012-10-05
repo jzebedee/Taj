@@ -19,11 +19,11 @@ namespace Taj
         TcpClient connection;
         Task Listener;
 
-        EndianBinaryReader reader;
-        EndianBinaryWriter writer;
+        public EndianBinaryReader Reader { get; private set; }
+        public EndianBinaryWriter Writer { get; private set; }
 
-        public Palace CurrentPalace { get; protected set; }
-        public readonly PalaceUser Identity;
+        public Palace Palace { get; private set; }
+        public PalaceUser Identity { get; private set; }
 
         public PalaceConnection(Uri target, PalaceUser identity)
         {
@@ -58,89 +58,105 @@ namespace Taj
                 using (var stream = connection.GetStream())
                 {
                     Handshake(stream);
-                    using (reader)
+                    using (Reader)
                     {
-                        using (writer)
+                        using (Writer)
                         {
-                            CurrentPalace = new Palace();
+                            Palace = new Palace();
 
-                            var op_msg = new MH_SMsg("This client is running Taj DEBUG build. Please notify Scorpion of any questions or concerns.");
-                            op_msg.Write(writer);
-                            Debug.WriteLine("OP_SMSG sent");
+                            //var op_msg = new MH_SMsg("This client is running Taj DEBUG build. Please notify Scorpion of any questions or concerns.");
+                            //op_msg.Write(Writer);
+                            //Debug.WriteLine("OP_SMSG sent");
 
                             while (connection.Connected)
                             {
                                 if (stream.DataAvailable)
                                 {
-                                    var msg = reader.ReadStruct<ClientMessage>();
+                                    var msg = Reader.ReadStruct<ClientMessage>();
                                     switch (msg.eventType)
                                     {
                                         case MessageTypes.MSG_ALTLOGONREPLY:
-                                            var msg_logon = new MHC_Logon(reader);
+                                            var msg_logon = new MH_Logon(this);
                                             Debug.WriteLine("AltLogonReply. But we're too cool to reconnect.");
                                             break;
                                         case MessageTypes.MSG_USERSTATUS:
                                             Debug.WriteLine(string.Format("EvT: UserStatus."));
-                                            var msg_ustatus = new MH_UserStatus(msg, reader);
+                                            var msg_ustatus = new MH_UserStatus(this, msg);
                                             break;
                                         case MessageTypes.MSG_USERLOG:
                                             Debug.WriteLine(string.Format("EvT: UserLog."));
-                                            var msg_ulog = new MH_UserLog(msg, reader);
+                                            var msg_ulog = new MH_UserLog(this, msg);
                                             break;
                                         case MessageTypes.MSG_USERLIST:
                                             Debug.WriteLine(string.Format("EvT: UserList."));
-                                            var msg_ulist = new MH_UserList(msg, reader);
+                                            var msg_ulist = new MH_UserList(this, msg);
                                             break;
                                         case MessageTypes.MSG_USERNEW:
                                             Debug.WriteLine(string.Format("EvT: UserNew."));
-                                            var msg_unew = new MH_UserNew(msg, reader);
+                                            var msg_unew = new MH_UserNew(this, msg);
                                             break;
                                         case MessageTypes.MSG_TALK:
                                             Debug.WriteLine("EvT: Talk");
-                                            var msg_talk = new MH_Talk(reader);
+                                            var msg_talk = new MH_Talk(this);
                                             Debug.WriteLine(string.Format("msg: `{0}`", msg_talk.Text));
                                             break;
                                         case MessageTypes.MSG_XTALK:
                                             Debug.WriteLine("EvT: XTalk");
-                                            var msg_xtalk = new MH_XTalk(msg, reader);
+                                            var msg_xtalk = new MH_XTalk(this, msg);
                                             Debug.WriteLine(string.Format("msg: `{0}`", msg_xtalk.Text));
+                                            break;
+                                        case MessageTypes.MSG_WHISPER:
+                                            Debug.WriteLine("EvT: Whisper");
+                                            var msg_whisp = new MH_Whisper(this, msg);
+                                            Debug.WriteLine(string.Format("msg: `{0}`", msg_whisp.Text));
+                                            break;
+                                        case MessageTypes.MSG_XWHISPER:
+                                            Debug.WriteLine("EvT: XWhisper");
+                                            var msg_xwhisp = new MH_XWhisper(this, msg);
+                                            Debug.WriteLine(string.Format("msg: `{0}`", msg_xwhisp.Text));
+                                            //var msg_xwhisp_out = new MH_XWhisper(msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
+                                            //msg_xwhisp_out.Write();
+                                            var msg_whisp_out = new MH_Whisper(this, msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
+                                            msg_whisp_out.Write();
                                             break;
                                         case MessageTypes.MSG_ROOMDESC:
                                             Debug.WriteLine(string.Format("EvT: RoomDesc."));
-                                            var msg_roomdesc = new MH_RoomDesc(msg, reader);
+                                            var msg_roomdesc = new MH_RoomDesc(this, msg);
                                             break;
                                         case MessageTypes.MSG_ROOMDESCEND:
                                             Debug.WriteLine(string.Format("EvT: RoomDescEnd."));
                                             break;
                                         case MessageTypes.MSG_VERSION:
-                                            var mh_sv = new MH_ServerVersion(msg);
-                                            CurrentPalace.Version = mh_sv.Version;
+                                            var mh_sv = new MH_ServerVersion(this, msg);
+                                            Palace.Version = mh_sv.Version;
                                             Debug.WriteLine(string.Format("EvT: ServerVersion. v{0}.", mh_sv.Version));
                                             break;
                                         case MessageTypes.MSG_SERVERINFO:
                                             Debug.WriteLine(string.Format("EvT: ServerInfo."));
-                                            var msg_svinfo = new MH_ServerInfo(msg, reader);
+                                            var msg_svinfo = new MH_ServerInfo(this, msg);
                                             break;
                                         case MessageTypes.MSG_HTTPSERVER:
                                             Debug.WriteLine(string.Format("EvT: HTTPServer."));
-                                            var msg_httpsv = new MH_HTTPServer(reader);
+                                            var msg_httpsv = new MH_HTTPServer(this);
                                             Debug.WriteLine(string.Format("HTTPServer URI: {0}", msg_httpsv.Location));
-                                            CurrentPalace.HTTPServer = msg_httpsv.Location;
+                                            Palace.HTTPServer = msg_httpsv.Location;
                                             break;
                                         default:
                                             Debug.WriteLine(string.Format("Unknown EvT: 0x{0:X8}", msg.eventType));
-                                            reader.Read(new byte[msg.length], 0, msg.length);
+                                            Reader.Read(new byte[msg.length], 0, msg.length);
                                             break;
                                     }
                                     Debug.WriteLine("--");
                                 }
 
-                                if (false && DateTime.Now.Second % 4 == 0)
+                                if (DateTime.Now.Second % 4 == 0)
                                 {
                                     if (!rateLimiter)
                                     {
-                                        var new_out_msg = new MH_Talk("Hello. It is currently " + DateTime.Now.ToLongTimeString());
-                                        new_out_msg.Write(writer);
+                                        var new_out_msg = new MH_Talk(this, "Hello. It is currently " + DateTime.Now.ToLongTimeString());
+                                        new_out_msg.Write();
+                                        //var xnew_out_msg = new MH_XTalk(this, "XHello. It is currently " + DateTime.Now.ToLongTimeString());
+                                        //xnew_out_msg.Write();
 
                                         rateLimiter = true;
                                     }
@@ -184,18 +200,18 @@ namespace Taj
                         break;
                 }
 
-                reader = new EndianBinaryReader(endianness, palstream);
-                writer = new EndianBinaryWriter(endianness, palstream);
+                Reader = new EndianBinaryReader(endianness, palstream);
+                Writer = new EndianBinaryWriter(endianness, palstream);
             }
 
-            var length = reader.ReadUInt32();
-            var refNum = reader.ReadUInt32(); //userID for client
+            var length = Reader.ReadUInt32();
+            var refNum = Reader.ReadInt32(); //userID for client
             Identity.ID = refNum;
 
             //TODO: take out the debug room
             //oceansapart.epalaces.com:9998/124
-            var logon = new MHC_Logon(Identity.Name, 124); //112 landing, 124 jl room
-            logon.Write(writer);
+            var logon = new MH_Logon(this, Identity.Name, 124); //112 landing, 124 jl room
+            logon.Write();
         }
     }
 }
