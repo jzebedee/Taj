@@ -14,7 +14,9 @@ namespace Taj.Messages
             var userID = cmsg.refNum;
             var numUsers = Reader.ReadInt32();
 
-            //TODO: implement
+            Debug.WriteLine("MH_UserLog: {0} users, {1} joined", numUsers, userID);
+
+            Palace.Users = numUsers;
         }
     }
 }
