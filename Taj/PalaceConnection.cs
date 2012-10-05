@@ -57,8 +57,6 @@ namespace Taj
 
         private void Listen()
         {
-            bool rateLimiter = false;
-
             try
             {
                 using (NetworkStream stream = connection.GetStream())
@@ -85,6 +83,12 @@ namespace Taj
                                             var msg_logon = new MH_Logon(this);
                                             Debug.WriteLine("AltLogonReply. But we're too cool to reconnect.");
                                             break;
+                                        case MessageTypes.MSG_PING:
+                                            Debug.WriteLine("Ping.");
+                                            var msg_pingpong = new MH_PingPong(this, msg);
+                                            msg_pingpong.Write();
+                                            Debug.WriteLine("Pong.");
+                                            break;
                                         case MessageTypes.MSG_USERSTATUS:
                                             Debug.WriteLine(string.Format("EvT: UserStatus."));
                                             var msg_ustatus = new MH_UserStatus(this, msg);
@@ -104,21 +108,27 @@ namespace Taj
                                         case MessageTypes.MSG_TALK:
                                             Debug.WriteLine("EvT: Talk");
                                             var msg_talk = new MH_Talk(this);
-                                            Debug.WriteLine(string.Format("msg: `{0}`", msg_talk.Text));
+                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_talk.Text,
+                                                                          msg.refNum));
                                             break;
                                         case MessageTypes.MSG_XTALK:
                                             Debug.WriteLine("EvT: XTalk");
                                             var msg_xtalk = new MH_XTalk(this, msg);
-                                            Debug.WriteLine(string.Format("msg: `{0}`", msg_xtalk.Text));
+                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_xtalk.Text,
+                                                                          msg.refNum));
                                             break;
                                         case MessageTypes.MSG_WHISPER:
                                             Debug.WriteLine("EvT: Whisper");
                                             var msg_whisp = new MH_Whisper(this, msg);
-                                            Debug.WriteLine(string.Format("msg: `{0}`", msg_whisp.Text));
-                                            var msg_whisp_out = new MH_Whisper(this, msg_whisp.Target,
-                                                                               new string(
-                                                                                   msg_whisp.Text.Reverse().ToArray()));
-                                            msg_whisp_out.Write();
+                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_whisp.Text,
+                                                                          msg_whisp.Target.ID));
+                                            if (msg_whisp.Target.ID != Identity.ID)
+                                            {
+                                                var msg_whisp_out = new MH_Whisper(this, msg_whisp.Target,
+                                                                                   new string(
+                                                                                       msg_whisp.Text.Reverse().ToArray()));
+                                                msg_whisp_out.Write();
+                                            }
                                             break;
                                         case MessageTypes.MSG_XWHISPER:
                                             Debug.WriteLine("EvT: XWhisper");
@@ -164,26 +174,26 @@ namespace Taj
                                     Debug.WriteLine("--");
                                 }
 
-                                if (DateTime.Now.Second%4 == 0)
-                                {
-                                    if (!rateLimiter)
-                                    {
-                                        //var new_out_msg = new MH_Talk(this,
-                                        //                              "Hello. It is currently " +
-                                        //                              DateTime.Now.ToLongTimeString());
-                                        //new_out_msg.Write();
-                                        var xnew_out_msg = new MH_XTalk(this,
-                                                                        "XHello. It is currently " +
-                                                                        DateTime.Now.ToLongTimeString());
-                                        xnew_out_msg.Write();
+                                //if (DateTime.Now.Second % 4 == 0)
+                                //{
+                                //    if (!rateLimiter)
+                                //    {
+                                //        var new_out_msg = new MH_Talk(this,
+                                //                                      "Hello. It is currently " +
+                                //                                      DateTime.Now.ToLongTimeString());
+                                //        new_out_msg.Write();
+                                //        var xnew_out_msg = new MH_XTalk(this,
+                                //                                        "XHello. It is currently " +
+                                //                                        DateTime.Now.ToLongDateString());
+                                //        xnew_out_msg.Write();
 
-                                        rateLimiter = true;
-                                    }
-                                }
-                                else
-                                {
-                                    rateLimiter = false;
-                                }
+                                //        rateLimiter = true;
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    rateLimiter = false;
+                                //}
                             }
                         }
                     }
@@ -201,7 +211,7 @@ namespace Taj
 
             {
                 var buf = new byte[4];
-                palstream.Read(buf, 0, sizeof (Int32));
+                palstream.Read(buf, 0, sizeof(Int32));
 
                 EndianBitConverter endianness;
 
@@ -210,9 +220,11 @@ namespace Taj
                 {
                     case MessageTypes.MSG_DIYIT:
                         endianness = EndianBitConverter.Big;
+                        Debug.WriteLine("BigEndian server handshake");
                         break;
                     case MessageTypes.MSG_TIYID:
                         endianness = EndianBitConverter.Little;
+                        Debug.WriteLine("LittleEndian server handshake");
                         break;
                     default:
                         throw new NotImplementedException(string.Format("unrecognized handshake event: 0x{0:X8}",

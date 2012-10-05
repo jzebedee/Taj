@@ -52,6 +52,7 @@
     <Compile Include="IPalaceConnection.cs" />
     <Compile Include="Messages\ClientMessage.cs" />
     <Compile Include="Messages\MessageHeader.cs" />
+    <Compile Include="Messages\MH_PingPong.cs" />
     <Compile Include="Messages\MH_XWhisper.cs" />
     <Compile Include="Messages\MH_SMsg.cs" />
     <Compile Include="Messages\MH_Whisper.cs" />
