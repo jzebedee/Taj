@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using MiscUtil.IO;
-
-namespace Taj.Messages
+﻿namespace Taj.Messages
 {
     public class MH_XTalk : MessageHeader, IOutgoingMessage
     {
-        public MH_XTalk(PalaceConnection con, string msg)
+        public MH_XTalk(IPalaceConnection con, string msg)
             : base(con)
         {
             if (msg.Length > 255)
                 msg = msg.Substring(0, 255);
 
-            Text = msg + '\0';
+            Text = msg;
         }
-        public MH_XTalk(PalaceConnection con, ClientMessage cmsg)
+
+        public MH_XTalk(IPalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
-            var len = Reader.ReadInt16();
+            short len = Reader.ReadInt16();
             byte[] xmsg = Reader.ReadBytes(len - 3);
             Reader.ReadByte();
             Text = PalaceEncryption.Decrypt(xmsg);
@@ -28,20 +22,24 @@ namespace Taj.Messages
 
         public string Text { get; private set; }
 
+        #region IOutgoingMessage Members
+
         public void Write()
         {
-            var xmsg = PalaceEncryption.Encrypt(Text);
+            byte[] xmsg = PalaceEncryption.Encrypt(Text);
 
             Writer.WriteStruct(new ClientMessage
-            {
-                eventType = MessageTypes.MSG_XTALK,
-                length = sizeof(short) + xmsg.Length,
-                refNum = 0, //TODO: set refnum to userid
-            });
-            Writer.Write((short)xmsg.Length);
+                                   {
+                                       eventType = MessageTypes.MSG_XTALK,
+                                       length = sizeof (short) + xmsg.Length + 1,
+                                       refNum = 0, //TODO: set refnum to userid
+                                   });
+            Writer.Write((short) (xmsg.Length + 3));
             Writer.Write(xmsg);
-            Writer.Write((byte)0);
+            Writer.Write((byte) 0);
             Writer.Flush();
         }
+
+        #endregion
     }
 }

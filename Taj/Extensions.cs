@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using MiscUtil.IO;
 
 namespace Taj
@@ -15,22 +12,22 @@ namespace Taj
             var builder = new StringBuilder();
 
             byte cur;
-            while ((cur = reader.ReadByte()) != '\0') builder.Append((char)cur);
+            while ((cur = reader.ReadByte()) != '\0') builder.Append((char) cur);
 
             return builder.ToString();
         }
 
         public static T ReadStruct<T>(this EndianBinaryReader reader, int? Size = null) where T : struct
         {
-            int structSize = Size ?? Marshal.SizeOf(typeof(T));
+            int structSize = Size ?? Marshal.SizeOf(typeof (T));
             byte[] readBytes = reader.ReadBytes(structSize);
             if (readBytes.Length != structSize)
                 throw new ArgumentException("Size of bytes read did not match struct size");
 
-            var pin_bytes = GCHandle.Alloc(readBytes, GCHandleType.Pinned);
+            GCHandle pin_bytes = GCHandle.Alloc(readBytes, GCHandleType.Pinned);
             try
             {
-                return (T)Marshal.PtrToStructure(pin_bytes.AddrOfPinnedObject(), typeof(T));
+                return (T) Marshal.PtrToStructure(pin_bytes.AddrOfPinnedObject(), typeof (T));
             }
             finally
             {
@@ -40,8 +37,8 @@ namespace Taj
 
         public static void WriteStruct<T>(this EndianBinaryWriter writer, T obj) where T : struct
         {
-            var size = Marshal.SizeOf(obj);
-            byte[] buf = new byte[size];
+            int size = Marshal.SizeOf(obj);
+            var buf = new byte[size];
 
             IntPtr ptrAlloc = IntPtr.Zero;
 
@@ -66,7 +63,7 @@ namespace Taj
             if (str.Length > 31)
                 str.Substring(0, 31);
 
-            byte[] ret = new byte[32];
+            var ret = new byte[32];
             ret[0] = Convert.ToByte(str.Length);
 
             Array.Copy(Encoding.GetEncoding("Windows-1252").GetBytes(str), 0, ret, 1, str.Length);

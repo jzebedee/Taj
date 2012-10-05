@@ -1,29 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using System.Threading;
-using Taj.Messages;
+using MiscUtil.Conversion;
 using MiscUtil.IO;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
+using Taj.Messages;
 
 namespace Taj
 {
-    public class PalaceConnection : IDisposable
+    public class PalaceConnection : IDisposable, IPalaceConnection
     {
-        TcpClient connection;
-        Task Listener;
-
-        public EndianBinaryReader Reader { get; private set; }
-        public EndianBinaryWriter Writer { get; private set; }
-
-        public Palace Palace { get; private set; }
-        public PalaceUser Identity { get; private set; }
+        private readonly TcpClient connection;
+        private Task Listener;
 
         public PalaceConnection(Uri target, PalaceUser identity)
         {
@@ -32,15 +22,31 @@ namespace Taj
             Identity = identity;
             Listener = Task.Factory.StartNew(Listen, TaskCreationOptions.LongRunning);
         }
-        ~PalaceConnection()
-        {
-            Dispose(false);
-        }
+
+        #region IDisposable Members
 
         public void Dispose()
         {
             Dispose(true);
         }
+
+        #endregion
+
+        #region IPalaceConnection Members
+
+        public EndianBinaryReader Reader { get; private set; }
+        public EndianBinaryWriter Writer { get; private set; }
+
+        public Palace Palace { get; private set; }
+        public PalaceUser Identity { get; private set; }
+
+        #endregion
+
+        ~PalaceConnection()
+        {
+            Dispose(false);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             connection.Close();
@@ -49,13 +55,13 @@ namespace Taj
                 GC.SuppressFinalize(this);
         }
 
-        void Listen()
+        private void Listen()
         {
             bool rateLimiter = false;
 
             try
             {
-                using (var stream = connection.GetStream())
+                using (NetworkStream stream = connection.GetStream())
                 {
                     Handshake(stream);
                     using (Reader)
@@ -109,15 +115,24 @@ namespace Taj
                                             Debug.WriteLine("EvT: Whisper");
                                             var msg_whisp = new MH_Whisper(this, msg);
                                             Debug.WriteLine(string.Format("msg: `{0}`", msg_whisp.Text));
+                                            var msg_whisp_out = new MH_Whisper(this, msg_whisp.Target,
+                                                                               new string(
+                                                                                   msg_whisp.Text.Reverse().ToArray()));
+                                            msg_whisp_out.Write();
                                             break;
                                         case MessageTypes.MSG_XWHISPER:
                                             Debug.WriteLine("EvT: XWhisper");
                                             var msg_xwhisp = new MH_XWhisper(this, msg);
-                                            Debug.WriteLine(string.Format("msg: `{0}`", msg_xwhisp.Text));
-                                            //var msg_xwhisp_out = new MH_XWhisper(msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
-                                            //msg_xwhisp_out.Write();
-                                            var msg_whisp_out = new MH_Whisper(this, msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
-                                            msg_whisp_out.Write();
+                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_xwhisp.Text,
+                                                                          msg_xwhisp.Target.ID));
+                                            if (msg_xwhisp.Target.ID != Identity.ID)
+                                            {
+                                                var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target,
+                                                                                     new string(
+                                                                                         msg_xwhisp.Text.Reverse().
+                                                                                             ToArray()));
+                                                msg_xwhisp_out.Write();
+                                            }
                                             break;
                                         case MessageTypes.MSG_ROOMDESC:
                                             Debug.WriteLine(string.Format("EvT: RoomDesc."));
@@ -149,14 +164,18 @@ namespace Taj
                                     Debug.WriteLine("--");
                                 }
 
-                                if (DateTime.Now.Second % 4 == 0)
+                                if (DateTime.Now.Second%4 == 0)
                                 {
                                     if (!rateLimiter)
                                     {
-                                        var new_out_msg = new MH_Talk(this, "Hello. It is currently " + DateTime.Now.ToLongTimeString());
-                                        new_out_msg.Write();
-                                        //var xnew_out_msg = new MH_XTalk(this, "XHello. It is currently " + DateTime.Now.ToLongTimeString());
-                                        //xnew_out_msg.Write();
+                                        //var new_out_msg = new MH_Talk(this,
+                                        //                              "Hello. It is currently " +
+                                        //                              DateTime.Now.ToLongTimeString());
+                                        //new_out_msg.Write();
+                                        var xnew_out_msg = new MH_XTalk(this,
+                                                                        "XHello. It is currently " +
+                                                                        DateTime.Now.ToLongTimeString());
+                                        xnew_out_msg.Write();
 
                                         rateLimiter = true;
                                     }
@@ -176,27 +195,28 @@ namespace Taj
             }
         }
 
-        void Handshake(Stream palstream)
+        private void Handshake(Stream palstream)
         {
             //We do this 'dirty' because of the extra handling for the yet-unknown endianness
 
             {
-                byte[] buf = new byte[4];
-                palstream.Read(buf, 0, sizeof(Int32));
+                var buf = new byte[4];
+                palstream.Read(buf, 0, sizeof (Int32));
 
-                MiscUtil.Conversion.EndianBitConverter endianness;
+                EndianBitConverter endianness;
 
                 int eventType = BitConverter.ToInt32(buf, 0);
                 switch (eventType)
                 {
                     case MessageTypes.MSG_DIYIT:
-                        endianness = MiscUtil.Conversion.EndianBitConverter.Big;
+                        endianness = EndianBitConverter.Big;
                         break;
                     case MessageTypes.MSG_TIYID:
-                        endianness = MiscUtil.Conversion.EndianBitConverter.Little;
+                        endianness = EndianBitConverter.Little;
                         break;
                     default:
-                        throw new NotImplementedException(string.Format("unrecognized handshake event: 0x{0:X8}", eventType));
+                        throw new NotImplementedException(string.Format("unrecognized handshake event: 0x{0:X8}",
+                                                                        eventType));
                         break;
                 }
 
@@ -204,8 +224,8 @@ namespace Taj
                 Writer = new EndianBinaryWriter(endianness, palstream);
             }
 
-            var length = Reader.ReadUInt32();
-            var refNum = Reader.ReadInt32(); //userID for client
+            uint length = Reader.ReadUInt32();
+            int refNum = Reader.ReadInt32(); //userID for client
             Identity.ID = refNum;
 
             //TODO: take out the debug room

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MiscUtil.IO;
-using System.Diagnostics;
 
 namespace Taj.Messages
 {
@@ -13,7 +8,7 @@ namespace Taj.Messages
 
         public MH_HTTPServer(PalaceConnection con) : base(con)
         {
-            var uri_string = Reader.ReadCString();
+            string uri_string = Reader.ReadCString();
             Location = new Uri(uri_string);
         }
     }

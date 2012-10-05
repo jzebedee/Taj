@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Taj")]
+[assembly: AssemblyTitle("TajTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Taj")]
+[assembly: AssemblyProduct("TajTests")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid("6ebc8cf4-11f2-4eee-a13d-d7d460b376c0")]
+[assembly: Guid("bc143fbe-2249-4389-a5b2-b2326ea9abc8")]
 
 // Version information for an assembly consists of the following four values:
 //
