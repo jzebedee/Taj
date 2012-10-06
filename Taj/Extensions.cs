@@ -12,14 +12,14 @@ namespace Taj
             var builder = new StringBuilder();
 
             byte cur;
-            while ((cur = reader.ReadByte()) != '\0') builder.Append((char) cur);
+            while ((cur = reader.ReadByte()) != '\0') builder.Append((char)cur);
 
             return builder.ToString();
         }
 
         public static T ReadStruct<T>(this EndianBinaryReader reader, int? Size = null) where T : struct
         {
-            int structSize = Size ?? Marshal.SizeOf(typeof (T));
+            int structSize = Size ?? Marshal.SizeOf(typeof(T));
             byte[] readBytes = reader.ReadBytes(structSize);
             if (readBytes.Length != structSize)
                 throw new ArgumentException("Size of bytes read did not match struct size");
@@ -27,7 +27,7 @@ namespace Taj
             GCHandle pin_bytes = GCHandle.Alloc(readBytes, GCHandleType.Pinned);
             try
             {
-                return (T) Marshal.PtrToStructure(pin_bytes.AddrOfPinnedObject(), typeof (T));
+                return (T)Marshal.PtrToStructure(pin_bytes.AddrOfPinnedObject(), typeof(T));
             }
             finally
             {
@@ -58,12 +58,12 @@ namespace Taj
             writer.Write(buf);
         }
 
-        public static byte[] ToStr31(this string str)
+        public static byte[] ToPString(this string str, int length)
         {
-            if (str.Length > 31)
-                str.Substring(0, 31);
+            if (str.Length > length)
+                str = str.Substring(0, length);
 
-            var ret = new byte[32];
+            var ret = new byte[length + 1];
             ret[0] = Convert.ToByte(str.Length);
 
             Array.Copy(Encoding.GetEncoding("Windows-1252").GetBytes(str), 0, ret, 1, str.Length);

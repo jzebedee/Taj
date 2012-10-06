@@ -19,8 +19,8 @@ namespace Taj.Messages
                       {
                           crc = 0x5905f923, //cribbed guest from OP
                           counter = 0xcf07309c, //cribbed guest from OP
-                          userName = name.ToStr31(),
-                          wizPassword = string.Empty.ToStr31(),
+                          userName = name.ToPString(31),
+                          wizPassword = string.Empty.ToPString(31),
                           auxFlags = 0x80000004, //AUXFLAGS_AUTHENTICATE | AUXFLAGS_WIN32
                           puidCtr = puidCtr, //cribbed guest from OP
                           puidCRC = puidCRC, //cribbed guest from OP
@@ -69,11 +69,11 @@ namespace Taj.Messages
         public UInt32 crc;
         public UInt32 counter;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32, ArraySubType = UnmanagedType.I1)] public byte[] userName;
-        //Str31
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32, ArraySubType = UnmanagedType.I1)]
+        public byte[] userName; //Str31
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32, ArraySubType = UnmanagedType.I1)] public byte[] wizPassword;
-        //Str31
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32, ArraySubType = UnmanagedType.I1)]
+        public byte[] wizPassword; //Str31
 
         public UInt32 auxFlags;
         public UInt32 puidCtr;
@@ -83,8 +83,8 @@ namespace Taj.Messages
         public UInt32 demoLimit;
         public Int16 desiredRoom;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6, ArraySubType = UnmanagedType.I1)] public byte[] reserved;
-        //len: 6
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6, ArraySubType = UnmanagedType.I1)]
+        public byte[] reserved; //len: 6
 
         public UInt32 ulRequestedProtocolVersion;
         public UInt32 ulUploadCaps;

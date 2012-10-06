@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Taj.Messages
 {
     [Flags]
-    public enum ServerPermissions
+    public enum ServerPermissions : int
     {
         AllowGuests        = 0x0001, //guests may use this server
         AllowCyborgs       = 0x0002, //clients can use cyborg.ipt scripts
