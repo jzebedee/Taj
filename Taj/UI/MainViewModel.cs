@@ -31,7 +31,7 @@ namespace Taj.UI
 
         public MainViewModel()
         {
-            PalaceConnectCommand = new ActionCommand(PalaceConnect, () => true);
+            PalaceConnectCommand = new ActionCommand(PalaceConnect, () => !Connected);
         }
 
         private void PalaceConnect()

@@ -167,7 +167,7 @@ namespace Taj
                                             Palace.HTTPServer = msg_httpsv.Location;
                                             break;
                                         default:
-                                            Debug.WriteLine("Unknown EvT: 0x{0:X8}", (uint)msg.eventType);
+                                            Debug.WriteLine("Unknown EvT: {0} (0x{1:X8})", msg.eventType, (uint)msg.eventType);
                                             Reader.Read(new byte[msg.length], 0, msg.length);
                                             break;
                                     }
