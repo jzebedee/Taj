@@ -73,6 +73,7 @@
     <Compile Include="Messages\MH_Talk.cs" />
     <Compile Include="Messages\MessageTypes.cs" />
     <Compile Include="Messages\MH_UserStatus.cs" />
+    <Compile Include="Messages\ServerPermissions.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
     <Compile Include="PalaceEncryption.cs" />
@@ -82,9 +83,16 @@
     <Compile Include="UI\PalaceCanvas.xaml.cs">
       <DependentUpon>PalaceCanvas.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\PalaceProp.xaml.cs">
+      <DependentUpon>PalaceProp.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="UI\PalaceCanvas.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\PalaceProp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
