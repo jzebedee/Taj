@@ -58,6 +58,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="EncryptDecryptTest.cs" />
+    <Compile Include="MockPalaceConnection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
