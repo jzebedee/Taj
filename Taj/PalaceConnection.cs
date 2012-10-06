@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using MiscUtil.Conversion;
 using MiscUtil.IO;
@@ -13,7 +14,7 @@ namespace Taj
     public class PalaceConnection : IDisposable, IPalaceConnection
     {
         private readonly TcpClient connection;
-        private Task Listener;
+        public readonly Task Listener;
 
         public PalaceConnection(Uri target, PalaceUser identity)
         {
@@ -59,7 +60,7 @@ namespace Taj
         {
             try
             {
-                using (NetworkStream stream = connection.GetStream())
+                using (var stream = connection.GetStream())
                 {
                     Handshake(stream);
                     using (Reader)
@@ -72,6 +73,7 @@ namespace Taj
                             //op_msg.Write(Writer);
                             //Debug.WriteLine("OP_SMSG sent");
 
+                            var timer = new Timer(o => { connection.Close(); }, null, 6000, 3000);
                             while (connection.Connected)
                             {
                                 if (stream.DataAvailable)
@@ -171,9 +173,12 @@ namespace Taj
                     }
                 }
             }
-            catch (IOException e)
+            catch (Exception e)
             {
-                Trace.TraceError(e.ToString());
+                if (e is IOException || e is ObjectDisposedException)
+                    Trace.TraceError(e.ToString());
+                else
+                    throw e;
             }
         }
 

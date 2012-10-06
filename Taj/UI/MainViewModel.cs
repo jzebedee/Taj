@@ -31,27 +31,45 @@ namespace Taj.UI
 
         public MainViewModel()
         {
-            var retl = new RaiseEventTraceListener((str) => Output = str);
-            Debug.Listeners.Add(retl);
-
             PalaceConnectCommand = new ActionCommand(PalaceConnect, () => true);
         }
 
         private void PalaceConnect()
         {
 #if TRACE
-            File.Delete("trace.log");
-            var file_log_listener = new TextWriterTraceListener("trace.log");
-            var console_listener = new ConsoleTraceListener();
-            Trace.Listeners.Add(file_log_listener);
-            Trace.Listeners.Add(console_listener);
-            Trace.AutoFlush = true;
+            if (!Trace.AutoFlush)
+            {
+                File.Delete("trace.log");
+                var raiseevent_listener = new RaiseEventTraceListener((str) => Output = str);
+                var file_log_listener = new TextWriterTraceListener("trace.log");
+                var console_listener = new ConsoleTraceListener();
+                Trace.Listeners.Add(raiseevent_listener);
+                Trace.Listeners.Add(file_log_listener);
+                Trace.Listeners.Add(console_listener);
+                Trace.AutoFlush = true;
+            }
 #endif
 
             var identity = new PalaceUser { Name = "Superduper" };
 
             //var pal = new Palace(new Uri("tcp://chat.epalaces.com:9998"));
             _palCon = new PalaceConnection(new Uri("tcp://oceansapart.epalaces.com:9998"), identity);
+            _palCon.Listener.ContinueWith((listenTask) => Connected = false);
+            Connected = true;
+        }
+
+        private bool _connected = false;
+        public bool Connected
+        {
+            get { return _connected; }
+            private set
+            {
+                if (_connected != value)
+                {
+                    _connected = value;
+                    RaisePropertyChanged("Connected");
+                }
+            }
         }
 
         private StringBuilder _output = new StringBuilder();
