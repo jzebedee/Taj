@@ -1,14 +1,91 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.Eventing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 
 namespace Taj.UI
 {
+    internal class RaiseEventTraceListener : DefaultTraceListener
+    {
+        private readonly Action<string> toCall;
+        internal RaiseEventTraceListener(Action<string> onTraceEvent)
+        {
+            toCall = onTraceEvent;
+        }
+
+        public override void WriteLine(string message)
+        {
+            toCall(message);
+            base.WriteLine(message);
+        }
+    }
+
     public class MainViewModel : INotifyPropertyChanged
     {
+        private PalaceConnection _palCon;
+
+        public MainViewModel()
+        {
+            var retl = new RaiseEventTraceListener((str) => Output = str);
+            Debug.Listeners.Add(retl);
+
+            PalaceConnectCommand = new ActionCommand(PalaceConnect, () => true);
+        }
+
+        private void PalaceConnect()
+        {
+#if TRACE
+            File.Delete("trace.log");
+            var file_log_listener = new TextWriterTraceListener("trace.log");
+            var console_listener = new ConsoleTraceListener();
+            Trace.Listeners.Add(file_log_listener);
+            Trace.Listeners.Add(console_listener);
+            Trace.AutoFlush = true;
+#endif
+
+            var identity = new PalaceUser { Name = "Superduper" };
+
+            //var pal = new Palace(new Uri("tcp://chat.epalaces.com:9998"));
+            _palCon = new PalaceConnection(new Uri("tcp://oceansapart.epalaces.com:9998"), identity);
+        }
+
+        private StringBuilder _output = new StringBuilder();
+        public string Output
+        {
+            get { return _output.ToString(); }
+            private set
+            {
+                _output.AppendLine(value);
+                RaisePropertyChanged("Output");
+            }
+        }
+
+        private ICommand _palaceConnectCommand;
+        public ICommand PalaceConnectCommand
+        {
+            get { return _palaceConnectCommand; }
+            private set
+            {
+                if (_palaceConnectCommand != value)
+                {
+                    _palaceConnectCommand = value;
+                    RaisePropertyChanged("PalaceConnectCommand");
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propertyName)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

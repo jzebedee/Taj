@@ -5,11 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:UI="clr-namespace:Taj.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+        Title="Taj">
     <Window.DataContext>
         <UI:MainViewModel />
     </Window.DataContext>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
 
+        <TextBox Grid.Row="0" Grid.Column="0"
+                 IsReadOnly="True" TextWrapping="Wrap" UI:TextBoxBehavior.ScrollOnTextChanged="True" ScrollViewer.VerticalScrollBarVisibility="Visible" Text="{Binding Output,Mode=OneWay}" />
+        <Button Content="Connect" Grid.Row="1" Grid.Column="0" Command="{Binding PalaceConnectCommand}" />
     </Grid>
 </Window>
