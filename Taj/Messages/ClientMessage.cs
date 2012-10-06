@@ -6,7 +6,8 @@ namespace Taj.Messages
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ClientMessage
     {
-        public UInt32 eventType;
+        [MarshalAs(UnmanagedType.U4)]
+        public MessageTypes eventType;
         public Int32 length;
         public Int32 refNum;
     }

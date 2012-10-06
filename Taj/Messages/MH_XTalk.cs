@@ -30,7 +30,7 @@
 
             Writer.WriteStruct(new ClientMessage
                                    {
-                                       eventType = MessageTypes.MSG_XTALK,
+                                       eventType = MessageTypes.XTALK,
                                        length = sizeof (short) + xmsg.Length + 1,
                                        refNum = 0, //TODO: set refnum to userid
                                    });

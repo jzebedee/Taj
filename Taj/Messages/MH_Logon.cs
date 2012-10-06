@@ -51,7 +51,7 @@ namespace Taj.Messages
         {
             Writer.WriteStruct(new ClientMessage
                                    {
-                                       eventType = MessageTypes.MSG_LOGON,
+                                       eventType = MessageTypes.LOGON,
                                        length = 128,
                                        refNum = 0, //intentional
                                    });

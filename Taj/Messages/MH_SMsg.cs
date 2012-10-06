@@ -12,9 +12,9 @@
         {
         }
 
-        protected override uint MH_EventType
+        protected override MessageTypes MH_EventType
         {
-            get { return MessageTypes.MSG_SMSG; }
+            get { return MessageTypes.SMSG; }
         }
     }
 }

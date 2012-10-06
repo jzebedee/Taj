@@ -16,7 +16,7 @@
         {
             Writer.WriteStruct(new ClientMessage
                                    {
-                                       eventType = MessageTypes.MSG_PONG,
+                                       eventType = MessageTypes.PONG,
                                        length = 0,
                                        refNum = _pingNum,
                                    });

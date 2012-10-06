@@ -77,97 +77,88 @@ namespace Taj
                                 if (stream.DataAvailable)
                                 {
                                     var msg = Reader.ReadStruct<ClientMessage>();
-                                    switch (msg.eventType)
+                                    switch ((MessageTypes)msg.eventType)
                                     {
-                                        case MessageTypes.MSG_ALTLOGONREPLY:
+                                        case MessageTypes.ALTLOGONREPLY:
                                             var msg_logon = new MH_Logon(this);
                                             Debug.WriteLine("AltLogonReply. But we're too cool to reconnect.");
                                             break;
-                                        case MessageTypes.MSG_PING:
+                                        case MessageTypes.PING:
                                             Debug.WriteLine("Ping.");
                                             var msg_pingpong = new MH_PingPong(this, msg);
                                             msg_pingpong.Write();
                                             Debug.WriteLine("Pong.");
                                             break;
-                                        case MessageTypes.MSG_USERSTATUS:
-                                            Debug.WriteLine(string.Format("EvT: UserStatus."));
+                                        case MessageTypes.USERSTATUS:
+                                            Debug.WriteLine("EvT: UserStatus.");
                                             var msg_ustatus = new MH_UserStatus(this, msg);
                                             break;
-                                        case MessageTypes.MSG_USERLOG:
-                                            Debug.WriteLine(string.Format("EvT: UserLog."));
+                                        case MessageTypes.USERLOG:
+                                            Debug.WriteLine("EvT: UserLog.");
                                             var msg_ulog = new MH_UserLog(this, msg);
                                             break;
-                                        case MessageTypes.MSG_USERLIST:
-                                            Debug.WriteLine(string.Format("EvT: UserList."));
+                                        case MessageTypes.USERLIST:
+                                            Debug.WriteLine("EvT: UserList.");
                                             var msg_ulist = new MH_UserList(this, msg);
                                             break;
-                                        case MessageTypes.MSG_USERNEW:
-                                            Debug.WriteLine(string.Format("EvT: UserNew."));
+                                        case MessageTypes.USERNEW:
+                                            Debug.WriteLine("EvT: UserNew.");
                                             var msg_unew = new MH_UserNew(this, msg);
                                             break;
-                                        case MessageTypes.MSG_TALK:
+                                        case MessageTypes.TALK:
                                             Debug.WriteLine("EvT: Talk");
                                             var msg_talk = new MH_Talk(this);
-                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_talk.Text,
-                                                                          msg.refNum));
+                                            Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_talk.Text, msg.refNum);
                                             break;
-                                        case MessageTypes.MSG_XTALK:
+                                        case MessageTypes.XTALK:
                                             Debug.WriteLine("EvT: XTalk");
                                             var msg_xtalk = new MH_XTalk(this, msg);
-                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_xtalk.Text,
-                                                                          msg.refNum));
+                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_xtalk.Text, msg.refNum));
                                             break;
-                                        case MessageTypes.MSG_WHISPER:
+                                        case MessageTypes.WHISPER:
                                             Debug.WriteLine("EvT: Whisper");
                                             var msg_whisp = new MH_Whisper(this, msg);
-                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_whisp.Text,
-                                                                          msg_whisp.Target.ID));
+                                            Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_whisp.Text, msg_whisp.Target.ID);
                                             if (msg_whisp.Target.ID != Identity.ID)
                                             {
-                                                var msg_whisp_out = new MH_Whisper(this, msg_whisp.Target,
-                                                                                   new string(
-                                                                                       msg_whisp.Text.Reverse().ToArray()));
+                                                var msg_whisp_out = new MH_Whisper(this, msg_whisp.Target, new string(msg_whisp.Text.Reverse().ToArray()));
                                                 msg_whisp_out.Write();
                                             }
                                             break;
-                                        case MessageTypes.MSG_XWHISPER:
+                                        case MessageTypes.XWHISPER:
                                             Debug.WriteLine("EvT: XWhisper");
                                             var msg_xwhisp = new MH_XWhisper(this, msg);
-                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_xwhisp.Text,
-                                                                          msg_xwhisp.Target.ID));
+                                            Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_xwhisp.Text, msg_xwhisp.Target.ID);
                                             if (msg_xwhisp.Target.ID != Identity.ID)
                                             {
-                                                var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target,
-                                                                                     new string(
-                                                                                         msg_xwhisp.Text.Reverse().
-                                                                                             ToArray()));
+                                                var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
                                                 msg_xwhisp_out.Write();
                                             }
                                             break;
-                                        case MessageTypes.MSG_ROOMDESC:
-                                            Debug.WriteLine(string.Format("EvT: RoomDesc."));
+                                        case MessageTypes.ROOMDESC:
+                                            Debug.WriteLine("EvT: RoomDesc.");
                                             var msg_roomdesc = new MH_RoomDesc(this, msg);
                                             break;
-                                        case MessageTypes.MSG_ROOMDESCEND:
-                                            Debug.WriteLine(string.Format("EvT: RoomDescEnd."));
+                                        case MessageTypes.ROOMDESCEND:
+                                            Debug.WriteLine("EvT: RoomDescEnd.");
                                             break;
-                                        case MessageTypes.MSG_VERSION:
+                                        case MessageTypes.VERSION:
                                             var mh_sv = new MH_ServerVersion(this, msg);
                                             Palace.Version = mh_sv.Version;
-                                            Debug.WriteLine(string.Format("EvT: ServerVersion. v{0}.", mh_sv.Version));
+                                            Debug.WriteLine("EvT: ServerVersion. v{0}.", mh_sv.Version);
                                             break;
-                                        case MessageTypes.MSG_SERVERINFO:
-                                            Debug.WriteLine(string.Format("EvT: ServerInfo."));
+                                        case MessageTypes.SERVERINFO:
+                                            Debug.WriteLine("EvT: ServerInfo.");
                                             var msg_svinfo = new MH_ServerInfo(this, msg);
                                             break;
-                                        case MessageTypes.MSG_HTTPSERVER:
-                                            Debug.WriteLine(string.Format("EvT: HTTPServer."));
+                                        case MessageTypes.HTTPSERVER:
+                                            Debug.WriteLine("EvT: HTTPServer.");
                                             var msg_httpsv = new MH_HTTPServer(this);
-                                            Debug.WriteLine(string.Format("HTTPServer URI: {0}", msg_httpsv.Location));
+                                            Debug.WriteLine("HTTPServer URI: {0}", msg_httpsv.Location);
                                             Palace.HTTPServer = msg_httpsv.Location;
                                             break;
                                         default:
-                                            Debug.WriteLine(string.Format("Unknown EvT: 0x{0:X8}", msg.eventType));
+                                            Debug.WriteLine("Unknown EvT: 0x{0:X8}", msg.eventType);
                                             Reader.Read(new byte[msg.length], 0, msg.length);
                                             break;
                                     }
@@ -211,18 +202,18 @@ namespace Taj
 
             {
                 var buf = new byte[4];
-                palstream.Read(buf, 0, sizeof (Int32));
+                palstream.Read(buf, 0, sizeof(Int32));
 
                 EndianBitConverter endianness;
 
                 int eventType = BitConverter.ToInt32(buf, 0);
-                switch (eventType)
+                switch ((MessageTypes)eventType)
                 {
-                    case MessageTypes.MSG_DIYIT:
+                    case MessageTypes.DIYIT:
                         endianness = EndianBitConverter.Big;
                         Debug.WriteLine("BigEndian server handshake");
                         break;
-                    case MessageTypes.MSG_TIYID:
+                    case MessageTypes.TIYID:
                         endianness = EndianBitConverter.Little;
                         Debug.WriteLine("LittleEndian server handshake");
                         break;

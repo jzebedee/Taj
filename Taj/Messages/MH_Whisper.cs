@@ -32,7 +32,7 @@ namespace Taj.Messages
 
             Writer.WriteStruct(new ClientMessage
                                    {
-                                       eventType = MessageTypes.MSG_WHISPER,
+                                       eventType = MessageTypes.WHISPER,
                                        length = sizeof (int) + msgBytes.Length,
                                        refNum = Identity.ID, //TODO: set refnum to userid
                                    });

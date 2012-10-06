@@ -35,7 +35,7 @@
 
             Writer.WriteStruct(new ClientMessage
                                    {
-                                       eventType = MessageTypes.MSG_XWHISPER,
+                                       eventType = MessageTypes.XWHISPER,
                                        length = sizeof (int) + sizeof (short) + xmsg.Length + 1,
                                        refNum = Identity.ID, //TODO: set refnum to userid
                                    });

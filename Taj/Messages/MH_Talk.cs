@@ -19,9 +19,9 @@ namespace Taj.Messages
             Text = Reader.ReadCString();
         }
 
-        protected virtual uint MH_EventType
+        protected virtual MessageTypes MH_EventType
         {
-            get { return MessageTypes.MSG_TALK; }
+            get { return MessageTypes.TALK; }
         }
 
         public string Text { get; private set; }
