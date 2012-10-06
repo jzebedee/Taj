@@ -6,7 +6,7 @@ using System.Text;
 namespace Taj.Messages
 {
     [Flags]
-    public enum ServerOptions
+    public enum ServerOptions : uint
     {
         SaveSessionKeys     = 0x00000001, //server logs regcodes of users (obsolete)
         PasswordSecurity    = 0x00000002, //you need a password to use this server

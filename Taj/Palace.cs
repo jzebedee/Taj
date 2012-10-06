@@ -1,4 +1,5 @@
 ﻿using System;
+using Taj.Messages;
 
 namespace Taj
 {
@@ -6,6 +7,8 @@ namespace Taj
     {
         public Version Version { get; set; }
         public Uri HTTPServer { get; set; }
+        public ServerPermissions Permissions { get; set; }
+        public string Name { get; set; }
         public int Users { get; set; }
     }
 }

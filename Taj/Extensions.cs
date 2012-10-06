@@ -17,6 +17,16 @@ namespace Taj
             return builder.ToString();
         }
 
+        public static string ReadPString(this EndianBinaryReader reader)
+        {
+            var builder = new StringBuilder();
+
+            byte length = reader.ReadByte();
+            while (length-- > 0) builder.Append((char)reader.ReadByte());
+
+            return builder.ToString();
+        }
+
         public static T ReadStruct<T>(this EndianBinaryReader reader, int? Size = null) where T : struct
         {
             int structSize = Size ?? Marshal.SizeOf(typeof(T));

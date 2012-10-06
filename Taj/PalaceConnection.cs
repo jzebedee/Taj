@@ -150,6 +150,8 @@ namespace Taj
                                         case MessageTypes.SERVERINFO:
                                             Debug.WriteLine("EvT: ServerInfo.");
                                             var msg_svinfo = new MH_ServerInfo(this, msg);
+                                            Debug.WriteLine("Name: {0}", new[] { Palace.Name });
+                                            Debug.WriteLine("Permissions: {0}", Palace.Permissions);
                                             break;
                                         case MessageTypes.HTTPSERVER:
                                             Debug.WriteLine("EvT: HTTPServer.");

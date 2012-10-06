@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Taj.Messages
 {
@@ -7,8 +8,13 @@ namespace Taj.Messages
         public MH_ServerInfo(PalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
-            Debug.WriteLine("MH_ServerInfo is unimplemented, and skipping itself ahead.");
-            Reader.ReadBytes(cmsg.length);
+            Palace.Permissions = (ServerPermissions)Reader.ReadUInt32();
+            Palace.Name = Reader.ReadPString();
+
+            //The server is shortchanging us?
+            //var options = (ServerOptions)Reader.ReadUInt32();
+            //var ulUploadCaps = Reader.ReadUInt32();
+            //var ulDownloadCaps = Reader.ReadUInt32();
         }
     }
 }
