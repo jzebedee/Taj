@@ -1,0 +1,5 @@
+﻿<Application x:Class="Taj.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:UI="clr-namespace:Taj.UI"
+    StartupUri="UI\MainView.xaml" />
