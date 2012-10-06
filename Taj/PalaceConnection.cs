@@ -77,7 +77,7 @@ namespace Taj
                                 if (stream.DataAvailable)
                                 {
                                     var msg = Reader.ReadStruct<ClientMessage>();
-                                    switch ((MessageTypes)msg.eventType)
+                                    switch (msg.eventType)
                                     {
                                         case MessageTypes.ALTLOGONREPLY:
                                             var msg_logon = new MH_Logon(this);
@@ -166,27 +166,6 @@ namespace Taj
                                     }
                                     Debug.WriteLine("--");
                                 }
-
-                                //if (DateTime.Now.Second % 4 == 0)
-                                //{
-                                //    if (!rateLimiter)
-                                //    {
-                                //        var new_out_msg = new MH_Talk(this,
-                                //                                      "Hello. It is currently " +
-                                //                                      DateTime.Now.ToLongTimeString());
-                                //        new_out_msg.Write();
-                                //        var xnew_out_msg = new MH_XTalk(this,
-                                //                                        "XHello. It is currently " +
-                                //                                        DateTime.Now.ToLongDateString());
-                                //        xnew_out_msg.Write();
-
-                                //        rateLimiter = true;
-                                //    }
-                                //}
-                                //else
-                                //{
-                                //    rateLimiter = false;
-                                //}
                             }
                         }
                     }
@@ -220,9 +199,7 @@ namespace Taj
                         Debug.WriteLine("LittleEndian server handshake");
                         break;
                     default:
-                        throw new NotImplementedException(string.Format("unrecognized handshake event: 0x{0:X8}",
-                                                                        eventType));
-                        break;
+                        throw new NotImplementedException(string.Format("unrecognized handshake event: 0x{0:X8}", eventType));
                 }
 
                 Reader = new EndianBinaryReader(endianness, palstream);
