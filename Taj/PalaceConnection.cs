@@ -21,7 +21,12 @@ namespace Taj
             connection = new TcpClient(target.Host, target.Port);
 
             Identity = identity;
-            Listener = Task.Factory.StartNew(Listen, TaskCreationOptions.LongRunning);
+            Listener = new Task(Listen, TaskCreationOptions.LongRunning);
+        }
+
+        public void Connect()
+        {
+            Listener.Start();
         }
 
         #region IDisposable Members
@@ -73,7 +78,7 @@ namespace Taj
                             //op_msg.Write(Writer);
                             //Debug.WriteLine("OP_SMSG sent");
 
-                            var timer = new Timer(o => { connection.Close(); }, null, 6000, 3000);
+                            //var timer = new Timer(o => { connection.Close(); }, null, 6000, 3000);
                             while (connection.Connected)
                             {
                                 if (stream.DataAvailable)

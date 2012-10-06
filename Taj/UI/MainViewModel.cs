@@ -55,6 +55,8 @@ namespace Taj.UI
             //var pal = new Palace(new Uri("tcp://chat.epalaces.com:9998"));
             _palCon = new PalaceConnection(new Uri("tcp://oceansapart.epalaces.com:9998"), identity);
             _palCon.Listener.ContinueWith((listenTask) => Connected = false);
+
+            _palCon.Connect();
             Connected = true;
         }
 
