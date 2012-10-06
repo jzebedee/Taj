@@ -37,7 +37,7 @@
                                    {
                                        eventType = MessageTypes.XWHISPER,
                                        length = sizeof (int) + sizeof (short) + xmsg.Length + 1,
-                                       refNum = Identity.ID, //TODO: set refnum to userid
+                                       refNum = Identity.ID,
                                    });
             Writer.Write(Target.ID);
             Writer.Write((short) (xmsg.Length + 3));

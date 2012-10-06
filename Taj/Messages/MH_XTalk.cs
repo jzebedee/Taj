@@ -32,7 +32,7 @@
                                    {
                                        eventType = MessageTypes.XTALK,
                                        length = sizeof (short) + xmsg.Length + 1,
-                                       refNum = 0, //TODO: set refnum to userid
+                                       refNum = Identity.ID,
                                    });
             Writer.Write((short) (xmsg.Length + 3));
             Writer.Write(xmsg);

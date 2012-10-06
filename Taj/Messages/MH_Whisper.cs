@@ -34,7 +34,7 @@ namespace Taj.Messages
                                    {
                                        eventType = MessageTypes.WHISPER,
                                        length = sizeof (int) + msgBytes.Length,
-                                       refNum = Identity.ID, //TODO: set refnum to userid
+                                       refNum = Identity.ID,
                                    });
             Writer.Write(Target.ID);
             Writer.Write(msgBytes);
