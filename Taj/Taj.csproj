@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="IPalaceConnection.cs" />
+    <Compile Include="Messages\AuxRegistrationRec.cs" />
     <Compile Include="Messages\ClientMessage.cs" />
     <Compile Include="Messages\MessageHeader.cs" />
     <Compile Include="Messages\MH_PingPong.cs" />
