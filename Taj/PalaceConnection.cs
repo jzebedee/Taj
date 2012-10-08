@@ -13,20 +13,31 @@ namespace Taj
 {
     public class PalaceConnection : IDisposable, IPalaceConnection
     {
-        private readonly TcpClient connection;
         public readonly Task Listener;
+
+        private readonly CancellationTokenSource listenerTokenSrc = new CancellationTokenSource();
+        private CancellationToken listenerToken { get { return listenerTokenSrc.Token; } }
+
+        private readonly Uri targetUri;
+        private TcpClient connection;
 
         public PalaceConnection(Uri target, PalaceUser identity)
         {
-            connection = new TcpClient(target.Host, target.Port);
-
+            targetUri = target;
             Identity = identity;
-            Listener = new Task(Listen, TaskCreationOptions.LongRunning);
+            Listener = new Task(Listen, listenerToken, TaskCreationOptions.LongRunning);
         }
 
         public void Connect()
         {
+            connection = new TcpClient(targetUri.Host, targetUri.Port);
             Listener.Start();
+        }
+
+        public void Disconnect()
+        {
+            listenerTokenSrc.Cancel();
+            Listener.Wait();
         }
 
         #region IDisposable Members
@@ -55,7 +66,22 @@ namespace Taj
 
         protected virtual void Dispose(bool disposing)
         {
-            connection.Close();
+            listenerTokenSrc.Dispose();
+            if (connection != null)
+            {
+                connection.Close();
+                connection = null;
+            }
+            if (Reader != null)
+            {
+                Reader.Dispose();
+                Reader = null;
+            }
+            if (Writer != null)
+            {
+                Writer.Dispose();
+                Writer = null;
+            }
 
             if (disposing)
                 GC.SuppressFinalize(this);
@@ -79,7 +105,7 @@ namespace Taj
                             //Debug.WriteLine("OP_SMSG sent");
 
                             //var timer = new Timer(o => { connection.Close(); }, null, 6000, 3000);
-                            while (connection.Connected)
+                            while (connection.Connected && !listenerToken.IsCancellationRequested)
                             {
                                 if (stream.DataAvailable)
                                 {

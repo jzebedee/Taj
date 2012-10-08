@@ -23,5 +23,6 @@
         <TextBox Grid.Row="0" Grid.Column="0"
                  IsReadOnly="True" TextWrapping="Wrap" UI:TextBoxBehavior.ScrollOnTextChanged="True" ScrollViewer.VerticalScrollBarVisibility="Visible" Text="{Binding Output,Mode=OneWay}" />
         <Button Content="Connect" Grid.Row="1" Grid.Column="0" Command="{Binding PalaceConnectCommand}" Visibility="{Binding Connected,Mode=OneWay,Converter={StaticResource !BoolVisConverter}}" />
+        <Button Content="Disconnect" Grid.Row="1" Grid.Column="0" Command="{Binding PalaceDisconnectCommand}" Visibility="{Binding Connected,Mode=OneWay,Converter={StaticResource BoolVisConverter}}" />
     </Grid>
 </Window>

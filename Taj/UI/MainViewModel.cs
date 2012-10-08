@@ -32,6 +32,7 @@ namespace Taj.UI
         public MainViewModel()
         {
             PalaceConnectCommand = new ActionCommand(PalaceConnect, () => !Connected);
+            PalaceDisconnectCommand = new ActionCommand(PalaceDisconnect, () => Connected);
         }
 
         private void PalaceConnect()
@@ -58,6 +59,12 @@ namespace Taj.UI
 
             _palCon.Connect();
             Connected = true;
+        }
+
+        private void PalaceDisconnect()
+        {
+            using (_palCon)
+                _palCon.Disconnect();
         }
 
         private bool _connected = false;
@@ -95,6 +102,20 @@ namespace Taj.UI
                 {
                     _palaceConnectCommand = value;
                     RaisePropertyChanged("PalaceConnectCommand");
+                }
+            }
+        }
+
+        private ICommand _palaceDisconnectCommand;
+        public ICommand PalaceDisconnectCommand
+        {
+            get { return _palaceDisconnectCommand; }
+            private set
+            {
+                if (_palaceDisconnectCommand != value)
+                {
+                    _palaceDisconnectCommand = value;
+                    RaisePropertyChanged("PalaceDisconnectCommand");
                 }
             }
         }
