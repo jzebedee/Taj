@@ -31,5 +31,16 @@ namespace Taj
 
             return u;
         }
+        public bool RemoveUserByID(int UserID)
+        {
+            var targetUser = GetUserByID(UserID);
+            if (targetUser != null)
+                return _users.Remove(targetUser);
+            return false;
+        }
+        public bool RemoveUser(PalaceUser targetUser)
+        {
+            return _users.Remove(targetUser);
+        }
     }
 }

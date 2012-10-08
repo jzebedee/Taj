@@ -4,7 +4,7 @@
     {
         private readonly int _pingNum;
 
-        public MH_PingPong(PalaceConnection con, ClientMessage cmsg)
+        public MH_PingPong(IPalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
             _pingNum = cmsg.refNum;

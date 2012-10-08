@@ -66,7 +66,10 @@ namespace Taj
 
         protected virtual void Dispose(bool disposing)
         {
+            //Disconnect();
+
             listenerTokenSrc.Dispose();
+
             if (connection != null)
             {
                 connection.Close();
@@ -105,9 +108,14 @@ namespace Taj
                             //Debug.WriteLine("OP_SMSG sent");
 
                             //var timer = new Timer(o => { connection.Close(); }, null, 6000, 3000);
-                            while (connection.Connected && !listenerToken.IsCancellationRequested)
+                            while (connection.Connected)
                             {
-                                if (stream.DataAvailable)
+                                if (listenerToken.IsCancellationRequested)
+                                {
+                                    Signoff();
+                                    break;
+                                }
+                                else if (stream.DataAvailable)
                                 {
                                     var msg = Reader.ReadStruct<ClientMessage>();
                                     switch (msg.eventType)
@@ -123,22 +131,29 @@ namespace Taj
                                             Debug.WriteLine("Pong.");
                                             break;
                                         case MessageTypes.USERSTATUS:
-                                            Debug.WriteLine("EvT: UserStatus.");
+                                            Debug.WriteLine("EvT: UserStatus");
                                             var msg_ustatus = new MH_UserStatus(this, msg);
                                             Debug.WriteLine("Target: {0}", msg_ustatus.Target);
                                             Debug.WriteLine("Flags: {0}", msg_ustatus.Target.Flags);
                                             break;
                                         case MessageTypes.USERLOG:
-                                            Debug.WriteLine("EvT: UserLog.");
+                                            Debug.WriteLine("EvT: UserLog");
                                             var msg_ulog = new MH_UserLog(this, msg);
+                                            Debug.WriteLine("{0} users, {1} joined", msg_ulog.UserCount, msg_ulog.NewUser);
                                             break;
                                         case MessageTypes.USERLIST:
-                                            Debug.WriteLine("EvT: UserList.");
+                                            Debug.WriteLine("EvT: UserList");
                                             var msg_ulist = new MH_UserList(this, msg);
                                             break;
                                         case MessageTypes.USERNEW:
-                                            Debug.WriteLine("EvT: UserNew.");
+                                            Debug.WriteLine("EvT: UserNew");
                                             var msg_unew = new MH_UserNew(this, msg);
+                                            break;
+                                        case MessageTypes.LOGOFF:
+                                            Debug.WriteLine("EvT: Logoff");
+                                            var msg_logoff = new MH_Logoff(this, msg);
+                                            Debug.WriteLine("Lost user {0}", msg_logoff.LostUser);
+                                            Debug.WriteLine("New user count: {0}", msg_logoff.UserCount);
                                             break;
                                         case MessageTypes.TALK:
                                             Debug.WriteLine("EvT: Talk");
@@ -148,7 +163,7 @@ namespace Taj
                                         case MessageTypes.XTALK:
                                             Debug.WriteLine("EvT: XTalk");
                                             var msg_xtalk = new MH_XTalk(this, msg);
-                                            Debug.WriteLine(string.Format("(fromuser {1}) msg: `{0}`", msg_xtalk.Text, msg.refNum));
+                                            Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_xtalk.Text, msg.refNum);
                                             break;
                                         case MessageTypes.WHISPER:
                                             Debug.WriteLine("EvT: Whisper");
@@ -171,25 +186,26 @@ namespace Taj
                                             }
                                             break;
                                         case MessageTypes.ROOMDESC:
-                                            Debug.WriteLine("EvT: RoomDesc.");
+                                            Debug.WriteLine("EvT: RoomDesc");
                                             var msg_roomdesc = new MH_RoomDesc(this, msg);
                                             break;
                                         case MessageTypes.ROOMDESCEND:
-                                            Debug.WriteLine("EvT: RoomDescEnd.");
+                                            Debug.WriteLine("EvT: RoomDescEnd");
                                             break;
                                         case MessageTypes.VERSION:
                                             var mh_sv = new MH_ServerVersion(this, msg);
                                             Palace.Version = mh_sv.Version;
-                                            Debug.WriteLine("EvT: ServerVersion. v{0}.", mh_sv.Version);
+                                            Debug.WriteLine("EvT: ServerVersion");
+                                            Debug.WriteLine("v{0}.", mh_sv.Version);
                                             break;
                                         case MessageTypes.SERVERINFO:
-                                            Debug.WriteLine("EvT: ServerInfo.");
+                                            Debug.WriteLine("EvT: ServerInfo");
                                             var msg_svinfo = new MH_ServerInfo(this, msg);
-                                            Debug.WriteLine("Name: {0}", new[] { Palace.Name });
+                                            Debug.WriteLine("Name: {0}", Palace.Name);
                                             Debug.WriteLine("Permissions: {0}", Palace.Permissions);
                                             break;
                                         case MessageTypes.HTTPSERVER:
-                                            Debug.WriteLine("EvT: HTTPServer.");
+                                            Debug.WriteLine("EvT: HTTPServer");
                                             var msg_httpsv = new MH_HTTPServer(this);
                                             Debug.WriteLine("HTTPServer URI: {0}", msg_httpsv.Location);
                                             Palace.HTTPServer = msg_httpsv.Location;
@@ -215,6 +231,12 @@ namespace Taj
             }
         }
 
+        private void Signoff()
+        {
+            var mh_logoff = new MH_Logoff(this);
+            mh_logoff.Write();
+        }
+
         private void Handshake(Stream palstream)
         {
             //We do this 'dirty' because of the extra handling for the yet-unknown endianness
@@ -237,7 +259,7 @@ namespace Taj
                         Debug.WriteLine("LittleEndian server handshake");
                         break;
                     default:
-                        throw new NotImplementedException(string.Format("unrecognized handshake event: 0x{0:X8}", eventType));
+                        throw new Exception(string.Format("unrecognized handshake event: 0x{0:X8}", eventType));
                 }
 
                 Reader = new EndianBinaryReader(endianness, palstream);

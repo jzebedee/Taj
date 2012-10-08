@@ -2,12 +2,12 @@
 {
     public class MH_SMsg : MH_Talk
     {
-        public MH_SMsg(PalaceConnection con, string msg)
+        public MH_SMsg(IPalaceConnection con, string msg)
             : base(con, msg)
         {
         }
 
-        public MH_SMsg(PalaceConnection con)
+        public MH_SMsg(IPalaceConnection con)
             : base(con)
         {
         }

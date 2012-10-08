@@ -4,7 +4,7 @@ namespace Taj.Messages
 {
     public class MH_Talk : MessageHeader, IOutgoingMessage
     {
-        public MH_Talk(PalaceConnection con, string msg)
+        public MH_Talk(IPalaceConnection con, string msg)
             : base(con)
         {
             if (msg.Length > 255)
@@ -13,7 +13,7 @@ namespace Taj.Messages
             Text = msg;
         }
 
-        public MH_Talk(PalaceConnection con)
+        public MH_Talk(IPalaceConnection con)
             : base(con)
         {
             Text = Reader.ReadCString();

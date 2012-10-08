@@ -79,6 +79,7 @@
     <Compile Include="IPalaceConnection.cs" />
     <Compile Include="Messages\AuxRegistrationRec.cs" />
     <Compile Include="Messages\ClientMessage.cs" />
+    <Compile Include="Messages\MH_Logoff.cs" />
     <Compile Include="Messages\MessageHeader.cs" />
     <Compile Include="Messages\MH_PingPong.cs" />
     <Compile Include="Messages\MH_XWhisper.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="UI\PalaceProp.xaml.cs">
       <DependentUpon>PalaceProp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CallbackTraceListener.cs" />
     <Compile Include="UI\TextBoxBehavior.cs" />
   </ItemGroup>
   <ItemGroup>

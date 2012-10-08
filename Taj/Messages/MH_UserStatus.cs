@@ -10,7 +10,7 @@ namespace Taj.Messages
     {
         public PalaceUser Target { get; private set; }
 
-        public MH_UserStatus(PalaceConnection con, ClientMessage cmsg)
+        public MH_UserStatus(IPalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
             //var tbytes = Reader.ReadBytes(tlen);
