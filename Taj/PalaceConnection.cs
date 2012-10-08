@@ -99,6 +99,8 @@ namespace Taj
                                         case MessageTypes.USERSTATUS:
                                             Debug.WriteLine("EvT: UserStatus.");
                                             var msg_ustatus = new MH_UserStatus(this, msg);
+                                            Debug.WriteLine("Target: {0}", msg_ustatus.Target);
+                                            Debug.WriteLine("Flags: {0}", msg_ustatus.Target.Flags);
                                             break;
                                         case MessageTypes.USERLOG:
                                             Debug.WriteLine("EvT: UserLog.");

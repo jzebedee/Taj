@@ -99,6 +99,7 @@
     <Compile Include="Messages\MH_UserStatus.cs" />
     <Compile Include="Messages\ServerOptions.cs" />
     <Compile Include="Messages\ServerPermissions.cs" />
+    <Compile Include="Messages\UserFlags.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
     <Compile Include="PalaceEncryption.cs" />

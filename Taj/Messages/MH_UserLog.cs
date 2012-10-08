@@ -11,7 +11,7 @@ namespace Taj.Messages
 
             Debug.WriteLine("MH_UserLog: {0} users, {1} joined", numUsers, userID);
 
-            Palace.Users = numUsers;
+            Palace.UserCount = numUsers;
         }
     }
 }
