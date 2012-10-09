@@ -270,13 +270,10 @@ namespace Taj
             int refNum = Reader.ReadInt32(); //userID for client
             Identity.ID = refNum;
 
-            //TODO: take out the debug room
-            //oceansapart.epalaces.com:9998/124
-            // //112 landing, 124 jl room
+            short desiredRoom = 0;
+            short.TryParse(targetUri.AbsolutePath.TrimStart('/'), out desiredRoom);
 
-
-            //cassiopeia.fpalace.com:9998/340
-            var logon = new MH_Logon(this, Identity.Name, 340);
+            var logon = new MH_Logon(this, Identity.Name, desiredRoom);
             logon.Write();
         }
     }
