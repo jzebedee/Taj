@@ -17,9 +17,9 @@ namespace Taj.UI
     /// <summary>
     /// Interaction logic for PalaceCanvas.xaml
     /// </summary>
-    public partial class PalaceCanvas : UserControl
+    public partial class PalaceCanvasView : UserControl
     {
-        public PalaceCanvas()
+        public PalaceCanvasView()
         {
             InitializeComponent();
         }

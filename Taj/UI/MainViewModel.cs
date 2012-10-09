@@ -36,7 +36,8 @@ namespace Taj.UI
             var identity = new PalaceUser { Name = new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0,255))).ToString() };
 
             //var pal = new Palace(new Uri("tcp://chat.epalaces.com:9998"));
-            _palCon = new PalaceConnection(new Uri("tcp://oceansapart.epalaces.com:9998"), identity);
+            //cassiopeia.fpalace.com:9998/340
+            _palCon = new PalaceConnection(new Uri("tcp://cassiopeia.fpalace.com:9998"), identity);
             _palCon.Listener.ContinueWith(listenTask => Connected = false);
 
             _palCon.Connect();

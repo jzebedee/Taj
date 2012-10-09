@@ -201,7 +201,7 @@ namespace Taj
                                         case MessageTypes.SERVERINFO:
                                             Debug.WriteLine("EvT: ServerInfo");
                                             var msg_svinfo = new MH_ServerInfo(this, msg);
-                                            Debug.WriteLine("Name: {0}", Palace.Name);
+                                            Debug.WriteLine("Name: {0}", new[] { Palace.Name });
                                             Debug.WriteLine("Permissions: {0}", Palace.Permissions);
                                             break;
                                         case MessageTypes.HTTPSERVER:
@@ -272,7 +272,11 @@ namespace Taj
 
             //TODO: take out the debug room
             //oceansapart.epalaces.com:9998/124
-            var logon = new MH_Logon(this, Identity.Name, 124); //112 landing, 124 jl room
+            // //112 landing, 124 jl room
+
+
+            //cassiopeia.fpalace.com:9998/340
+            var logon = new MH_Logon(this, Identity.Name, 340);
             logon.Write();
         }
     }

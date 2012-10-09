@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Taj.UI
 {
     /// <summary>
-    /// Interaction logic for PalaceProp.xaml
+    /// Interaction logic for PalacePropView.xaml
     /// </summary>
-    public partial class PalaceProp : UserControl
+    public partial class PalacePropView : UserControl
     {
-        public PalaceProp()
+        public PalacePropView()
         {
             InitializeComponent();
         }

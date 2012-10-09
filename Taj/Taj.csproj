@@ -108,15 +108,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\ActionCommand.cs" />
     <Compile Include="UI\BooleanVisibilityConverter.cs" />
+    <Compile Include="UI\PalacePropViewModel.cs" />
+    <Compile Include="UI\PalaceCanvasViewModel.cs" />
     <Compile Include="UI\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainViewModel.cs" />
-    <Compile Include="UI\PalaceCanvas.xaml.cs">
-      <DependentUpon>PalaceCanvas.xaml</DependentUpon>
+    <Compile Include="UI\PalaceCanvasView.xaml.cs">
+      <DependentUpon>PalaceCanvasView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\PalaceProp.xaml.cs">
-      <DependentUpon>PalaceProp.xaml</DependentUpon>
+    <Compile Include="UI\PalacePropView.xaml.cs">
+      <DependentUpon>PalacePropView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CallbackTraceListener.cs" />
     <Compile Include="UI\TextBoxBehavior.cs" />
@@ -130,11 +132,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\PalaceCanvas.xaml">
+    <Page Include="UI\PalaceCanvasView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\PalaceProp.xaml">
+    <Page Include="UI\PalacePropView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
