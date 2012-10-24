@@ -10,20 +10,38 @@ using System.Windows.Input;
 
 namespace Taj.UI
 {
-    public class PalacePropViewModel : INotifyPropertyChanged
+    public class PalacePropViewModel : BaseViewModel
     {
         public PalacePropViewModel()
         {
-
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string propertyName)
+        private double _x;
+        public double X
         {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            get { return _x; }
+            set
+            {
+                if (_x != value)
+                {
+                    _x = value;
+                    RaisePropertyChanged("X");
+                }
+            }
+        }
+
+        private double _y;
+        public double Y
+        {
+            get { return _y; }
+            set
+            {
+                if (_y != value)
+                {
+                    _y = value;
+                    RaisePropertyChanged("Y");
+                }
+            }
         }
     }
 }

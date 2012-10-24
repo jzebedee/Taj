@@ -10,6 +10,6 @@
         <UI:PalacePropViewModel />
     </UserControl.DataContext>
     <Grid>
-            
+            <TextBlock Text="you're scaring me" />
     </Grid>
 </UserControl>

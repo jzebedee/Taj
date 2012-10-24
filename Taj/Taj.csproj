@@ -107,6 +107,7 @@
     <Compile Include="PalaceUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\ActionCommand.cs" />
+    <Compile Include="UI\BaseViewModel.cs" />
     <Compile Include="UI\BooleanVisibilityConverter.cs" />
     <Compile Include="UI\PalacePropViewModel.cs" />
     <Compile Include="UI\PalaceCanvasViewModel.cs" />

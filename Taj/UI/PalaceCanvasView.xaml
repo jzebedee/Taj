@@ -9,6 +9,18 @@
     <UserControl.DataContext>
         <UI:PalaceCanvasViewModel />
     </UserControl.DataContext>
-    <Grid>
-    </Grid>
+    <ItemsControl ItemsSource="{Binding Path=Elements}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Canvas />
+                <!--Background="White" Width="500" Height="500"-->
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemContainerStyle>
+            <Style>
+                <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />
+                <Setter Property="Canvas.Left" Value="{Binding Path=X}" />
+            </Style>
+        </ItemsControl.ItemContainerStyle>
+    </ItemsControl>
 </UserControl>

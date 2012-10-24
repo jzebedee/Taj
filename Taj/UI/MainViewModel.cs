@@ -6,11 +6,12 @@ using System.Diagnostics.Eventing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Taj.UI
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : BaseViewModel
     {
         private PalaceConnection _palCon;
 
@@ -29,11 +30,12 @@ namespace Taj.UI
 
             PalaceConnectCommand = new ActionCommand(PalaceConnect, () => !Connected);
             PalaceDisconnectCommand = new ActionCommand(PalaceDisconnect, () => Connected);
+            TestCanvasCommand = new ActionCommand(() => new Window() { Content = new PalaceCanvasView() }.Show(), () => true);
         }
 
         private void PalaceConnect()
         {
-            var identity = new PalaceUser { Name = new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0,255))).ToString() };
+            var identity = new PalaceUser { Name = new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0, 255))).ToString() };
 
             _palCon = new PalaceConnection(new Uri("tcp://ee.fastpalaces.com:9998/140"), identity);
             _palCon.Listener.ContinueWith(listenTask => Connected = false);
@@ -101,13 +103,18 @@ namespace Taj.UI
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string propertyName)
+        private ICommand _testCanvasCommand;
+        public ICommand TestCanvasCommand
         {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            get { return _testCanvasCommand; }
+            private set
+            {
+                if (_testCanvasCommand != value)
+                {
+                    _testCanvasCommand = value;
+                    RaisePropertyChanged("TestCanvasCommand");
+                }
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Taj.Messages
     {
         public readonly Version Version;
 
-        public MH_ServerVersion(PalaceConnection con, ClientMessage cmsg) : base(con)
+        public MH_ServerVersion(IPalaceConnection con, ClientMessage cmsg) : base(con)
         {
             short
                 refVerLo = (short) (cmsg.refNum),
