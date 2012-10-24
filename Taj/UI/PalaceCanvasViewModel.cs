@@ -4,11 +4,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Eventing;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Taj.UI
 {
@@ -25,6 +28,25 @@ namespace Taj.UI
                 ppvm.X = rand.NextDouble() * 500;
                 ppvm.Y = rand.NextDouble() * 500;
                 Elements.Add(ppv);
+            }
+
+            var imgs = (from path in System.IO.Directory.EnumerateFiles(@"C:\Dropbox\Data", "*.png") select path);
+            var finalimg = imgs.ElementAt(new Random().Next(0, imgs.Count() - 1));
+            Debug.WriteLine(finalimg);
+            Background = new BitmapImage(new Uri(finalimg));
+        }
+
+        private ImageSource _background;
+        public ImageSource Background
+        {
+            get { return _background; }
+            set
+            {
+                if (_background != value)
+                {
+                    _background = value;
+                    RaisePropertyChanged("Background");
+                }
             }
         }
 

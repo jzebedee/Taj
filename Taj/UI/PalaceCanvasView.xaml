@@ -12,7 +12,12 @@
     <ItemsControl ItemsSource="{Binding Path=Elements}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <Canvas />
+                <Canvas>
+                    <Canvas.Background>
+                        <!--<ImageBrush ImageSource="C:\\Dropbox\\Data\\crepe.png" />-->
+                        <ImageBrush ImageSource="{Binding DataContext.Background,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" />
+                    </Canvas.Background>
+                </Canvas>
                 <!--Background="White" Width="500" Height="500"-->
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
