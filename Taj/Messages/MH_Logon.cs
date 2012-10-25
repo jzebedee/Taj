@@ -11,7 +11,7 @@ namespace Taj.Messages
         private readonly AuxRegistrationRec rec;
 
         public MH_Logon(PalaceConnection con, string name, short desiredRoom = 0, uint puidCtr = guest_puidCtr,
-                        uint puidCRC = guest_puidCRC) : base(con, false)
+                        uint puidCRC = guest_puidCRC) : base(con)
         {
             rec = new AuxRegistrationRec
                       {

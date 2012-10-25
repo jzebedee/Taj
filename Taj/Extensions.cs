@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using MiscUtil.IO;
 
 namespace Taj
@@ -34,7 +35,22 @@ namespace Taj
             if (readBytes.Length != structSize)
                 throw new ArgumentException("Size of bytes read did not match struct size");
 
-            GCHandle pin_bytes = GCHandle.Alloc(readBytes, GCHandleType.Pinned);
+            return readBytes.MarshalStruct<T>();
+        }
+
+        public static async Task<T> ReadStructAsync<T>(this EndianBinaryReader reader, int? Size = null) where T : struct
+        {
+            int structSize = Size ?? Marshal.SizeOf(typeof(T));
+            byte[] readBytes = await reader.ReadBytesAsync(structSize);
+            if (readBytes.Length != structSize)
+                throw new ArgumentException("Size of bytes read did not match struct size");
+
+            return readBytes.MarshalStruct<T>();
+        }
+
+        public static T MarshalStruct<T>(this byte[] buf) where T : struct
+        {
+            GCHandle pin_bytes = GCHandle.Alloc(buf, GCHandleType.Pinned);
             try
             {
                 return (T)Marshal.PtrToStructure(pin_bytes.AddrOfPinnedObject(), typeof(T));

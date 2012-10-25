@@ -2,16 +2,14 @@
 
 namespace Taj.Messages
 {
-    public abstract class MessageHeader
+    public abstract class MessageHeader : IClientMessage
     {
         protected readonly ClientMessage ClientMsg;
         private readonly IPalaceConnection Connection;
 
-        public MessageHeader(IPalaceConnection con, bool readHeader = false)
+        public MessageHeader(IPalaceConnection con)
         {
             Connection = con;
-            if (readHeader)
-                ClientMsg = Reader.ReadStruct<ClientMessage>();
         }
 
         public MessageHeader(IPalaceConnection con, ClientMessage cmsg)

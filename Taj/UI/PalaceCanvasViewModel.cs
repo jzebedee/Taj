@@ -20,20 +20,11 @@ namespace Taj.UI
         public PalaceCanvasViewModel()
         {
             Elements = new ObservableCollection<UIElement>();
-            var rand = new Random();
-            for (int i = 0; i < 40; i++)
-            {
-                var ppv = new PalacePropView();
-                var ppvm = ppv.DataContext as PalacePropViewModel;
-                ppvm.X = rand.NextDouble() * 500;
-                ppvm.Y = rand.NextDouble() * 500;
-                Elements.Add(ppv);
-            }
+        }
 
-            var imgs = (from path in System.IO.Directory.EnumerateFiles(@"C:\Dropbox\Data", "*.png") select path);
-            var finalimg = imgs.ElementAt(new Random().Next(0, imgs.Count() - 1));
-            Debug.WriteLine(finalimg);
-            Background = new BitmapImage(new Uri(finalimg));
+        public void SetBackground(Uri target)
+        {
+            Background = new BitmapImage(target);
         }
 
         private ImageSource _background;

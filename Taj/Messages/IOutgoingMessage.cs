@@ -1,6 +1,6 @@
 ﻿namespace Taj.Messages
 {
-    public interface IOutgoingMessage
+    public interface IOutgoingMessage : IClientMessage
     {
         void Write();
     }
