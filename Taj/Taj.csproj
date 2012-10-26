@@ -85,6 +85,12 @@
     <Compile Include="IPalaceConnection.cs" />
     <Compile Include="Messages\AuxRegistrationRec.cs" />
     <Compile Include="Messages\ClientMessage.cs" />
+    <Compile Include="Messages\Flags\AuxFlags.cs" />
+    <Compile Include="Messages\Flags\ul3DEngineCapsFlags.cs" />
+    <Compile Include="Messages\Flags\ul2DGraphicsCapsFlags.cs" />
+    <Compile Include="Messages\Flags\ul2DEngineCapsFlags.cs" />
+    <Compile Include="Messages\Flags\ulDownloadCapsFlags.cs" />
+    <Compile Include="Messages\Flags\ulUploadCapsFlags.cs" />
     <Compile Include="Messages\IClientMessage.cs" />
     <Compile Include="Messages\MH_Logoff.cs" />
     <Compile Include="Messages\MessageHeader.cs" />
@@ -105,9 +111,9 @@
     <Compile Include="Messages\MH_Talk.cs" />
     <Compile Include="Messages\MessageTypes.cs" />
     <Compile Include="Messages\MH_UserStatus.cs" />
-    <Compile Include="Messages\ServerOptions.cs" />
-    <Compile Include="Messages\ServerPermissions.cs" />
-    <Compile Include="Messages\UserFlags.cs" />
+    <Compile Include="Messages\Flags\ServerOptionsFlags.cs" />
+    <Compile Include="Messages\Flags\ServerPermissionsFlags.cs" />
+    <Compile Include="Messages\Flags\UserFlags.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
     <Compile Include="PalaceEncryption.cs" />
@@ -116,6 +122,10 @@
     <Compile Include="UI\ActionCommand.cs" />
     <Compile Include="UI\BaseViewModel.cs" />
     <Compile Include="UI\BooleanVisibilityConverter.cs" />
+    <Compile Include="UI\DebugViewModel.cs" />
+    <Compile Include="UI\DebugView.xaml.cs">
+      <DependentUpon>DebugView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\PalacePropViewModel.cs" />
     <Compile Include="UI\PalaceCanvasViewModel.cs" />
     <Compile Include="UI\MainView.xaml.cs">
@@ -136,6 +146,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="UI\DebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

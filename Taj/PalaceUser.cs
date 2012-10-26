@@ -1,4 +1,5 @@
 ﻿using Taj.Messages;
+using Taj.Messages.Flags;
 using UserID = System.Int32;
 
 namespace Taj

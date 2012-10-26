@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Taj.Messages
+namespace Taj.Messages.Flags
 {
     [Flags]
-    public enum ServerOptions : uint
+    public enum ServerOptionsFlags : uint
     {
         SaveSessionKeys     = 0x00000001, //server logs regcodes of users (obsolete)
         PasswordSecurity    = 0x00000002, //you need a password to use this server

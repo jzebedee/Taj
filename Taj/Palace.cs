@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Taj.Messages;
+using Taj.Messages.Flags;
 
 namespace Taj
 {
@@ -9,7 +10,7 @@ namespace Taj
     {
         public Version Version { get; set; }
         public Uri HTTPServer { get; set; }
-        public ServerPermissions Permissions { get; set; }
+        public ServerPermissionsFlags Permissions { get; set; }
         public string Name { get; set; }
         public int UserCount { get; set; }
 

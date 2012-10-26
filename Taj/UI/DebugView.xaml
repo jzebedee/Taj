@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="Taj.UI.DebugView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:UI="clr-namespace:Taj.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <UI:BooleanVisibilityConverter x:Key="BoolVisConverter"/>
+        <UI:BooleanVisibilityConverter x:Key="!BoolVisConverter" Reverse="True"/>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <UI:DebugViewModel />
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                 IsReadOnly="True" TextWrapping="Wrap" UI:TextBoxBehavior.ScrollOnTextChanged="True" ScrollViewer.VerticalScrollBarVisibility="Visible" Text="{Binding Output,Mode=OneWay}" />
+        <Button Content="Connect" Grid.Row="1" Grid.Column="0" Command="{Binding PalaceConnectCommand}" Visibility="{Binding Connected,Mode=OneWay,Converter={StaticResource !BoolVisConverter}}" />
+        <Button Content="Disconnect" Grid.Row="1" Grid.Column="0" Command="{Binding PalaceDisconnectCommand}" Visibility="{Binding Connected,Mode=OneWay,Converter={StaticResource BoolVisConverter}}" />
+        <Button Content="Show Test Canvas" Grid.Row="1" Grid.Column="1" Command="{Binding TestCanvasCommand}" />
+    </Grid>
+</UserControl>

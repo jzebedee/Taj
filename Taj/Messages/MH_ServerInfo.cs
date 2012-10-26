@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Taj.Messages.Flags;
 
 namespace Taj.Messages
 {
@@ -8,7 +9,7 @@ namespace Taj.Messages
         public MH_ServerInfo(PalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
-            Palace.Permissions = (ServerPermissions)Reader.ReadUInt32();
+            Palace.Permissions = (ServerPermissionsFlags)Reader.ReadUInt32();
             Palace.Name = Reader.ReadPString();
 
             //The server is shortchanging us?

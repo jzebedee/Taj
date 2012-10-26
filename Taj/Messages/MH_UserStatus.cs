@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Taj.Messages.Flags;
 
 namespace Taj.Messages
 {

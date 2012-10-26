@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Taj.Messages.Flags;
 
 namespace Taj.Messages
 {
@@ -19,7 +20,7 @@ namespace Taj.Messages
                           counter = 0xcf07309c, //cribbed guest from OP
                           userName = name.ToPString(31),
                           wizPassword = string.Empty.ToPString(31),
-                          auxFlags = 0x80000004, //AUXFLAGS_AUTHENTICATE | AUXFLAGS_WIN32
+                          auxFlags = AuxFlags.Authenticate | AuxFlags.Win32,
                           puidCtr = puidCtr, //cribbed guest from OP
                           puidCRC = puidCRC, //cribbed guest from OP
 
@@ -30,11 +31,11 @@ namespace Taj.Messages
                           desiredRoom = desiredRoom,
                           reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"),
                           ulRequestedProtocolVersion = 0,
-                          ulUploadCaps = 0x1, //ULCAPS_ASSETS_PALACE
-                          ulDownloadCaps = 0x111, //DLCAPS_ASSETS_PALACE | DLCAPS_FILES_PALACE | DLCAPS_FILES_HTTPSRVR
-                          ul2DEngineCaps = 0,
-                          ul2DGraphicsCaps = 0,
-                          ul3DEngineCaps = 0,
+                          ulUploadCaps = ulUploadCapsFlags.ASSETS_PALACE,
+                          ulDownloadCaps = ulDownloadCapsFlags.ASSETS_PALACE | ulDownloadCapsFlags.FILES_PALACE | ulDownloadCapsFlags.FILES_HTTPSrvr,
+                          ul2DEngineCaps = ul2DEngineCapsFlags.NONE,
+                          ul2DGraphicsCaps = ul2DGraphicsCapsFlags.NONE,
+                          ul3DEngineCaps = ul3DEngineCapsFlags.NONE,
                       };
         }
 
