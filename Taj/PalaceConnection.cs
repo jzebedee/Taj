@@ -20,11 +20,12 @@ namespace Taj
         private CancellationToken listenerToken { get { return listenerTokenSrc.Token; } }
 
         private readonly Uri targetUri;
+        private string Username;
 
-        public PalaceConnection(Uri target, PalaceUser identity)
+        public PalaceConnection(Uri target, string username)
         {
             targetUri = target;
-            Identity = identity;
+            Username = username;
             Listener = new Task(Listen, listenerToken, TaskCreationOptions.LongRunning);
         }
 
@@ -91,6 +92,7 @@ namespace Taj
             try
             {
                 connection = new TcpClient(targetUri.Host, targetUri.Port);
+                Palace = new Palace();
 
                 using (var stream = connection.GetStream())
                 {
@@ -99,8 +101,6 @@ namespace Taj
                     {
                         using (Writer)
                         {
-                            Palace = new Palace();
-
                             //var op_msg = new MH_SMsg("This client is running Taj DEBUG build. Please notify Scorpion of any questions or concerns.");
                             //op_msg.Write(Writer);
                             //Debug.WriteLine("OP_SMSG sent");
@@ -294,7 +294,9 @@ namespace Taj
 
             uint length = Reader.ReadUInt32();
             int refNum = Reader.ReadInt32(); //userID for client
-            Identity.ID = refNum;
+
+            Identity = Palace.GetUserByID(refNum, true);
+            Identity.Name = Username;
 
             short desiredRoom = 0;
             short.TryParse(targetUri.AbsolutePath.TrimStart('/'), out desiredRoom);

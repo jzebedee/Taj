@@ -18,12 +18,38 @@ namespace Taj
             return builder.ToString();
         }
 
+        public static string MarshalCString(this byte[] buf, int offset = 0)
+        {
+            buf = TrimBuffer(buf, offset);
+
+            var builder = new StringBuilder();
+
+            byte cur;
+            for (int i = 0; ((cur = buf[i]) != '\0'); i++)
+                builder.Append((char)cur);
+
+            return builder.ToString();
+        }
+
         public static string ReadPString(this EndianBinaryReader reader)
         {
             var builder = new StringBuilder();
 
             byte length = reader.ReadByte();
             while (length-- > 0) builder.Append((char)reader.ReadByte());
+
+            return builder.ToString();
+        }
+
+        public static string MarshalPString(this byte[] buf, int offset = 0)
+        {
+            byte length = buf[offset];
+
+            buf = TrimBuffer(buf, offset + 1, length);
+
+            var builder = new StringBuilder();
+
+            for (byte i = length; i > 0; ) builder.Append((char)buf[length - i--]);
 
             return builder.ToString();
         }
@@ -48,8 +74,10 @@ namespace Taj
             return readBytes.MarshalStruct<T>();
         }
 
-        public static T MarshalStruct<T>(this byte[] buf) where T : struct
+        public static T MarshalStruct<T>(this byte[] buf, int offset = 0, int length = -1) where T : struct
         {
+            buf = TrimBuffer(buf, offset, length);
+
             GCHandle pin_bytes = GCHandle.Alloc(buf, GCHandleType.Pinned);
             try
             {
@@ -59,6 +87,18 @@ namespace Taj
             {
                 pin_bytes.Free();
             }
+        }
+
+        public static byte[] TrimBuffer(this byte[] buf, int offset, int length = -1)
+        {
+            if (offset == 0)
+                return buf;
+
+            var newLength = (length < 0 ? buf.Length - offset : length);
+            var newBuf = new byte[newLength];
+            Array.Copy(buf, offset, newBuf, 0, newLength);
+
+            return newBuf;
         }
 
         public static void WriteStruct<T>(this EndianBinaryWriter writer, T obj) where T : struct

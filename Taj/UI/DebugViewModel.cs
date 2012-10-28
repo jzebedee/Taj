@@ -35,9 +35,7 @@ namespace Taj.UI
 
         private void PalaceConnect()
         {
-            var identity = new PalaceUser { Name = new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0, 255))).ToString() };
-
-            _palCon = new PalaceConnection(new Uri("tcp://ee.fastpalaces.com:9998/140"), identity);
+            _palCon = new PalaceConnection(new Uri("tcp://ee.fastpalaces.com:9998/140"), new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0, 255))).ToString());
             _palCon.Listener.ContinueWith(listenTask => Connected = false);
 
             _palCon.Connect();

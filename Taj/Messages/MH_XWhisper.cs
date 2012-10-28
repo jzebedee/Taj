@@ -23,7 +23,7 @@ namespace Taj.Messages
             Reader.ReadByte();
             Text = PalaceEncryption.Decrypt(xmsg);
 
-            Target = new PalaceUser {ID = cmsg.refNum};
+            Target = Palace.GetUserByID(cmsg.refNum, true);
         }
 
         public string Text { get; private set; }
@@ -37,13 +37,13 @@ namespace Taj.Messages
             Writer.WriteStruct(new ClientMessage
                                    {
                                        eventType = MessageTypes.XWHISPER,
-                                       length = sizeof (int) + sizeof (short) + xmsg.Length + 1,
+                                       length = sizeof(int) + sizeof(short) + xmsg.Length + 1,
                                        refNum = Identity.ID,
                                    });
             Writer.Write(Target.ID);
-            Writer.Write((short) (xmsg.Length + 3));
+            Writer.Write((short)(xmsg.Length + 3));
             Writer.Write(xmsg);
-            Writer.Write((byte) 0);
+            Writer.Write((byte)0);
             Writer.Flush();
         }
 

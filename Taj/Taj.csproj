@@ -83,6 +83,9 @@
     <Compile Include="Clever.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IPalaceConnection.cs" />
+    <Compile Include="Messages\Flags\RoomFlags.cs" />
+    <Compile Include="Messages\Flags\HotspotScriptEventMask.cs" />
+    <Compile Include="Messages\Structures\AssetSpec.cs" />
     <Compile Include="Messages\Structures\AuxRegistrationRec.cs" />
     <Compile Include="Messages\Structures\ClientMessage.cs" />
     <Compile Include="Messages\Flags\AuxFlags.cs" />
@@ -114,10 +117,17 @@
     <Compile Include="Messages\Flags\ServerOptionsFlags.cs" />
     <Compile Include="Messages\Flags\ServerPermissionsFlags.cs" />
     <Compile Include="Messages\Flags\UserFlags.cs" />
+    <Compile Include="Messages\Structures\DrawRec.cs" />
+    <Compile Include="Messages\Structures\HotspotRec.cs" />
+    <Compile Include="Messages\Structures\LLRec.cs" />
+    <Compile Include="Messages\Structures\LPropRec.cs" />
+    <Compile Include="Messages\Structures\PictureRec.cs" />
+    <Compile Include="Messages\Structures\Point.cs" />
     <Compile Include="Messages\Structures\RoomRec.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
     <Compile Include="PalaceEncryption.cs" />
+    <Compile Include="PalaceRoom.cs" />
     <Compile Include="PalaceUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\ActionCommand.cs" />

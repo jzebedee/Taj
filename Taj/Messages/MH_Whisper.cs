@@ -22,7 +22,7 @@ namespace Taj.Messages
             : base(con, cmsg)
         {
             Text = Reader.ReadCString();
-            Target = new PalaceUser {ID = cmsg.refNum};
+            Target = Palace.GetUserByID(cmsg.refNum, true);
         }
 
         #region IOutgoingMessage Members
