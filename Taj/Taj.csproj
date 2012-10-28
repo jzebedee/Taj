@@ -83,8 +83,8 @@
     <Compile Include="Clever.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IPalaceConnection.cs" />
-    <Compile Include="Messages\AuxRegistrationRec.cs" />
-    <Compile Include="Messages\ClientMessage.cs" />
+    <Compile Include="Messages\Structures\AuxRegistrationRec.cs" />
+    <Compile Include="Messages\Structures\ClientMessage.cs" />
     <Compile Include="Messages\Flags\AuxFlags.cs" />
     <Compile Include="Messages\Flags\ul3DEngineCapsFlags.cs" />
     <Compile Include="Messages\Flags\ul2DGraphicsCapsFlags.cs" />
@@ -114,6 +114,7 @@
     <Compile Include="Messages\Flags\ServerOptionsFlags.cs" />
     <Compile Include="Messages\Flags\ServerPermissionsFlags.cs" />
     <Compile Include="Messages\Flags\UserFlags.cs" />
+    <Compile Include="Messages\Structures\RoomRec.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
     <Compile Include="PalaceEncryption.cs" />

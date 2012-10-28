@@ -4,6 +4,7 @@ using MiscUtil.Conversion;
 using MiscUtil.IO;
 using Taj;
 using Taj.Messages;
+using Taj.Messages.Structures;
 
 namespace TajTests
 {

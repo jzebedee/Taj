@@ -1,4 +1,5 @@
-﻿namespace Taj.Messages
+﻿using Taj.Messages.Structures;
+namespace Taj.Messages
 {
     public class MH_PingPong : MessageHeader, IOutgoingMessage
     {

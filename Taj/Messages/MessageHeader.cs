@@ -1,4 +1,5 @@
 ﻿using MiscUtil.IO;
+using Taj.Messages.Structures;
 
 namespace Taj.Messages
 {

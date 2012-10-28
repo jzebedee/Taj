@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Taj.Messages.Flags;
 
-namespace Taj.Messages
+namespace Taj.Messages.Structures
 {
     [StructLayout(LayoutKind.Sequential, Size = 128)]
     internal struct AuxRegistrationRec

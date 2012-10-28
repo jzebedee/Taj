@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Taj.Messages.Flags;
+using Taj.Messages.Structures;
 
 namespace Taj.Messages
 {

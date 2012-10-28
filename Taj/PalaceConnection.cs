@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MiscUtil.Conversion;
 using MiscUtil.IO;
 using Taj.Messages;
+using Taj.Messages.Structures;
 
 namespace Taj
 {
@@ -123,7 +124,7 @@ namespace Taj
                                 if (readtask.Result == sizeof_header)
                                 {
                                     var msg = bufHeader.MarshalStruct<ClientMessage>();
-
+                                    
                                     HandleMessage(msg);
                                     Debug.WriteLine("--");
                                 };
@@ -197,32 +198,32 @@ namespace Taj
                     Debug.WriteLine("EvT: XTalk");
                     var msg_xtalk = new MH_XTalk(this, msg);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_xtalk.Text, msg.refNum);
-                    if (Identity.ID != msg.refNum)
-                    {
-                        var newxtalk = new MH_XTalk(this, clever.Think(msg_xtalk.Text));
-                        newxtalk.Write();
-                    }
+                    //if (Identity.ID != msg.refNum)
+                    //{
+                    //    var newxtalk = new MH_XTalk(this, clever.Think(msg_xtalk.Text));
+                    //    newxtalk.Write();
+                    //}
                     break;
                 case MessageTypes.WHISPER:
                     Debug.WriteLine("EvT: Whisper");
                     var msg_whisp = new MH_Whisper(this, msg);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_whisp.Text, msg_whisp.Target.ID);
-                    if (msg_whisp.Target.ID != Identity.ID)
-                    {
-                        var msg_whisp_out = new MH_Whisper(this, msg_whisp.Target, new string(msg_whisp.Text.Reverse().ToArray()));
-                        msg_whisp_out.Write();
-                    }
+                    //if (msg_whisp.Target.ID != Identity.ID)
+                    //{
+                    //    var msg_whisp_out = new MH_Whisper(this, msg_whisp.Target, new string(msg_whisp.Text.Reverse().ToArray()));
+                    //    msg_whisp_out.Write();
+                    //}
                     break;
                 case MessageTypes.XWHISPER:
                     Debug.WriteLine("EvT: XWhisper");
                     var msg_xwhisp = new MH_XWhisper(this, msg);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_xwhisp.Text, msg_xwhisp.Target.ID);
-                    if (msg_xwhisp.Target.ID != Identity.ID)
-                    {
-                        //var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, clever.Think(msg_xwhisp.Text));
-                        var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
-                        msg_xwhisp_out.Write();
-                    }
+                    //if (msg_xwhisp.Target.ID != Identity.ID)
+                    //{
+                    //    //var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, clever.Think(msg_xwhisp.Text));
+                    //    var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
+                    //    msg_xwhisp_out.Write();
+                    //}
                     break;
                 case MessageTypes.ROOMDESC:
                     Debug.WriteLine("EvT: RoomDesc");

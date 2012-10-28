@@ -1,4 +1,5 @@
 ﻿using System;
+using Taj.Messages.Structures;
 
 namespace Taj.Messages
 {

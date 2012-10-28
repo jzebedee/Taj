@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Taj.Messages.Structures;
 
 namespace Taj.Messages
 {

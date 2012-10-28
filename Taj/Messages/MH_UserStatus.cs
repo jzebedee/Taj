@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Taj.Messages.Flags;
+using Taj.Messages.Structures;
 
 namespace Taj.Messages
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Taj.Messages
+namespace Taj.Messages.Structures
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ClientMessage
