@@ -8,8 +8,13 @@ namespace Taj.Messages
         public MH_UserList(IPalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
-            Debug.WriteLine("MH_UserList is unimplemented, and skipping itself ahead.");
-            Reader.ReadBytes(cmsg.length);
+            for (int numUsers = cmsg.refNum; numUsers > 0; numUsers--)
+            {
+                var userRec = Reader.ReadStruct<UserRec>();
+                var user = Palace.GetUserByID(userRec.userID, true);
+
+                user.Name = userRec.name.MarshalPString();
+            }
         }
     }
 }

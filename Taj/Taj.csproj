@@ -83,6 +83,7 @@
     <Compile Include="Clever.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IPalaceConnection.cs" />
+    <Compile Include="Messages\AssetType.cs" />
     <Compile Include="Messages\Flags\RoomFlags.cs" />
     <Compile Include="Messages\Flags\HotspotScriptEventMask.cs" />
     <Compile Include="Messages\Structures\AssetSpec.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Messages\Structures\PictureRec.cs" />
     <Compile Include="Messages\Structures\Point.cs" />
     <Compile Include="Messages\Structures\RoomRec.cs" />
+    <Compile Include="Messages\Structures\UserRec.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
     <Compile Include="PalaceEncryption.cs" />

@@ -85,7 +85,6 @@ namespace Taj
                 GC.SuppressFinalize(this);
         }
 
-        static Clever clever = new Clever();
         private void Listen()
         {
             TcpClient connection = null;
