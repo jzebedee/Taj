@@ -80,6 +80,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Assets\FlatFileManager.cs" />
+    <Compile Include="Assets\IAssetManager.cs" />
     <Compile Include="Clever.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="IPalaceConnection.cs" />
