@@ -1,19 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
 using Taj.Messages.Structures;
 
 namespace Taj.Messages
 {
     public class MH_ServerVersion : MessageHeader
     {
-        public readonly Version Version;
-
-        public MH_ServerVersion(IPalaceConnection con, ClientMessage cmsg) : base(con)
+        public MH_ServerVersion(IPalaceConnection con, ClientMessage cmsg)
+            : base(con)
         {
             short
-                refVerLo = (short) (cmsg.refNum),
-                refVerHi = (short) (cmsg.refNum >> 16);
+                refVerLo = (short)(cmsg.refNum),
+                refVerHi = (short)(cmsg.refNum >> 16);
 
-            Version = new Version(refVerHi, refVerLo);
+            Palace.Version = new Version(refVerHi, refVerLo);
+            Debug.WriteLine("v{0}", Palace.Version);
         }
     }
 }

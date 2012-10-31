@@ -59,6 +59,8 @@ namespace Taj.Messages
             }
 
             var finalread = Reader.ReadInt32();
+
+            Palace.CurrentRoom = room;
         }
     }
 }

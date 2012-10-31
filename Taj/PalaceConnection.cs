@@ -20,12 +20,13 @@ namespace Taj
         private CancellationToken listenerToken { get { return listenerTokenSrc.Token; } }
 
         private readonly Uri targetUri;
-        private string Username;
 
-        public PalaceConnection(Uri target, string username)
+        public EventHandler Connected = (sender, e) => { };
+
+        public PalaceConnection(Uri target, PalaceIdentity identity)
         {
             targetUri = target;
-            Username = username;
+            Identity = identity;
             Listener = new Task(Listen, listenerToken, TaskCreationOptions.LongRunning);
         }
 
@@ -55,7 +56,7 @@ namespace Taj
         public EndianBinaryWriter Writer { get; private set; }
 
         public Palace Palace { get; private set; }
-        public PalaceUser Identity { get; private set; }
+        public PalaceIdentity Identity { get; private set; }
 
         #endregion
 
@@ -91,7 +92,7 @@ namespace Taj
             try
             {
                 connection = new TcpClient(targetUri.Host, targetUri.Port);
-                Palace = new Palace();
+                Palace = new Palace(this);
 
                 using (var stream = connection.GetStream())
                 {
@@ -105,6 +106,8 @@ namespace Taj
                             //Debug.WriteLine("OP_SMSG sent");
 
                             //var timer = new Timer(o => { connection.Close(); }, null, 6000, 3000);
+
+                            Connected(this, new EventArgs());
 
                             const int sizeof_header = 12; //sizeof(ClientMessage)
                             var bufHeader = new byte[sizeof_header];
@@ -123,9 +126,13 @@ namespace Taj
                                 if (readtask.Result == sizeof_header)
                                 {
                                     var msg = bufHeader.MarshalStruct<ClientMessage>();
-                                    
+
+                                    Debug.WriteLine("Message: " + Enum.GetName(typeof(MessageTypes), msg.eventType));
+                                    Debug.WriteLine("{");
+                                    Debug.Indent();
                                     HandleMessage(msg);
-                                    Debug.WriteLine("--");
+                                    Debug.Unindent();
+                                    Debug.WriteLine("}");
                                 };
                             }
 
@@ -134,13 +141,13 @@ namespace Taj
                         }
                     }
                 }
+                Debug.WriteLine("Listening ended");
             }
             catch (Exception e)
             {
                 if (e is IOException || e is ObjectDisposedException)
                     Trace.TraceError(e.ToString());
-                else
-                    throw e;
+                else throw;
             }
             finally
             {
@@ -164,37 +171,25 @@ namespace Taj
                     Debug.WriteLine("Pong.");
                     break;
                 case MessageTypes.USERSTATUS:
-                    Debug.WriteLine("EvT: UserStatus");
                     var msg_ustatus = new MH_UserStatus(this, msg);
-                    Debug.WriteLine("Target: {0}", msg_ustatus.Target);
-                    Debug.WriteLine("Flags: {0}", msg_ustatus.Target.Flags);
                     break;
                 case MessageTypes.USERLOG:
-                    Debug.WriteLine("EvT: UserLog");
                     var msg_ulog = new MH_UserLog(this, msg);
-                    Debug.WriteLine("{0} users, {1} joined", msg_ulog.UserCount, msg_ulog.NewUser);
                     break;
                 case MessageTypes.USERLIST:
-                    Debug.WriteLine("EvT: UserList");
                     var msg_ulist = new MH_UserList(this, msg);
                     break;
                 case MessageTypes.USERNEW:
-                    Debug.WriteLine("EvT: UserNew");
                     var msg_unew = new MH_UserNew(this, msg);
                     break;
                 case MessageTypes.LOGOFF:
-                    Debug.WriteLine("EvT: Logoff");
                     var msg_logoff = new MH_Logoff(this, msg);
-                    Debug.WriteLine("Lost user {0}", msg_logoff.LostUser);
-                    Debug.WriteLine("New user count: {0}", msg_logoff.UserCount);
                     break;
                 case MessageTypes.TALK:
-                    Debug.WriteLine("EvT: Talk");
                     var msg_talk = new MH_Talk(this);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_talk.Text, msg.refNum);
                     break;
                 case MessageTypes.XTALK:
-                    Debug.WriteLine("EvT: XTalk");
                     var msg_xtalk = new MH_XTalk(this, msg);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_xtalk.Text, msg.refNum);
                     //if (Identity.ID != msg.refNum)
@@ -204,7 +199,6 @@ namespace Taj
                     //}
                     break;
                 case MessageTypes.WHISPER:
-                    Debug.WriteLine("EvT: Whisper");
                     var msg_whisp = new MH_Whisper(this, msg);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_whisp.Text, msg_whisp.Target.ID);
                     //if (msg_whisp.Target.ID != Identity.ID)
@@ -214,7 +208,6 @@ namespace Taj
                     //}
                     break;
                 case MessageTypes.XWHISPER:
-                    Debug.WriteLine("EvT: XWhisper");
                     var msg_xwhisp = new MH_XWhisper(this, msg);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_xwhisp.Text, msg_xwhisp.Target.ID);
                     //if (msg_xwhisp.Target.ID != Identity.ID)
@@ -225,29 +218,18 @@ namespace Taj
                     //}
                     break;
                 case MessageTypes.ROOMDESC:
-                    Debug.WriteLine("EvT: RoomDesc");
                     var msg_roomdesc = new MH_RoomDesc(this, msg);
                     break;
                 case MessageTypes.ROOMDESCEND:
-                    Debug.WriteLine("EvT: RoomDescEnd");
                     break;
                 case MessageTypes.VERSION:
                     var mh_sv = new MH_ServerVersion(this, msg);
-                    Palace.Version = mh_sv.Version;
-                    Debug.WriteLine("EvT: ServerVersion");
-                    Debug.WriteLine("v{0}.", mh_sv.Version);
                     break;
                 case MessageTypes.SERVERINFO:
-                    Debug.WriteLine("EvT: ServerInfo");
                     var msg_svinfo = new MH_ServerInfo(this, msg);
-                    Debug.WriteLine("Name: {0}", new[] { Palace.Name });
-                    Debug.WriteLine("Permissions: {0}", Palace.Permissions);
                     break;
                 case MessageTypes.HTTPSERVER:
-                    Debug.WriteLine("EvT: HTTPServer");
                     var msg_httpsv = new MH_HTTPServer(this);
-                    Debug.WriteLine("HTTPServer URI: {0}", msg_httpsv.Location);
-                    Palace.HTTPServer = msg_httpsv.Location;
                     break;
                 default:
                     Debug.WriteLine("Unknown EvT: {0} (0x{1:X8})", msg.eventType, (uint)msg.eventType);
@@ -294,8 +276,7 @@ namespace Taj
             uint length = Reader.ReadUInt32();
             int refNum = Reader.ReadInt32(); //userID for client
 
-            Identity = Palace.GetUserByID(refNum, true);
-            Identity.Name = Username;
+            Palace.CurrentUser = Palace.GetUserByID(refNum, true);
 
             short desiredRoom = 0;
             short.TryParse(targetUri.AbsolutePath.TrimStart('/'), out desiredRoom);

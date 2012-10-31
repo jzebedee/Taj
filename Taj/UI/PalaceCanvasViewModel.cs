@@ -9,17 +9,34 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Taj.UI
 {
-    public class PalaceCanvasViewModel : BaseViewModel
+    public class PalaceCanvasViewModel : BaseNotificationModel
     {
+        private Palace _palace;
+        public Palace Palace
+        {
+            get
+            {
+                return _palace;
+            }
+            set
+            {
+                if (_palace != value)
+                {
+                    _palace = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public PalaceCanvasViewModel()
         {
-            Elements = new ObservableCollection<UIElement>();
         }
 
         public void SetBackground(Uri target)
@@ -36,21 +53,7 @@ namespace Taj.UI
                 if (_background != value)
                 {
                     _background = value;
-                    RaisePropertyChanged("Background");
-                }
-            }
-        }
-
-        private ObservableCollection<UIElement> _elements;
-        public ObservableCollection<UIElement> Elements
-        {
-            get { return _elements; }
-            private set
-            {
-                if (_elements != value)
-                {
-                    _elements = value;
-                    RaisePropertyChanged("Elements");
+                    RaisePropertyChanged();
                 }
             }
         }

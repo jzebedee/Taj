@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Taj.UI
+namespace Taj
 {
-    public abstract class BaseViewModel : INotifyPropertyChanged
+    public abstract class BaseNotificationModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void RaisePropertyChanged(string propertyName)
+        protected virtual void RaisePropertyChanged([CallerMemberName]string propertyName = "")
         {
             var handler = this.PropertyChanged;
             if (handler != null)

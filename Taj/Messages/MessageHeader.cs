@@ -34,9 +34,9 @@ namespace Taj.Messages
             get { return Connection.Writer; }
         }
 
-        protected PalaceUser Identity
+        protected PalaceUser CurrentUser
         {
-            get { return Connection.Identity; }
+            get { return Connection.Palace.CurrentUser; }
         }
     }
 }

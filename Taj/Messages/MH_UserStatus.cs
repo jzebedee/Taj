@@ -10,18 +10,10 @@ namespace Taj.Messages
 {
     public class MH_UserStatus : MessageHeader
     {
-        public PalaceUser Target { get; private set; }
-
         public MH_UserStatus(IPalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
-            //var tbytes = Reader.ReadBytes(tlen);
-            //using (var writer = new BinaryWriter(File.OpenWrite("userstatus.dump")))
-            //    writer.Write(tbytes);
-            //
-            //throw new Exception();
-
-            Target = Palace.GetUserByID(cmsg.refNum, true);
+            var Target = Palace.GetUserByID(cmsg.refNum, true);
             Target.Flags = (UserFlags)Reader.ReadInt16();
 
             var unk1 = Reader.ReadInt16();
@@ -43,6 +35,9 @@ namespace Taj.Messages
 
             //var unk10 = Reader.ReadInt32();
             //var unk11 = Reader.ReadInt16();// 32();
+
+            Debug.WriteLine("Target: {0}", Target);
+            Debug.WriteLine("Flags: {0}", Target.Flags);
         }
     }
 }

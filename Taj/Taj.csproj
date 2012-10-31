@@ -131,11 +131,13 @@
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
     <Compile Include="PalaceEncryption.cs" />
+    <Compile Include="PalaceIdentity.cs" />
+    <Compile Include="PalaceObject.cs" />
     <Compile Include="PalaceRoom.cs" />
     <Compile Include="PalaceUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\ActionCommand.cs" />
-    <Compile Include="UI\BaseViewModel.cs" />
+    <Compile Include="BaseNotificationModel.cs" />
     <Compile Include="UI\BooleanVisibilityConverter.cs" />
     <Compile Include="UI\DebugViewModel.cs" />
     <Compile Include="UI\DebugView.xaml.cs">

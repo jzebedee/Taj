@@ -9,7 +9,7 @@
     <UserControl.DataContext>
         <UI:PalaceCanvasViewModel />
     </UserControl.DataContext>
-    <ItemsControl ItemsSource="{Binding Path=Elements}">
+    <ItemsControl ItemsSource="{Binding Path=Palace.CurrentRoom.Users}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <Canvas>
@@ -21,6 +21,11 @@
                 <!--Background="White" Width="500" Height="500"-->
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
+        <!--<ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Ellipse Width="25" Height="25" Fill="Red" />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>-->
         <ItemsControl.ItemContainerStyle>
             <Style>
                 <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />

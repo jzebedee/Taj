@@ -11,13 +11,10 @@ using System.Windows.Input;
 
 namespace Taj.UI
 {
-    public class MainViewModel : BaseViewModel
+    public class MainViewModel : BaseNotificationModel
     {
         public MainViewModel()
         {
-#if DEBUG
-            new Window() { Title = "Debug Window", Content = new DebugView() }.Show();
-#endif
         }
     }
 }

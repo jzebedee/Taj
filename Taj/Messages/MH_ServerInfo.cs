@@ -17,6 +17,9 @@ namespace Taj.Messages
             //var options = (ServerOptions)Reader.ReadUInt32();
             //var ulUploadCaps = Reader.ReadUInt32();
             //var ulDownloadCaps = Reader.ReadUInt32();
+
+            Debug.WriteLine("Name: " + Palace.Name);
+            Debug.WriteLine("Permissions: " + Palace.Permissions);
         }
     }
 }

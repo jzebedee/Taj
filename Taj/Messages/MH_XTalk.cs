@@ -33,7 +33,7 @@ namespace Taj.Messages
                                    {
                                        eventType = MessageTypes.XTALK,
                                        length = sizeof (short) + xmsg.Length + 1,
-                                       refNum = Identity.ID,
+                                       refNum = CurrentUser.ID,
                                    });
             Writer.Write((short) (xmsg.Length + 3));
             Writer.Write(xmsg);

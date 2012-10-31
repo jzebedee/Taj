@@ -22,6 +22,12 @@ namespace Taj.UI
         public MainView()
         {
             InitializeComponent();
+
+#if DEBUG
+            Hide();
+            new Window() { Title = "Debug Window", Content = new DebugView() }.ShowDialog();
+            Close();
+#endif
         }
     }
 }

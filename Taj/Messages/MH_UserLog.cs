@@ -5,15 +5,15 @@ namespace Taj.Messages
 {
     public class MH_UserLog : MessageHeader
     {
-        public int UserCount { get; private set; }
-        public PalaceUser NewUser { get; private set; }
-
-        public MH_UserLog(IPalaceConnection con, ClientMessage cmsg) : base(con, cmsg)
+        public MH_UserLog(IPalaceConnection con, ClientMessage cmsg)
+            : base(con, cmsg)
         {
-            NewUser = Palace.GetUserByID(cmsg.refNum, true);
-            UserCount = Reader.ReadInt32();
+            var NewUser = Palace.GetUserByID(cmsg.refNum, true);
+            var UserCount = Reader.ReadInt32();
 
             Palace.UserCount = UserCount;
+
+            Debug.WriteLine("{0} users, {1} joined", UserCount, NewUser);
         }
     }
 }

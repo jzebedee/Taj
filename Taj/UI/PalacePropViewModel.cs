@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace Taj.UI
 {
-    public class PalacePropViewModel : BaseViewModel
+    public class PalacePropViewModel : BaseNotificationModel
     {
         public PalacePropViewModel()
         {
@@ -25,7 +25,7 @@ namespace Taj.UI
                 if (_x != value)
                 {
                     _x = value;
-                    RaisePropertyChanged("X");
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -39,7 +39,7 @@ namespace Taj.UI
                 if (_y != value)
                 {
                     _y = value;
-                    RaisePropertyChanged("Y");
+                    RaisePropertyChanged();
                 }
             }
         }

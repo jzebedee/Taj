@@ -37,7 +37,7 @@ namespace Taj.Messages
                                    {
                                        eventType = MH_EventType,
                                        length = msgBytes.Length,
-                                       refNum = Identity.ID,
+                                       refNum = CurrentUser.ID,
                                    });
             Writer.Write(msgBytes);
             Writer.Flush();

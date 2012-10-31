@@ -8,10 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Taj.UI
 {
-    public class DebugViewModel : BaseViewModel
+    public class DebugViewModel : BaseNotificationModel
     {
         private PalaceConnection _palCon;
 
@@ -35,11 +36,28 @@ namespace Taj.UI
 
         private void PalaceConnect()
         {
-            _palCon = new PalaceConnection(new Uri("tcp://ee.fastpalaces.com:9998/140"), new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0, 255))).ToString());
-            _palCon.Listener.ContinueWith(listenTask => Connected = false);
+            var identity = new PalaceIdentity { Name = new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0, 255))).ToString() };
+            _palCon = new PalaceConnection(new Uri("tcp://ee.fastpalaces.com:9998/140"), identity);
+
+            var pcv = new PalaceCanvasView();
+            var pcvm = (pcv.DataContext as PalaceCanvasViewModel);
+            var palwindow = new Window() { Title = "PCanvas", Content = pcv };
+            _palCon.Connected += (sender, e) =>
+            {
+                Connected = true;
+                pcvm.Palace = _palCon.Palace;
+            };
+            palwindow.Show();
+
+            var dispatch = Dispatcher.CurrentDispatcher;
+            _palCon.Listener.ContinueWith(listenTask =>
+            {
+                Connected = false;
+                pcvm.Palace = null;
+                dispatch.Invoke(() => palwindow.Close()); 
+            });
 
             _palCon.Connect();
-            Connected = true;
         }
 
         private void PalaceDisconnect()
@@ -57,7 +75,7 @@ namespace Taj.UI
                 if (_connected != value)
                 {
                     _connected = value;
-                    RaisePropertyChanged("Connected");
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -69,7 +87,7 @@ namespace Taj.UI
             private set
             {
                 _output.AppendLine(value);
-                RaisePropertyChanged("Output");
+                RaisePropertyChanged();
             }
         }
 
@@ -82,7 +100,7 @@ namespace Taj.UI
                 if (_palaceConnectCommand != value)
                 {
                     _palaceConnectCommand = value;
-                    RaisePropertyChanged("PalaceConnectCommand");
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -96,7 +114,7 @@ namespace Taj.UI
                 if (_palaceDisconnectCommand != value)
                 {
                     _palaceDisconnectCommand = value;
-                    RaisePropertyChanged("PalaceDisconnectCommand");
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -110,7 +128,7 @@ namespace Taj.UI
                 if (_testCanvasCommand != value)
                 {
                     _testCanvasCommand = value;
-                    RaisePropertyChanged("TestCanvasCommand");
+                    RaisePropertyChanged();
                 }
             }
         }

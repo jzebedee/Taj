@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using Taj.Messages;
@@ -7,24 +9,127 @@ using Taj.Messages.Flags;
 
 namespace Taj
 {
-    public class Palace
+    public class Palace : BaseNotificationModel
     {
-        public Version Version { get; set; }
-        public Uri HTTPServer { get; set; }
-        public ServerPermissionsFlags Permissions { get; set; }
-        public string Name { get; set; }
+        private IPalaceConnection _conn;
+        public Palace(IPalaceConnection connection)
+        {
+            _conn = connection;
+            Users = new ObservableCollection<PalaceUser>();
+            Rooms = new ObservableCollection<PalaceRoom>();
+        }
+
+        private Version _version;
+        public Version Version
+        {
+            get
+            {
+                return _version;
+            }
+            set
+            {
+                if (_version != value)
+                {
+                    _version = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private Uri _httpServer;
+        public Uri HTTPServer
+        {
+            get
+            {
+                return _httpServer;
+            }
+            set
+            {
+                if (_httpServer != value)
+                {
+                    _httpServer = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private ServerPermissionsFlags _permissions;
+        public ServerPermissionsFlags Permissions
+        {
+            get
+            {
+                return _permissions;
+            }
+            set
+            {
+                if (_permissions != value)
+                {
+                    _permissions = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private PalaceUser _curUser;
+        public PalaceUser CurrentUser
+        {
+            get
+            {
+                return _curUser;
+            }
+            set
+            {
+                if (_curUser != value)
+                {
+                    _curUser = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private PalaceRoom _curRoom;
+        public PalaceRoom CurrentRoom
+        {
+            get
+            {
+                return _curRoom;
+            }
+            set
+            {
+                if (_curRoom != value)
+                {
+                    _curRoom = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         public int UserCount { get; set; }
 
-        private Dictionary<int, PalaceRoom> _rooms = new Dictionary<int, PalaceRoom>();
-        public IEnumerable<PalaceRoom> Rooms { get { return _rooms.Values; } }
-
-        private Dictionary<int, PalaceUser> _users = new Dictionary<int, PalaceUser>();
-        public IEnumerable<PalaceUser> Users { get { return _users.Values; } }
+        public ObservableCollection<PalaceRoom> Rooms { get; protected set; }
+        public ObservableCollection<PalaceUser> Users { get; protected set; }
 
         #region User collection methods
         PalaceUser GetUserByID(int UserID)
         {
-            return _users[UserID];
+            return (from u in Users where u.ID == UserID select u).Single();
         }
         public PalaceUser GetUserByID(int UserID, bool create = false)
         {
@@ -34,60 +139,70 @@ namespace Taj
             {
                 u = GetUserByID(UserID);
             }
-            catch (KeyNotFoundException)
+            catch (InvalidOperationException)
             {
                 if (create)
                 {
                     u = new PalaceUser(this) { ID = UserID };
-                    _users.Add(UserID, u);
+                    Users.Add(u);
                 }
             }
 
             Debug.Assert(u != null);
             return u;
         }
-        public bool RemoveUserByID(int UserID)
+        public void RemoveUserByID(int UserID)
         {
-            return _users.Remove(UserID);
+            Debug.Assert(Users.Count(u => u.ID == UserID) <= 1);
+
+            var found = Users.SingleOrDefault(u => u.ID == UserID);
+            if (found == null) return;
+
+            Users.Remove(found);
         }
-        public bool RemoveUser(PalaceUser targetUser)
+        public void RemoveUser(PalaceUser targetUser)
         {
-            return RemoveUserByID(targetUser.ID);
+            Users.Remove(targetUser);
         }
         #endregion
 
         #region Room collection methods
         PalaceRoom GetRoomByID(int RoomID)
         {
-            return _rooms[RoomID];
+            return (from r in Rooms where r.ID == RoomID select r).Single();
         }
         public PalaceRoom GetRoomByID(int RoomID, bool create = false)
         {
-            PalaceRoom u = null;
+            PalaceRoom r = null;
 
             try
             {
-                u = GetRoomByID(RoomID);
+                r = GetRoomByID(RoomID);
             }
-            catch (KeyNotFoundException)
+            catch (InvalidOperationException)
             {
                 if (create)
                 {
-                    u = new PalaceRoom(this) { ID = RoomID };
-                    _rooms.Add(RoomID, u);
+                    r = new PalaceRoom(this) { ID = RoomID };
+                    Rooms.Add(r);
                 }
             }
 
-            Debug.Assert(u != null);
-            return u;
+            Debug.Assert(r != null);
+            return r;
         }
-        public bool RemoveRoomByID(int RoomID)
+        public void RemoveRoomByID(int RoomID)
         {
-            return _rooms.Remove(RoomID);
+            Debug.Assert(Rooms.Count(r => r.ID == RoomID) <= 1);
+
+            var found = Rooms.SingleOrDefault(r => r.ID == RoomID);
+            if (found == null) return;
+
+            Rooms.Remove(found);
         }
-        public bool RemoveRoom(PalaceRoom targetRoom)
+        public void RemoveRoom(PalaceRoom targetRoom)
         {
-            return RemoveRoomByID(targetRoom.ID);
+            Rooms.Remove(targetRoom);
         }
         #endregion
     }
