@@ -86,6 +86,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="IPalaceConnection.cs" />
     <Compile Include="Messages\AssetType.cs" />
+    <Compile Include="Messages\MH_UserMove.cs" />
     <Compile Include="Messages\Flags\RoomFlags.cs" />
     <Compile Include="Messages\Flags\HotspotScriptEventMask.cs" />
     <Compile Include="Messages\Structures\AssetSpec.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Messages\Structures\PictureRec.cs" />
     <Compile Include="Messages\Structures\Point.cs" />
     <Compile Include="Messages\Structures\RoomRec.cs" />
+    <Compile Include="Messages\Structures\StructExtensions.cs" />
     <Compile Include="Messages\Structures\UserRec.cs" />
     <Compile Include="Palace.cs" />
     <Compile Include="PalaceConnection.cs" />
@@ -143,7 +145,7 @@
     <Compile Include="UI\DebugView.xaml.cs">
       <DependentUpon>DebugView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\PalacePropViewModel.cs" />
+    <Compile Include="UI\PalaceObjectViewModel.cs" />
     <Compile Include="UI\PalaceCanvasViewModel.cs" />
     <Compile Include="UI\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -152,8 +154,8 @@
     <Compile Include="UI\PalaceCanvasView.xaml.cs">
       <DependentUpon>PalaceCanvasView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\PalacePropView.xaml.cs">
-      <DependentUpon>PalacePropView.xaml</DependentUpon>
+    <Compile Include="UI\PalaceObjectView.xaml.cs">
+      <DependentUpon>PalaceObjectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CallbackTraceListener.cs" />
     <Compile Include="UI\TextBoxBehavior.cs" />
@@ -175,7 +177,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\PalacePropView.xaml">
+    <Page Include="UI\PalaceObjectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

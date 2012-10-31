@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,9 +20,12 @@ namespace Taj.UI
     /// </summary>
     public partial class MainView : Window
     {
+        public static SynchronizationContext UIContext;
         public MainView()
         {
             InitializeComponent();
+
+            UIContext = SynchronizationContext.Current;
 
 #if DEBUG
             Hide();

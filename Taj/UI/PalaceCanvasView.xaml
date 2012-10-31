@@ -9,7 +9,7 @@
     <UserControl.DataContext>
         <UI:PalaceCanvasViewModel />
     </UserControl.DataContext>
-    <ItemsControl ItemsSource="{Binding Path=Palace.CurrentRoom.Users}">
+    <ItemsControl ItemsSource="{Binding Path=Palace.CurrentRoom.Objects}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <Canvas>

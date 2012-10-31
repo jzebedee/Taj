@@ -10,7 +10,7 @@ namespace Taj.Messages.Structures
     [StructLayout(LayoutKind.Sequential)]
     public struct Point
     {
-        Int16 y; //v
-        Int16 x; //h
+        public Int16 y; //v
+        public Int16 x; //h
     }
 }

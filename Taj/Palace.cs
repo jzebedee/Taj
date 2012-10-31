@@ -157,6 +157,7 @@ namespace Taj
 
             var found = Users.SingleOrDefault(u => u.ID == UserID);
             if (found == null) return;
+            found.RoomID = default(short);
 
             Users.Remove(found);
         }

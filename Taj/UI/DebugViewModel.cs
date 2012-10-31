@@ -6,6 +6,7 @@ using System.Diagnostics.Eventing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -49,12 +50,11 @@ namespace Taj.UI
             };
             palwindow.Show();
 
-            var dispatch = Dispatcher.CurrentDispatcher;
             _palCon.Listener.ContinueWith(listenTask =>
             {
                 Connected = false;
                 pcvm.Palace = null;
-                dispatch.Invoke(() => palwindow.Close()); 
+                MainView.UIContext.Send(x => palwindow.Close(), null);
             });
 
             _palCon.Connect();

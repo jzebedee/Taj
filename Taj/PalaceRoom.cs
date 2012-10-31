@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Taj.Messages.Flags;
+using System.Collections.Specialized;
+using System.Threading;
 
 namespace Taj
 {
@@ -42,21 +44,57 @@ namespace Taj
         /// </summary>
         public int FacesID { get; set; }
 
-        public IEnumerable<PalaceUser> Users
+        private ObservableCollection<PalaceUser> _users;
+        public ObservableCollection<PalaceUser> Users
         {
-            get
+            get { return _users; }
+            protected set
             {
-                return (from u in Host.Users where u.RoomID == ID select u);
+                if (value != _users)
+                {
+                    _users = value;
+                    RaisePropertyChanged();
+                }
             }
         }
 
-        public void UpdateUsers() {
-            RaisePropertyChanged("Users");
+        private ObservableCollection<PalaceObject> _objects;
+        public ObservableCollection<PalaceObject> Objects
+        {
+            get { return _objects; }
+            protected set
+            {
+                if (value != _objects)
+                {
+                    _objects = value;
+                    RaisePropertyChanged();
+                }
+            }
         }
 
         public PalaceRoom(Palace host)
         {
             Host = host;
+
+            Users = new ObservableCollection<PalaceUser>();
+            Objects = new ObservableCollection<PalaceObject>();
+
+            Users.CollectionChanged += Users_CollectionChanged;
+        }
+
+        void Users_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (var pu in e.NewItems.Cast<PalaceUser>())
+                        Taj.UI.MainView.UIContext.Send(x => Objects.Add(pu), null);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (var pu in e.OldItems.Cast<PalaceUser>())
+                        Taj.UI.MainView.UIContext.Send(x => Objects.Remove(pu), null);
+                    break;
+            }
         }
 
         public override string ToString()

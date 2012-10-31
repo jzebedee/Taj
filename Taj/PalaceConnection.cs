@@ -173,6 +173,9 @@ namespace Taj
                 case MessageTypes.USERSTATUS:
                     var msg_ustatus = new MH_UserStatus(this, msg);
                     break;
+                case MessageTypes.USERMOVE:
+                    var msg_umove = new MH_UserMove(this, msg);
+                    break;
                 case MessageTypes.USERLOG:
                     var msg_ulog = new MH_UserLog(this, msg);
                     break;

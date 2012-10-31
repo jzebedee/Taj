@@ -8,5 +8,7 @@ namespace Taj
 {
     public abstract class PalaceObject : BaseNotificationModel
     {
+        public abstract double X { get; set; }
+        public abstract double Y { get; set; }
     }
 }

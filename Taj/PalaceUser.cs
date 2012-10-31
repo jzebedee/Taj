@@ -43,9 +43,20 @@ namespace Taj
             {
                 if (value != _roomID)
                 {
+                    if (_roomID != default(short))
+                    {
+                        var oldRoom = Host.GetRoomByID(_roomID);
+                        oldRoom.Users.Remove(this);
+                    }
+
                     _roomID = value;
-                    Host.GetRoomByID(value).UpdateUsers();
                     RaisePropertyChanged();
+
+                    if (value != default(short))
+                    {
+                        var room = Host.GetRoomByID(value);
+                        room.Users.Add(this);
+                    }
                 }
             }
         }
@@ -63,6 +74,35 @@ namespace Taj
                 }
             }
         }
+
+        private double _x;
+        public override double X
+        {
+            get { return _x; }
+            set
+            {
+                if (value != _x)
+                {
+                    _x = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private double _y;
+        public override double Y
+        {
+            get { return _y; }
+            set
+            {
+                if (value != _y)
+                {
+                    _y = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
 
         public PalaceUser(Palace host)
         {

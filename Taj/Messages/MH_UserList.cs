@@ -11,10 +11,9 @@ namespace Taj.Messages
             for (int numUsers = cmsg.refNum; numUsers > 0; numUsers--)
             {
                 var userRec = Reader.ReadStruct<UserRec>();
-
                 var user = Palace.GetUserByID(userRec.userID, true);
-                user.Name = userRec.name.MarshalPString();
-                user.RoomID = userRec.roomID;
+
+                userRec.Populate(user);
             }
         }
     }
