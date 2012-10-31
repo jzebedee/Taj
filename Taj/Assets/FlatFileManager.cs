@@ -13,7 +13,12 @@ namespace Taj.Assets
             throw new NotImplementedException();
         }
 
-        public byte[] GetAsset(uint ID)
+        public byte[] GetAssetByID(uint ID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] GetAsset(uint CRC)
         {
             throw new NotImplementedException();
         }
