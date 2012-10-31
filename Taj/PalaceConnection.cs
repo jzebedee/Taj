@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MiscUtil.Conversion;
 using MiscUtil.IO;
+using Taj.Assets;
 using Taj.Messages;
 using Taj.Messages.Structures;
 
@@ -28,6 +29,8 @@ namespace Taj
             targetUri = target;
             Identity = identity;
             Listener = new Task(Listen, listenerToken, TaskCreationOptions.LongRunning);
+
+            AssetStore = new FlatFileManager();
         }
 
         public void Connect()
@@ -57,6 +60,8 @@ namespace Taj
 
         public Palace Palace { get; private set; }
         public PalaceIdentity Identity { get; private set; }
+
+        public IAssetManager AssetStore { get; private set; }
 
         #endregion
 
@@ -225,6 +230,9 @@ namespace Taj
                     break;
                 case MessageTypes.ROOMDESCEND:
                     break;
+                case MessageTypes.ASSETSEND:
+                    var msg_assetsend = new MH_AssetSend(this, msg);
+                    break;
                 case MessageTypes.VERSION:
                     var mh_sv = new MH_ServerVersion(this, msg);
                     break;
@@ -236,7 +244,7 @@ namespace Taj
                     break;
                 default:
                     Debug.WriteLine("Unknown EvT: {0} (0x{1:X8})", msg.eventType, (uint)msg.eventType);
-                    Reader.Read(new byte[msg.length], 0, msg.length);
+                    Reader.ReadBytes(msg.length);
                     break;
             }
         }

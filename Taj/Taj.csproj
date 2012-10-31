@@ -86,9 +86,14 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="IPalaceConnection.cs" />
     <Compile Include="Messages\AssetType.cs" />
+    <Compile Include="Messages\MH_AssetSend.cs" />
+    <Compile Include="Messages\MH_AssetQuery.cs" />
     <Compile Include="Messages\MH_UserMove.cs" />
     <Compile Include="Messages\Flags\RoomFlags.cs" />
     <Compile Include="Messages\Flags\HotspotScriptEventMask.cs" />
+    <Compile Include="Messages\Structures\AssetDescriptor.cs" />
+    <Compile Include="Messages\Structures\AssetQuery.cs" />
+    <Compile Include="Messages\Structures\AssetSend.cs" />
     <Compile Include="Messages\Structures\AssetSpec.cs" />
     <Compile Include="Messages\Structures\AuxRegistrationRec.cs" />
     <Compile Include="Messages\Structures\ClientMessage.cs" />

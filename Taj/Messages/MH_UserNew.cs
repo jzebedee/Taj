@@ -17,6 +17,8 @@ namespace Taj.Messages
             var user = Palace.GetUserByID(userID, true);
 
             userRec.Populate(user);
+
+            Debug.WriteLine("New user: " + user);
         }
     }
 }

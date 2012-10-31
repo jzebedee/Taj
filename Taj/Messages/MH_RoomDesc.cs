@@ -56,6 +56,9 @@ namespace Taj.Messages
                 var curPropRec = varbuf.MarshalStruct<LPropRec>(propStructOffset, LPropRec.Size);
                 props[i] = curPropRec;
                 propStructOffset = curPropRec.link.nextOfst;
+
+                var MHx = new MH_AssetQuery(con, props[i].propSpec.id, props[i].propSpec.crc);
+                MHx.Write();
             }
 
             var finalread = Reader.ReadInt32();

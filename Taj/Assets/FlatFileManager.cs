@@ -3,24 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Taj.Assets
 {
     public class FlatFileManager : IAssetManager
     {
-        public void PutAsset(byte[] data, Messages.AssetType type, uint ID, uint CRC)
+        const string _assetDirectory = "Assets";
+
+        public FlatFileManager()
         {
-            throw new NotImplementedException();
+            Directory.CreateDirectory(_assetDirectory);
         }
 
-        public byte[] GetAssetByID(uint ID)
+        public void PutAsset(byte[] data, Messages.AssetType type, uint ID, uint CRC = 0)
         {
-            throw new NotImplementedException();
+            File.WriteAllBytes(CreateMuddyFilename(type, ID, CRC), data);
         }
 
-        public byte[] GetAsset(uint CRC)
+        public byte[] GetAsset(Messages.AssetType type, uint ID, uint CRC = 0)
         {
-            throw new NotImplementedException();
+            return File.ReadAllBytes(CreateMuddyFilename(type, ID, CRC));
+        }
+
+        string CreateMuddyFilename(Messages.AssetType type, uint ID, uint CRC = 0)
+        {
+            return Path.Combine(_assetDirectory, string.Format("{1}{2}.{0}", type, ID, CRC));
         }
     }
 }
