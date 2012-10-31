@@ -36,7 +36,7 @@ namespace Taj.Messages
             //data contains the actual bytes of the asset itself.
             var data = Reader.ReadBytes(assetMsg.blockSize);
 
-            con.AssetStore.PutAsset(data, assetMsg.type, assetMsg.spec.id, assetMsg.spec.crc);
+            Assets.PutAsset(data, assetMsg.type, assetMsg.spec.id, assetMsg.spec.crc);
         }
         public MH_AssetSend(IPalaceConnection con, uint ID, uint CRC = 0)
             : base(con)

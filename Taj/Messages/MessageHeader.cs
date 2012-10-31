@@ -1,4 +1,5 @@
 ﻿using MiscUtil.IO;
+using Taj.Assets;
 using Taj.Messages.Structures;
 
 namespace Taj.Messages
@@ -22,6 +23,11 @@ namespace Taj.Messages
         protected Palace Palace
         {
             get { return Connection.Palace; }
+        }
+
+        protected IAssetManager Assets
+        {
+            get { return Connection.AssetStore; }
         }
 
         protected EndianBinaryReader Reader
