@@ -18,6 +18,8 @@ namespace Taj.Assets
 
         public void PutAsset(byte[] data, Messages.AssetType type, uint ID, uint CRC = 0)
         {
+            var prop = new PalaceProp(data, type, ID, CRC);
+
             File.WriteAllBytes(CreateMuddyFilename(type, ID, CRC), data);
         }
 

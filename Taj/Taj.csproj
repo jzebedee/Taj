@@ -86,6 +86,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="IPalaceConnection.cs" />
     <Compile Include="Messages\AssetType.cs" />
+    <Compile Include="Messages\Flags\PropFormatFlags.cs" />
     <Compile Include="Messages\MH_AssetSend.cs" />
     <Compile Include="Messages\MH_AssetQuery.cs" />
     <Compile Include="Messages\MH_UserMove.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="PalaceEncryption.cs" />
     <Compile Include="PalaceIdentity.cs" />
     <Compile Include="PalaceObject.cs" />
+    <Compile Include="PalaceProp.cs" />
     <Compile Include="PalaceRoom.cs" />
     <Compile Include="PalaceUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

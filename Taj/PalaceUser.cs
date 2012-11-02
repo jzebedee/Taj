@@ -75,35 +75,6 @@ namespace Taj
             }
         }
 
-        private double _x;
-        public override double X
-        {
-            get { return _x; }
-            set
-            {
-                if (value != _x)
-                {
-                    _x = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        private double _y;
-        public override double Y
-        {
-            get { return _y; }
-            set
-            {
-                if (value != _y)
-                {
-                    _y = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-
         public PalaceUser(Palace host)
         {
             Host = host;

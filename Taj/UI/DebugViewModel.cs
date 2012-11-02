@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Taj.Assets;
 
 namespace Taj.UI
 {
@@ -32,7 +33,7 @@ namespace Taj.UI
 
             PalaceConnectCommand = new ActionCommand(PalaceConnect, () => !Connected);
             PalaceDisconnectCommand = new ActionCommand(PalaceDisconnect, () => Connected);
-            TestCanvasCommand = new ActionCommand(() => new Window() { Content = new PalaceCanvasView() }.Show(), () => true);
+            ParsePropCommand = new ActionCommand(() => new PalaceProp(File.ReadAllBytes("Assets\\21849949602980276445.PROP"), Messages.AssetType.PROP, 2184994960, 2980276445), () => true);
         }
 
         private void PalaceConnect()
@@ -119,15 +120,15 @@ namespace Taj.UI
             }
         }
 
-        private ICommand _testCanvasCommand;
-        public ICommand TestCanvasCommand
+        private ICommand _parsePropCommand;
+        public ICommand ParsePropCommand
         {
-            get { return _testCanvasCommand; }
+            get { return _parsePropCommand; }
             private set
             {
-                if (_testCanvasCommand != value)
+                if (_parsePropCommand != value)
                 {
-                    _testCanvasCommand = value;
+                    _parsePropCommand = value;
                     RaisePropertyChanged();
                 }
             }

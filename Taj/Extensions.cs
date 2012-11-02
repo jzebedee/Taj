@@ -91,7 +91,7 @@ namespace Taj
 
         public static byte[] TrimBuffer(this byte[] buf, int offset, int length = -1)
         {
-            if (offset == 0)
+            if (offset == 0 && length < 0)
                 return buf;
 
             var newLength = (length < 0 ? buf.Length - offset : length);
