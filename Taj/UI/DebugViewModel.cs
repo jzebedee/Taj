@@ -33,13 +33,16 @@ namespace Taj.UI
 
             PalaceConnectCommand = new ActionCommand(PalaceConnect, () => !Connected);
             PalaceDisconnectCommand = new ActionCommand(PalaceDisconnect, () => Connected);
-            ParsePropCommand = new ActionCommand(() => new PalaceProp(File.ReadAllBytes("Assets\\21849949602980276445.PROP"), Messages.AssetType.PROP, 2184994960, 2980276445), () => true);
+            //ParsePropCommand = new ActionCommand(() => new PalaceProp(File.ReadAllBytes("Assets\\21849949602980276445.PROP"), Messages.AssetType.PROP, 2184994960, 2980276445), () => true);
         }
 
         private void PalaceConnect()
         {
+            //var testPal = "ee.fastpalaces.com:9998/140";
+            var testPal = "oceansapart.epalaces.com:9998/112";
+
             var identity = new PalaceIdentity { Name = new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0, 255))).ToString() };
-            _palCon = new PalaceConnection(new Uri("tcp://ee.fastpalaces.com:9998/140"), identity);
+            _palCon = new PalaceConnection(new Uri("tcp://" + testPal), identity);
 
             var pcv = new PalaceCanvasView();
             var pcvm = (pcv.DataContext as PalaceCanvasViewModel);

@@ -9,14 +9,15 @@ namespace Taj.Messages
     /// </summary>
     public class MH_AssetQuery : MessageHeader, IOutgoingMessage
     {
-        private uint _ID, _CRC;
+        private int _ID;
+        private uint _CRC;
 
         public MH_AssetQuery(IPalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
         {
 
         }
-        public MH_AssetQuery(IPalaceConnection con, uint ID, uint CRC = 0)
+        public MH_AssetQuery(IPalaceConnection con, int ID, uint CRC = 0)
             : base(con)
         {
             _ID = ID;
@@ -39,7 +40,7 @@ namespace Taj.Messages
             {
                 eventType = MessageTypes.ASSETQUERY,
                 length = AssetQuery.Size,
-                refNum = 0,
+                refNum = CurrentUser.ID,
             });
             Writer.WriteStruct(payload);
             Writer.Flush();

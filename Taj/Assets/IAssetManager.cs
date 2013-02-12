@@ -9,7 +9,7 @@ namespace Taj.Assets
 {
     public interface IAssetManager
     {
-        void PutAsset(byte[] data, AssetType type, uint ID, uint CRC = 0);
-        byte[] GetAsset(AssetType type, uint ID, uint CRC = 0);
+        void PutAsset(byte[] data, AssetType type, int ID, uint CRC = 0);
+        byte[] GetAsset(AssetType type, int ID, uint CRC = 0);
     }
 }

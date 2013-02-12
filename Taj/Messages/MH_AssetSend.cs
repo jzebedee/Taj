@@ -18,9 +18,10 @@ namespace Taj.Messages
     /// to size, blockOffset is always 0, blockNbr is always 0, and nbrBlocks 
     /// is always 1.
     /// </summary>
-    public class MH_AssetSend : MessageHeader, IOutgoingMessage
+    public class MH_AssetSend : MessageHeader
     {
-        private uint _ID, _CRC;
+        private int _ID;
+        private uint _CRC;
 
         public MH_AssetSend(IPalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
@@ -35,36 +36,15 @@ namespace Taj.Messages
             //blockSize is the size of the block being sent in this message.
             //data contains the actual bytes of the asset itself.
             var data = Reader.ReadBytes(assetMsg.blockSize);
+            Debug.WriteLine("Prop `{0}`", new[] { assetMsg.desc.name.MarshalPString() });
 
             Assets.PutAsset(data, assetMsg.type, assetMsg.spec.id, assetMsg.spec.crc);
         }
-        public MH_AssetSend(IPalaceConnection con, uint ID, uint CRC = 0)
+        public MH_AssetSend(IPalaceConnection con, int ID, uint CRC = 0)
             : base(con)
         {
             _ID = ID;
             _CRC = CRC;
-        }
-
-        public void Write()
-        {
-            var payload = new AssetQuery
-            {
-                type = AssetType.PROP,
-                spec = new AssetSpec
-                {
-                    id = _ID,
-                    crc = _CRC,
-                }
-            };
-
-            Writer.WriteStruct(new ClientMessage
-            {
-                eventType = MessageTypes.ASSETQUERY,
-                length = AssetQuery.Size,
-                refNum = 0,
-            });
-            Writer.WriteStruct(payload);
-            Writer.Flush();
         }
     }
 }
