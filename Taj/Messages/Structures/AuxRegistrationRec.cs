@@ -5,7 +5,7 @@ using Taj.Messages.Flags;
 namespace Taj.Messages.Structures
 {
     [StructLayout(LayoutKind.Sequential, Size = 128)]
-    internal struct AuxRegistrationRec
+    public struct AuxRegistrationRec
     {
         public UInt32 crc;
         public UInt32 counter;

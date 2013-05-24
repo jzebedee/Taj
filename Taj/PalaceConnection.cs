@@ -91,19 +91,21 @@ namespace Taj
                 GC.SuppressFinalize(this);
         }
 
-        private void Listen()
+        MH_Logon reset;
+        private async void Listen()
         {
-            TcpClient connection = null;
-            try
+            while (!listenerToken.IsCancellationRequested)
             {
-                connection = new TcpClient(targetUri.Host, targetUri.Port);
-                Palace = new Palace(this);
-
-                using (var stream = connection.GetStream())
+                TcpClient connection = null;
+                try
                 {
-                    Handshake(stream);
-                    using (Reader)
+                    connection = new TcpClient(targetUri.Host, targetUri.Port);
+                    Palace = new Palace(this);
+
+                    using (var stream = connection.GetStream())
                     {
+                        Handshake(stream, reset);
+                        using (Reader)
                         using (Writer)
                         {
                             //var op_msg = new MH_SMsg("This client is running Taj DEBUG build. Please notify Scorpion of any questions or concerns.");
@@ -118,17 +120,9 @@ namespace Taj
                             var bufHeader = new byte[sizeof_header];
                             while (!listenerToken.IsCancellationRequested)
                             {
-                                var readtask = stream.ReadAsync(bufHeader, 0, sizeof_header, listenerToken);
-                                try
-                                {
-                                    readtask.Wait(listenerToken); //async tasks returned hot
-                                }
-                                catch (OperationCanceledException)
-                                {
-                                    break;
-                                }
+                                var readBytes = await stream.ReadAsync(bufHeader, 0, sizeof_header, listenerToken);
 
-                                if (readtask.Result == sizeof_header)
+                                if (readBytes == sizeof_header)
                                 {
                                     var msg = bufHeader.MarshalStruct<ClientMessage>();
 
@@ -145,19 +139,17 @@ namespace Taj
                                 Signoff();
                         }
                     }
+                    Debug.WriteLine("Listening ended");
                 }
-                Debug.WriteLine("Listening ended");
-            }
-            catch (Exception e)
-            {
-                if (e is IOException || e is ObjectDisposedException)
+                catch (IOException e)
+                {
                     Trace.TraceError(e.ToString());
-                else throw;
-            }
-            finally
-            {
-                if (connection != null)
-                    connection.Close();
+                }
+                finally
+                {
+                    if (connection != null)
+                        connection.Close();
+                }
             }
         }
 
@@ -166,8 +158,15 @@ namespace Taj
             switch (msg.eventType)
             {
                 case MessageTypes.ALTLOGONREPLY:
-                    var msg_logon = new MH_Logon(this);
-                    Debug.WriteLine("AltLogonReply. But we're too cool to reconnect.");
+                    var altreset = new MH_Logon(this);
+                    var altrec = altreset.Record;
+                    var rec = reset.Record;
+                    Debug.WriteLine("AltLogonReply.");
+                    if (altrec.puidCRC != rec.puidCRC && altrec.puidCtr != rec.puidCtr)
+                    {
+                        Debug.WriteLine("Server changed our puid data. Reconnecting.");
+                        Signoff();
+                    }
                     break;
                 case MessageTypes.PING:
                     Debug.WriteLine("Ping.");
@@ -180,6 +179,9 @@ namespace Taj
                     break;
                 case MessageTypes.USERMOVE:
                     var msg_umove = new MH_UserMove(this, msg);
+                    break;
+                case MessageTypes.USERPROP:
+                    var msg_uprop = new MH_UserProp(this, msg);
                     break;
                 case MessageTypes.USERLOG:
                     var msg_ulog = new MH_UserLog(this, msg);
@@ -255,13 +257,13 @@ namespace Taj
             mh_logoff.Write();
         }
 
-        private void Handshake(Stream palstream)
+        private void Handshake(Stream palstream, MH_Logon handshake = null)
         {
             //We do this 'dirty' because of the extra handling for the yet-unknown endianness
 
             {
                 var buf = new byte[4];
-                palstream.Read(buf, 0, sizeof(Int32));
+                palstream.Read(buf, 0, 4);
 
                 EndianBitConverter endianness;
 
@@ -292,8 +294,8 @@ namespace Taj
             short desiredRoom = 0;
             short.TryParse(targetUri.AbsolutePath.TrimStart('/'), out desiredRoom);
 
-            var logon = new MH_Logon(this, Identity.Name, desiredRoom);
-            logon.Write();
+            reset = handshake ?? new MH_Logon(this, Identity.Name, desiredRoom);
+            reset.Write();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Taj.Messages
     /// </summary>
     public class MH_AssetSend : MessageHeader
     {
-        private int _ID;
+        private uint _ID;
         private uint _CRC;
 
         public MH_AssetSend(IPalaceConnection con, ClientMessage cmsg)
@@ -40,7 +40,7 @@ namespace Taj.Messages
 
             Assets.PutAsset(data, assetMsg.type, assetMsg.spec.id, assetMsg.spec.crc);
         }
-        public MH_AssetSend(IPalaceConnection con, int ID, uint CRC = 0)
+        public MH_AssetSend(IPalaceConnection con, uint ID, uint CRC = 0)
             : base(con)
         {
             _ID = ID;

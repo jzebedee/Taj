@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Taj.Messages
 {
     public class MH_HTTPServer : MessageHeader
     {
-        public readonly Uri Location;
-
-        public MH_HTTPServer(PalaceConnection con) : base(con)
+        public MH_HTTPServer(PalaceConnection con)
+            : base(con)
         {
             string uri_string = Reader.ReadCString();
-            Location = new Uri(uri_string);
+            Debug.WriteLine("HTTPServer: " + uri_string);
+
+            Palace.HTTPServer = new Uri(uri_string);
         }
     }
 }

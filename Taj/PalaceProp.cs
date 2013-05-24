@@ -76,7 +76,7 @@ namespace Taj
 		private int _width, _height, _horizontalOffset, _verticalOffset, _scriptOffset;
 		private PropFormatFlags _flags;
 
-		public PalaceProp(byte[] data, AssetType type, int ID, uint CRC = 0)
+		public PalaceProp(byte[] data, AssetType type, uint ID, uint CRC = 0)
 		{
 			Process(data);
 		}

@@ -9,7 +9,7 @@ namespace Taj.Messages
     /// </summary>
     public class MH_AssetQuery : MessageHeader, IOutgoingMessage
     {
-        private int _ID;
+        private uint _ID;
         private uint _CRC;
 
         public MH_AssetQuery(IPalaceConnection con, ClientMessage cmsg)
@@ -17,7 +17,7 @@ namespace Taj.Messages
         {
 
         }
-        public MH_AssetQuery(IPalaceConnection con, int ID, uint CRC = 0)
+        public MH_AssetQuery(IPalaceConnection con, uint ID, uint CRC = 0)
             : base(con)
         {
             _ID = ID;
@@ -26,6 +26,8 @@ namespace Taj.Messages
 
         public void Write()
         {
+            System.Threading.Thread.Sleep(500);
+
             var payload = new AssetQuery
             {
                 type = AssetType.PROP,

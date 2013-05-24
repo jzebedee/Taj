@@ -12,8 +12,17 @@ namespace Taj.Messages
 
         private readonly AuxRegistrationRec rec;
 
+        public AuxRegistrationRec Record
+        {
+            get
+            {
+                return rec;
+            }
+        }
+
         public MH_Logon(PalaceConnection con, string name, short desiredRoom = 0, uint puidCtr = guest_puidCtr,
-                        uint puidCRC = guest_puidCRC) : base(con)
+                        uint puidCRC = guest_puidCRC)
+            : base(con)
         {
             rec = new AuxRegistrationRec
                       {
@@ -40,7 +49,8 @@ namespace Taj.Messages
                       };
         }
 
-        public MH_Logon(PalaceConnection con) : base(con)
+        public MH_Logon(PalaceConnection con)
+            : base(con)
         {
             rec = Reader.ReadStruct<AuxRegistrationRec>();
         }

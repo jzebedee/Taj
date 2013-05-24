@@ -39,7 +39,8 @@ namespace Taj.UI
         private void PalaceConnect()
         {
             //var testPal = "ee.fastpalaces.com:9998/140";
-            var testPal = "oceansapart.epalaces.com:9998/112";
+            //var testPal = "oceansapart.epalaces.com:9998/112";
+            var testPal = "treasuresvalley.ssws.us:9998";
 
             var identity = new PalaceIdentity { Name = new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0, 255))).ToString() };
             _palCon = new PalaceConnection(new Uri("tcp://" + testPal), identity);
