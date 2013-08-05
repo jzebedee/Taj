@@ -81,73 +81,13 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Assets\FlatFileManager.cs" />
-    <Compile Include="Assets\IAssetManager.cs" />
     <Compile Include="Clever.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="IPalaceConnection.cs" />
-    <Compile Include="Messages\AssetType.cs" />
-    <Compile Include="Messages\MH_UserProp.cs" />
-    <Compile Include="Messages\Flags\PropFormatFlags.cs" />
-    <Compile Include="Messages\MH_AssetSend.cs" />
-    <Compile Include="Messages\MH_AssetQuery.cs" />
-    <Compile Include="Messages\MH_UserMove.cs" />
-    <Compile Include="Messages\Flags\RoomFlags.cs" />
-    <Compile Include="Messages\Flags\HotspotScriptEventMask.cs" />
-    <Compile Include="Messages\Structures\AssetDescriptor.cs" />
-    <Compile Include="Messages\Structures\AssetQuery.cs" />
-    <Compile Include="Messages\Structures\AssetSend.cs" />
-    <Compile Include="Messages\Structures\AssetSpec.cs" />
-    <Compile Include="Messages\Structures\AuxRegistrationRec.cs" />
-    <Compile Include="Messages\Structures\ClientMessage.cs" />
-    <Compile Include="Messages\Flags\AuxFlags.cs" />
-    <Compile Include="Messages\Flags\ul3DEngineCapsFlags.cs" />
-    <Compile Include="Messages\Flags\ul2DGraphicsCapsFlags.cs" />
-    <Compile Include="Messages\Flags\ul2DEngineCapsFlags.cs" />
-    <Compile Include="Messages\Flags\ulDownloadCapsFlags.cs" />
-    <Compile Include="Messages\Flags\ulUploadCapsFlags.cs" />
-    <Compile Include="Messages\IClientMessage.cs" />
-    <Compile Include="Messages\MH_Logoff.cs" />
-    <Compile Include="Messages\MessageHeader.cs" />
-    <Compile Include="Messages\MH_PingPong.cs" />
-    <Compile Include="Messages\MH_XWhisper.cs" />
-    <Compile Include="Messages\MH_SMsg.cs" />
-    <Compile Include="Messages\MH_Whisper.cs" />
-    <Compile Include="Messages\MH_XTalk.cs" />
-    <Compile Include="Messages\MH_UserNew.cs" />
-    <Compile Include="Messages\MH_UserList.cs" />
-    <Compile Include="Messages\MH_RoomDesc.cs" />
-    <Compile Include="Messages\MH_HTTPServer.cs" />
-    <Compile Include="Messages\MH_UserLog.cs" />
-    <Compile Include="Messages\MH_Logon.cs" />
-    <Compile Include="Messages\IOutgoingMessage.cs" />
-    <Compile Include="Messages\MH_ServerInfo.cs" />
-    <Compile Include="Messages\MH_ServerVersion.cs" />
-    <Compile Include="Messages\MH_Talk.cs" />
-    <Compile Include="Messages\MessageTypes.cs" />
-    <Compile Include="Messages\MH_UserStatus.cs" />
-    <Compile Include="Messages\Flags\ServerOptionsFlags.cs" />
-    <Compile Include="Messages\Flags\ServerPermissionsFlags.cs" />
-    <Compile Include="Messages\Flags\UserFlags.cs" />
-    <Compile Include="Messages\Structures\DrawRec.cs" />
-    <Compile Include="Messages\Structures\HotspotRec.cs" />
-    <Compile Include="Messages\Structures\LLRec.cs" />
-    <Compile Include="Messages\Structures\LPropRec.cs" />
-    <Compile Include="Messages\Structures\PictureRec.cs" />
-    <Compile Include="Messages\Structures\Point.cs" />
-    <Compile Include="Messages\Structures\RoomRec.cs" />
-    <Compile Include="Messages\Structures\StructExtensions.cs" />
-    <Compile Include="Messages\Structures\UserRec.cs" />
-    <Compile Include="Palace.cs" />
+    <Compile Include="ClientPalace.cs" />
+    <Compile Include="IClientPalaceConnection.cs" />
     <Compile Include="PalaceConnection.cs" />
-    <Compile Include="PalaceEncryption.cs" />
     <Compile Include="PalaceIdentity.cs" />
-    <Compile Include="PalaceObject.cs" />
-    <Compile Include="PalaceProp.cs" />
-    <Compile Include="PalaceRoom.cs" />
-    <Compile Include="PalaceUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\ActionCommand.cs" />
-    <Compile Include="BaseNotificationModel.cs" />
     <Compile Include="UI\BooleanVisibilityConverter.cs" />
     <Compile Include="UI\DebugViewModel.cs" />
     <Compile Include="UI\DebugView.xaml.cs">
@@ -214,6 +154,12 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Palace\Palace.csproj">
+      <Project>{ca4dc414-736c-4bf9-938f-56935235b3d6}</Project>
+      <Name>Palace</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

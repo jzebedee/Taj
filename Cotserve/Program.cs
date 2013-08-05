@@ -12,37 +12,18 @@ namespace Cotserve
     {
         static void Main(string[] args)
         {
-            var listen = new TcpListener(IPAddress.Loopback, 9991);
-            try
+            using (var palace = new Palace(new IPEndPoint(IPAddress.Loopback, 9991)))
             {
-                while (true)
-                {
-                    listen.Start(1);
-
-                    Console.WriteLine("Listening started.");
-                    using (var client = listen.AcceptTcpClient())
-                    {
-                        while (client.Connected)
-                        {
-                            Console.WriteLine("Client connected.");
-                            using (var stream = client.GetStream())
-                            {
-                                do
-                                {
-                                    var rbte = stream.ReadByte();
-                                    Console.WriteLine(rbte);
-                                } while (true);
-                            }
-                        }
-                    }
-                    Console.WriteLine("NOTCHA");
-                }
-            }
-            finally
-            {
-                listen.Stop();
+                Console.WriteLine("Starting server...");
+                palace.StartServer();
+                Console.WriteLine("Listening. Press any key to stop.");
+                Console.ReadKey();
+                Console.WriteLine("Stopping server...");
+                palace.StopServer();
+                Console.WriteLine("Stopped.");
             }
 
+            Console.WriteLine("Fin. Press any key to exit.");
             Console.ReadKey();
         }
     }

@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 using MiscUtil.Conversion;
 using MiscUtil.IO;
 using Taj.Assets;
-using Taj.Messages;
-using Taj.Messages.Structures;
+using Palace.Assets;
+using Palace.Messages;
+using Palace.Messages.Structures;
+using Palace;
 
 namespace Taj
 {
-    public class PalaceConnection : IDisposable, IPalaceConnection
+    public class PalaceConnection : IDisposable, IClientPalaceConnection
     {
         public readonly Task Listener;
 
@@ -58,7 +60,7 @@ namespace Taj
         public EndianBinaryReader Reader { get; private set; }
         public EndianBinaryWriter Writer { get; private set; }
 
-        public Palace Palace { get; private set; }
+        public IPalace Palace { get; private set; }
         public PalaceIdentity Identity { get; private set; }
 
         public IAssetManager AssetStore { get; private set; }
@@ -100,7 +102,7 @@ namespace Taj
                 try
                 {
                     connection = new TcpClient(targetUri.Host, targetUri.Port);
-                    Palace = new Palace(this);
+                    Palace = new ClientPalace(this);
 
                     using (var stream = connection.GetStream())
                     {

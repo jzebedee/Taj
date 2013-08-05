@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CA4DC414-736C-4BF9-938F-56935235B3D6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Palace</RootNamespace>
+    <AssemblyName>Palace</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MiscUtil">
+      <HintPath>..\MiscUtil-Src-r285\MiscUtil\MiscUtil\bin\Release\MiscUtil.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assets\IAssetManager.cs" />
+    <Compile Include="BaseNotificationModel.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="IPalace.cs" />
+    <Compile Include="IPalaceConnection.cs" />
+    <Compile Include="Messages\AssetType.cs" />
+    <Compile Include="Messages\Flags\AuxFlags.cs" />
+    <Compile Include="Messages\Flags\HotspotScriptEventMask.cs" />
+    <Compile Include="Messages\Flags\PropFormatFlags.cs" />
+    <Compile Include="Messages\Flags\RoomFlags.cs" />
+    <Compile Include="Messages\Flags\ServerOptionsFlags.cs" />
+    <Compile Include="Messages\Flags\ServerPermissionsFlags.cs" />
+    <Compile Include="Messages\Flags\ul2DEngineCapsFlags.cs" />
+    <Compile Include="Messages\Flags\ul2DGraphicsCapsFlags.cs" />
+    <Compile Include="Messages\Flags\ul3DEngineCapsFlags.cs" />
+    <Compile Include="Messages\Flags\ulDownloadCapsFlags.cs" />
+    <Compile Include="Messages\Flags\ulUploadCapsFlags.cs" />
+    <Compile Include="Messages\Flags\UserFlags.cs" />
+    <Compile Include="Messages\IClientMessage.cs" />
+    <Compile Include="Messages\IOutgoingMessage.cs" />
+    <Compile Include="Messages\MessageHeader.cs" />
+    <Compile Include="Messages\MessageTypes.cs" />
+    <Compile Include="Messages\MH_AssetQuery.cs" />
+    <Compile Include="Messages\MH_AssetSend.cs" />
+    <Compile Include="Messages\MH_HTTPServer.cs" />
+    <Compile Include="Messages\MH_Logoff.cs" />
+    <Compile Include="Messages\MH_Logon.cs" />
+    <Compile Include="Messages\MH_PingPong.cs" />
+    <Compile Include="Messages\MH_RoomDesc.cs" />
+    <Compile Include="Messages\MH_ServerInfo.cs" />
+    <Compile Include="Messages\MH_ServerVersion.cs" />
+    <Compile Include="Messages\MH_SMsg.cs" />
+    <Compile Include="Messages\MH_Talk.cs" />
+    <Compile Include="Messages\MH_UserList.cs" />
+    <Compile Include="Messages\MH_UserLog.cs" />
+    <Compile Include="Messages\MH_UserMove.cs" />
+    <Compile Include="Messages\MH_UserNew.cs" />
+    <Compile Include="Messages\MH_UserProp.cs" />
+    <Compile Include="Messages\MH_UserStatus.cs" />
+    <Compile Include="Messages\MH_Whisper.cs" />
+    <Compile Include="Messages\MH_XTalk.cs" />
+    <Compile Include="Messages\MH_XWhisper.cs" />
+    <Compile Include="Messages\Structures\AssetDescriptor.cs" />
+    <Compile Include="Messages\Structures\AssetQuery.cs" />
+    <Compile Include="Messages\Structures\AssetSend.cs" />
+    <Compile Include="Messages\Structures\AssetSpec.cs" />
+    <Compile Include="Messages\Structures\AuxRegistrationRec.cs" />
+    <Compile Include="Messages\Structures\ClientMessage.cs" />
+    <Compile Include="Messages\Structures\DrawRec.cs" />
+    <Compile Include="Messages\Structures\HotspotRec.cs" />
+    <Compile Include="Messages\Structures\LLRec.cs" />
+    <Compile Include="Messages\Structures\LPropRec.cs" />
+    <Compile Include="Messages\Structures\PictureRec.cs" />
+    <Compile Include="Messages\Structures\Point.cs" />
+    <Compile Include="Messages\Structures\RoomRec.cs" />
+    <Compile Include="Messages\Structures\StructExtensions.cs" />
+    <Compile Include="Messages\Structures\UserRec.cs" />
+    <Compile Include="PalaceEncryption.cs" />
+    <Compile Include="PalaceObject.cs" />
+    <Compile Include="PalaceProp.cs" />
+    <Compile Include="PalaceRegistration.cs" />
+    <Compile Include="PalaceRoom.cs" />
+    <Compile Include="PalaceUser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerBase.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

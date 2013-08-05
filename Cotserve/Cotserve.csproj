@@ -41,16 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PalaceClient.cs" />
+    <Compile Include="Palace.cs">
+      <SubType>
+      </SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Taj\Taj.csproj">
-      <Project>{05c87e74-8305-4daa-8818-0d3b2ee9b8ac}</Project>
-      <Name>Taj</Name>
+    <ProjectReference Include="..\Palace\Palace.csproj">
+      <Project>{ca4dc414-736c-4bf9-938f-56935235b3d6}</Project>
+      <Name>Palace</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

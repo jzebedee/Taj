@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Palace;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -18,8 +19,8 @@ namespace Taj.UI
 {
     public class PalaceCanvasViewModel : BaseNotificationModel
     {
-        private Palace _palace;
-        public Palace Palace
+        private IPalace _palace;
+        public IPalace Palace
         {
             get
             {
