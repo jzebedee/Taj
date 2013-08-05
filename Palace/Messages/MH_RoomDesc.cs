@@ -14,7 +14,7 @@ namespace Palace.Messages
             : base(con, cmsg)
         {
             var roomrec = Reader.ReadStruct<RoomRec>();
-            var room = Palace.GetRoomByID(roomrec.roomID);
+            var room = Palace.GetRoomByID(roomrec.roomID, true);
 
             room.Flags = roomrec.roomFlags;
             room.FacesID = roomrec.facesID;

@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Palace
 {
-    public interface IPalace
+    public interface IPalace : INotifyPropertyChanged
     {
         string Name { get; set; }
         int UserCount { get; set; }

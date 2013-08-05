@@ -30,7 +30,8 @@ namespace Taj
         {
             targetUri = target;
             Identity = identity;
-            Listener = new Task(Listen, listenerToken, TaskCreationOptions.LongRunning);
+
+            Listener = new Task(Listen, listenerToken);
 
             AssetStore = new FlatFileManager();
         }
@@ -43,6 +44,8 @@ namespace Taj
         public void Disconnect()
         {
             listenerTokenSrc.Cancel();
+            _connection.Close();
+
             Listener.Wait();
         }
 
@@ -94,17 +97,17 @@ namespace Taj
         }
 
         MH_Logon reset;
-        private async void Listen()
+        private TcpClient _connection;
+        private void Listen()
         {
             while (!listenerToken.IsCancellationRequested)
             {
-                TcpClient connection = null;
                 try
                 {
-                    connection = new TcpClient(targetUri.Host, targetUri.Port);
+                    _connection = new TcpClient(targetUri.Host, targetUri.Port);
                     Palace = new ClientPalace(this);
 
-                    using (var stream = connection.GetStream())
+                    using (var stream = _connection.GetStream())
                     {
                         Handshake(stream, reset);
                         using (Reader)
@@ -118,13 +121,23 @@ namespace Taj
 
                             Connected(this, new EventArgs());
 
-                            const int sizeof_header = 12; //sizeof(ClientMessage)
-                            var bufHeader = new byte[sizeof_header];
+                            var bufHeader = new byte[ClientMessage.Size];
                             while (!listenerToken.IsCancellationRequested)
                             {
-                                var readBytes = await stream.ReadAsync(bufHeader, 0, sizeof_header, listenerToken);
+                                int readBytes;
+                                try
+                                {
+                                    readBytes = stream.ReadAsync(bufHeader, 0, ClientMessage.Size, listenerToken).Result;
+                                }
+                                catch (AggregateException ae)
+                                {
+                                    foreach (var ie in ae.InnerExceptions)
+                                        if (ie is ObjectDisposedException || ie is OperationCanceledException)
+                                            return;
+                                    throw;
+                                }
 
-                                if (readBytes == sizeof_header)
+                                if (readBytes == ClientMessage.Size)
                                 {
                                     var msg = bufHeader.MarshalStruct<ClientMessage>();
 
@@ -137,7 +150,7 @@ namespace Taj
                                 };
                             }
 
-                            if (connection.Connected)
+                            if (_connection.Connected)
                                 Signoff();
                         }
                     }
@@ -149,8 +162,8 @@ namespace Taj
                 }
                 finally
                 {
-                    if (connection != null)
-                        connection.Close();
+                    if (_connection != null)
+                        _connection.Close();
                 }
             }
         }

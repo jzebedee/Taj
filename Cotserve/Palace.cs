@@ -17,196 +17,130 @@ namespace Cotserve
         public Palace(IPEndPoint bind)
             : base(bind, (tcpclient) => new PalaceClient(tcpclient))
         {
-            //Users = new ObservableCollection<PalaceUser>();
-            //Rooms = new ObservableCollection<PalaceRoom>();
         }
 
-        private Version _version;
-        public Version Version
-        {
-            get
-            {
-                return _version;
-            }
-            set
-            {
-                if (_version != value)
-                {
-                    _version = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        private Uri _httpServer;
-        public Uri HTTPServer
-        {
-            get
-            {
-                return _httpServer;
-            }
-            set
-            {
-                if (_httpServer != value)
-                {
-                    _httpServer = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        private ServerPermissionsFlags _permissions;
-        public ServerPermissionsFlags Permissions
-        {
-            get
-            {
-                return _permissions;
-            }
-            set
-            {
-                if (_permissions != value)
-                {
-                    _permissions = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        private string _name;
         public string Name
         {
             get
             {
-                return _name;
+                throw new NotImplementedException();
             }
             set
             {
-                if (_name != value)
-                {
-                    _name = value;
-                    RaisePropertyChanged();
-                }
+                throw new NotImplementedException();
             }
         }
 
-        private PalaceUser _curUser;
-        public PalaceUser CurrentUser
+        public int UserCount
         {
             get
             {
-                return _curUser;
+                throw new NotImplementedException();
             }
             set
             {
-                if (_curUser != value)
-                {
-                    _curUser = value;
-                    RaisePropertyChanged();
-                }
+                throw new NotImplementedException();
             }
         }
 
-        private PalaceRoom _curRoom;
+        public Version Version
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public Uri HTTPServer
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public ServerPermissionsFlags Permissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public ObservableCollection<PalaceRoom> Rooms
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public ObservableCollection<PalaceUser> Users
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public PalaceRoom CurrentRoom
         {
             get
             {
-                return _curRoom;
+                throw new NotImplementedException();
             }
             set
             {
-                if (_curRoom != value)
-                {
-                    _curRoom = value;
-                    RaisePropertyChanged();
-                }
+                throw new NotImplementedException();
             }
         }
 
-        public int UserCount { get; set; }
-
-        public ObservableCollection<PalaceRoom> Rooms { get; protected set; }
-        public ObservableCollection<PalaceUser> Users { get; protected set; }
-
-        #region User collection methods
-        PalaceUser GetUserByID(int UserID)
+        public PalaceUser CurrentUser
         {
-            return (from u in Users where u.ID == UserID select u).Single();
-        }
-        public PalaceUser GetUserByID(int UserID, bool create = false)
-        {
-            PalaceUser u = null;
-
-            try
+            get
             {
-                u = GetUserByID(UserID);
+                throw new NotImplementedException();
             }
-            catch (InvalidOperationException)
+            set
             {
-                if (create)
-                {
-                    u = new PalaceUser(this) { ID = UserID };
-                    Users.Add(u);
-                }
+                throw new NotImplementedException();
             }
-
-            Debug.Assert(u != null);
-            return u;
         }
-        public void RemoveUserByID(int UserID)
-        {
-            Debug.Assert(Users.Count(u => u.ID == UserID) <= 1);
 
-            var found = Users.SingleOrDefault(u => u.ID == UserID);
-            if (found == null) return;
-            found.RoomID = default(short);
-
-            Users.Remove(found);
-        }
-        public void RemoveUser(PalaceUser targetUser)
-        {
-            Users.Remove(targetUser);
-        }
-        #endregion
-
-        #region Room collection methods
-        PalaceRoom GetRoomByID(int RoomID)
-        {
-            return (from r in Rooms where r.ID == RoomID select r).Single();
-        }
         public PalaceRoom GetRoomByID(int RoomID, bool create = false)
         {
-            PalaceRoom r = null;
-
-            try
-            {
-                r = GetRoomByID(RoomID);
-            }
-            catch (InvalidOperationException)
-            {
-                if (create)
-                {
-                    r = new PalaceRoom(this) { ID = RoomID };
-                    Rooms.Add(r);
-                }
-            }
-
-            Debug.Assert(r != null);
-            return r;
+            throw new NotImplementedException();
         }
-        public void RemoveRoomByID(int RoomID)
+
+        public PalaceUser GetUserByID(int UserID, bool create = false)
         {
-            Debug.Assert(Rooms.Count(r => r.ID == RoomID) <= 1);
-
-            var found = Rooms.SingleOrDefault(r => r.ID == RoomID);
-            if (found == null) return;
-
-            Rooms.Remove(found);
+            throw new NotImplementedException();
         }
+
         public void RemoveRoom(PalaceRoom targetRoom)
         {
-            Rooms.Remove(targetRoom);
+            throw new NotImplementedException();
         }
-        #endregion
+
+        public void RemoveRoomByID(int RoomID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveUser(PalaceUser targetUser)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveUserByID(int UserID)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

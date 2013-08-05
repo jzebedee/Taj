@@ -78,24 +78,7 @@ namespace Palace
 
             Users = new ObservableCollection<PalaceUser>();
             Objects = new ObservableCollection<PalaceObject>();
-
-            //Users.CollectionChanged += Users_CollectionChanged;
         }
-
-        //void Users_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    switch (e.Action)
-        //    {
-        //        case NotifyCollectionChangedAction.Add:
-        //            foreach (var pu in e.NewItems.Cast<PalaceUser>())
-        //                Palace.UI.MainView.UIContext.Send(x => Objects.Add(pu), null);
-        //            break;
-        //        case NotifyCollectionChangedAction.Remove:
-        //            foreach (var pu in e.OldItems.Cast<PalaceUser>())
-        //                Palace.UI.MainView.UIContext.Send(x => Objects.Remove(pu), null);
-        //            break;
-        //    }
-        //}
 
         public override string ToString()
         {
