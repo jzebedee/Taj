@@ -1,4 +1,5 @@
 ﻿using Palace.Messages.Structures;
+using System;
 namespace Palace.Messages
 {
     public class MH_XWhisper : MessageHeader, IOutgoingMessage
@@ -8,8 +9,10 @@ namespace Palace.Messages
         public MH_XWhisper(IPalaceConnection con, PalaceUser target, string msg)
             : base(con)
         {
+            //TODO: handle >255 messages
             if (msg.Length > 255)
-                msg = msg.Substring(0, 255);
+                throw new ArgumentException();
+                //msg = msg.Substring(0, 255);
 
             Text = msg;
             Target = target;
@@ -35,11 +38,12 @@ namespace Palace.Messages
             byte[] xmsg = PalaceEncryption.Encrypt(Text);
 
             Writer.WriteStruct(new ClientMessage
-                                   {
-                                       eventType = MessageTypes.XWHISPER,
-                                       length = sizeof(int) + sizeof(short) + xmsg.Length + 1,
-                                       refNum = CurrentUser.ID,
-                                   });
+                                {
+                                    eventType = MessageTypes.XWHISPER,
+                                    length = sizeof(int) + sizeof(short) + xmsg.Length + 1,
+                                    refNum = CurrentUser.ID,
+                                }
+                              );
             Writer.Write(Target.ID);
             Writer.Write((short)(xmsg.Length + 3));
             Writer.Write(xmsg);

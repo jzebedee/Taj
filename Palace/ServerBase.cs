@@ -13,23 +13,29 @@ namespace Palace
 {
     public abstract class ServerBase<T> : BaseNotificationModel, IDisposable
     {
-        const int MAX_PENDING_CLIENTS = -1;
-
         private Task _listenTask;
-        private Func<TcpClient, T> _clientFactory;
         private CancellationTokenSource _cts;
         private readonly TcpListener _listener;
 
+        protected ClientFactoryDelegate clientFactory { get; set; }
+
         public readonly EventHandler<T> ClientConnected = (sender, e) => { };
+        public readonly EventHandler<T> ClientDisconnected = (sender, e) => { };
+
+        public delegate T ClientFactoryDelegate(TcpClient netClient, EventHandler<T> clientDisconnectedCallback);
 
         public IList<T> Clients { get; private set; }
 
-        protected ServerBase(IPEndPoint bind, Func<TcpClient, T> clientFactory)
+        protected ServerBase(IPEndPoint bind)
         {
             _listener = new TcpListener(bind);
             Clients = new List<T>();
 
-            _clientFactory = clientFactory;
+            ClientDisconnected += (sender, e) =>
+            {
+                if (sender == this)
+                    Clients.Remove(e);
+            };
         }
 
         #region Dispose
@@ -49,10 +55,10 @@ namespace Palace
 
         public void StartServer()
         {
-            if (MAX_PENDING_CLIENTS < 0)
-                _listener.Start();
-            else
-                _listener.Start(MAX_PENDING_CLIENTS);
+            if (clientFactory == null)
+                throw new ArgumentNullException("ClientFactory");
+
+            _listener.Start();
 
             _cts = new CancellationTokenSource();
             _listenTask = new Task(Listen, _cts.Token);
@@ -65,10 +71,8 @@ namespace Palace
             {
                 try
                 {
-                    var newClient = _clientFactory(_listener.AcceptTcpClient());
+                    var newClient = clientFactory(_listener.AcceptTcpClient(), ClientDisconnected);
                     Clients.Add(newClient);
-
-                    RaisePropertyChanged("Clients");
 
                     ClientConnected(this, newClient);
                 }

@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 using MiscUtil.IO;
 
 namespace Palace
@@ -134,6 +135,11 @@ namespace Palace
 
             Array.Copy(Encoding.GetEncoding("Windows-1252").GetBytes(str), 0, ret, 1, str.Length);
             return ret;
+        }
+
+        public static string ToArrayString(this byte[] buffer)
+        {
+            return "[" + buffer.Aggregate("", (str, b) => str + b.ToString("X") + ",").TrimEnd(',') + "]";
         }
     }
 }

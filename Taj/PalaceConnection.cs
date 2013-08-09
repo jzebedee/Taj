@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define OFFLINE
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ using Palace.Assets;
 using Palace.Messages;
 using Palace.Messages.Structures;
 using Palace;
+using System.Collections.Generic;
 
 namespace Taj
 {
@@ -96,10 +98,44 @@ namespace Taj
                 GC.SuppressFinalize(this);
         }
 
+#if OFFLINE
+        List<byte[]> blowthrus = new List<byte[]>();
+#endif
+
         MH_Logon reset;
         private TcpClient _connection;
         private void Listen()
         {
+#if OFFLINE
+            {
+                var x = @"C:\Users\James\Desktop\convo.raw";
+                using (var fs = File.OpenRead(x))
+                {
+                    using (Reader = new EndianBinaryReader(new LittleEndianBitConverter(), fs))
+                    {
+                        Palace = new ClientPalace(this);
+
+                        while (fs.Position < fs.Length)
+                        {
+                            var cm = Reader.ReadStruct<ClientMessage>();
+                            HandleMessage(cm);
+                        }
+
+
+                        foreach (var bt in blowthrus)
+                        {
+                            using (var ws = File.OpenWrite(@"C:\Users\James\Desktop\blowthrus" + blowthrus.IndexOf(bt) + ".raw"))
+                            {
+                                foreach (var b in bt)
+                                    ws.WriteByte(b);
+                                ws.Flush();
+                            }
+                        }
+                    }
+                }
+            }
+#endif
+
             while (!listenerToken.IsCancellationRequested)
             {
                 try
@@ -121,33 +157,26 @@ namespace Taj
 
                             Connected(this, new EventArgs());
 
-                            var bufHeader = new byte[ClientMessage.Size];
                             while (!listenerToken.IsCancellationRequested)
                             {
-                                int readBytes;
-                                try
-                                {
-                                    readBytes = stream.ReadAsync(bufHeader, 0, ClientMessage.Size, listenerToken).Result;
-                                }
-                                catch (AggregateException ae)
-                                {
-                                    foreach (var ie in ae.InnerExceptions)
-                                        if (ie is ObjectDisposedException || ie is OperationCanceledException)
-                                            return;
-                                    throw;
-                                }
+                                //try
+                                //{
+                                var msg = Reader.ReadStruct<ClientMessage>();
 
-                                if (readBytes == ClientMessage.Size)
-                                {
-                                    var msg = bufHeader.MarshalStruct<ClientMessage>();
-
-                                    Debug.WriteLine("Message: " + Enum.GetName(typeof(MessageTypes), msg.eventType));
-                                    Debug.WriteLine("{");
-                                    Debug.Indent();
-                                    HandleMessage(msg);
-                                    Debug.Unindent();
-                                    Debug.WriteLine("}");
-                                };
+                                Debug.WriteLine("Message: " + Enum.GetName(typeof(MessageTypes), msg.eventType));
+                                Debug.WriteLine("{");
+                                Debug.Indent();
+                                HandleMessage(msg);
+                                Debug.Unindent();
+                                Debug.WriteLine("}");
+                                //}
+                                //catch (AggregateException ae)
+                                //{
+                                //    foreach (var ie in ae.InnerExceptions)
+                                //        if (ie is ObjectDisposedException || ie is OperationCanceledException)
+                                //            return;
+                                //    throw;
+                                //}
                             }
 
                             if (_connection.Connected)
@@ -175,6 +204,9 @@ namespace Taj
                 case MessageTypes.ALTLOGONREPLY:
                     var altreset = new MH_Logon(this);
                     var altrec = altreset.Record;
+#if OFFLINE
+                    break;
+#endif
                     var rec = reset.Record;
                     Debug.WriteLine("AltLogonReply.");
                     if (altrec.puidCRC != rec.puidCRC && altrec.puidCtr != rec.puidCtr)
@@ -203,6 +235,9 @@ namespace Taj
                     break;
                 case MessageTypes.USERLIST:
                     var msg_ulist = new MH_UserList(this, msg);
+                    break;
+                case MessageTypes.USEREXIT:
+                    var msg_uexit = new MH_UserExit(this, msg);
                     break;
                 case MessageTypes.USERNEW:
                     var msg_unew = new MH_UserNew(this, msg);
@@ -258,6 +293,12 @@ namespace Taj
                     break;
                 case MessageTypes.HTTPSERVER:
                     var msg_httpsv = new MH_HTTPServer(this);
+                    break;
+                case MessageTypes.BLOWTHRU:
+                    var msg_blowthru = new MH_Blowthru(this, msg);
+#if OFFLINE
+                    blowthrus.Add(msg_blowthru.Payload);
+#endif
                     break;
                 default:
                     Debug.WriteLine("Unknown EvT: {0} (0x{1:X8})", msg.eventType, (uint)msg.eventType);

@@ -15,8 +15,17 @@ namespace Cotserve
     public class Palace : ServerBase<PalaceClient>, IPalace
     {
         public Palace(IPEndPoint bind)
-            : base(bind, (tcpclient) => new PalaceClient(tcpclient))
+            : base(bind)
         {
+            clientFactory = CreatePalaceClient;
+        }
+
+        private PalaceClient CreatePalaceClient(TcpClient netClient, EventHandler<PalaceClient> clientDisconnectedCallback)
+        {
+            var pclient = new PalaceClient(this, netClient);
+            pclient.LoopTask.ContinueWith(t => clientDisconnectedCallback(this, pclient));
+
+            return pclient;
         }
 
         public string Name

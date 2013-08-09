@@ -7,6 +7,8 @@ namespace Palace.Messages.Structures
     [StructLayout(LayoutKind.Sequential, Size = 128)]
     public struct AuxRegistrationRec
     {
+        public static int Size = 128;
+
         public UInt32 crc;
         public UInt32 counter;
 

@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Palace.Messages;
 using Palace.Messages.Structures;
 using Palace;
+using Palace.Messages.Flags;
+using MiscUtil.IO;
 
 namespace Cotserve
 {
@@ -16,9 +18,11 @@ namespace Cotserve
     {
         private static volatile int _id = 0;
 
-        protected TcpClient _client { get; private set; }
+        private readonly TcpClient _client;
 
-        protected Task _loop { get; private set; }
+        protected IPalaceConnection connection { get; private set; }
+        protected IPalace parent { get; private set; }
+
         protected readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
         protected readonly int ID = ++_id;
@@ -26,10 +30,15 @@ namespace Cotserve
         public CancellationTokenSource Source { get { return _cts; } }
         public CancellationToken Token { get { return _cts.Token; } }
 
-        public PalaceClient(TcpClient client)
+        public Task LoopTask { get; private set; }
+
+        public PalaceUser User { get; private set; }
+
+        public PalaceClient(IPalace palace, TcpClient client)
         {
+            parent = palace;
             _client = client;
-            _loop = Task.Factory.StartNew(Loop, Token);
+            LoopTask = Task.Factory.StartNew(Loop, Token);
         }
         ~PalaceClient()
         {
@@ -43,18 +52,10 @@ namespace Cotserve
         }
         protected virtual void Dispose(bool disposing)
         {
-            if (_client != null)
+            if (disposing)
             {
-                if (disposing)
-                    _client.Close();
-                _client = null;
-            }
-
-            if (_loop != null)
-            {
-                if (disposing)
-                    _loop.Wait();
-                _loop = null;
+                _client.Close();
+                LoopTask.Wait();
             }
         }
 
@@ -67,11 +68,12 @@ namespace Cotserve
                     Console.WriteLine("Client " + ID + " connected.");
 
                     using (var stream = _client.GetStream())
-                    using (var reader = new BinaryReader(stream))
                     {
-                        using (var writer = new BinaryWriter(stream))
+                        connection = new PalaceClientConnection(parent, stream);
+                        using (connection.Reader)
+                        using (connection.Writer)
                         {
-                            Handshake(writer);
+                            Handshake(connection.Writer);
 
                             while (_client.Connected)
                             {
@@ -79,7 +81,7 @@ namespace Cotserve
                                 var bytesRead = await stream.ReadAsync(bufHeader, 0, ClientMessage.Size, Token);
 
                                 var header = bufHeader.MarshalStruct<ClientMessage>();
-                                var response = HandleMessage(reader, header);
+                                var response = HandleMessage(connection.Reader, header);
 
                                 response.Write();
                             }
@@ -93,26 +95,36 @@ namespace Cotserve
             }
         }
 
-        private IOutgoingMessage HandleMessage(BinaryReader reader, ClientMessage header)
+        private IOutgoingMessage HandleMessage(EndianBinaryReader reader, ClientMessage header)
         {
             switch (header.eventType)
             {
                 case MessageTypes.LOGON:
-                    var clientRec = reader.ReadBytes(header.length).MarshalStruct<AuxRegistrationRec>();
-                    Console.WriteLine(clientRec);
+                    var msg_logon = new MH_AltLogonReply(connection);
+                    var clientRec = msg_logon.Record;
 
-                    return null;
-                    break;
+                    var newUser = new PalaceUser(parent)
+                    {
+                        Name = clientRec.userName.MarshalPString(),
+                        RoomID = clientRec.desiredRoom,
+                        ID = ID,
+                    };
+
+                    msg_logon.User = newUser;
+                    User = newUser;
+
+                    return msg_logon;
                 default:
-                    throw new ArgumentException();
+                    System.Diagnostics.Debugger.Break();
+                    throw new ArgumentException("Unhandled protocol.");
             }
         }
 
-        private void Handshake(BinaryWriter writer)
+        private void Handshake(EndianBinaryWriter writer)
         {
             writer.Write((uint)MessageTypes.TIYID);
             writer.Write(0);
-            writer.Write(_id);
+            writer.Write(ID);
         }
     }
 }

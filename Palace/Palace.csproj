@@ -49,6 +49,9 @@
     <Compile Include="IPalace.cs" />
     <Compile Include="IPalaceConnection.cs" />
     <Compile Include="Messages\AssetType.cs" />
+    <Compile Include="Messages\MH_AltLogonReply.cs" />
+    <Compile Include="Messages\MH_UserExit.cs" />
+    <Compile Include="Messages\MH_Blowthru.cs" />
     <Compile Include="Messages\Flags\AuxFlags.cs" />
     <Compile Include="Messages\Flags\HotspotScriptEventMask.cs" />
     <Compile Include="Messages\Flags\PropFormatFlags.cs" />

@@ -11,21 +11,12 @@ namespace Palace.Messages
             guest_puidCtr = 0xf5dc385e,
             guest_puidCRC = 0xc144c580;
 
-        private readonly AuxRegistrationRec rec;
+        public AuxRegistrationRec Record { get; private set; }
 
-        public AuxRegistrationRec Record
-        {
-            get
-            {
-                return rec;
-            }
-        }
-
-        public MH_Logon(IPalaceConnection con, string name, short desiredRoom = 0, uint puidCtr = guest_puidCtr,
-                        uint puidCRC = guest_puidCRC)
+        public MH_Logon(IPalaceConnection con, string name, short desiredRoom = 0, uint puidCtr = guest_puidCtr, uint puidCRC = guest_puidCRC)
             : base(con)
         {
-            rec = new AuxRegistrationRec
+            Record = new AuxRegistrationRec
                       {
                           crc = 0x5905f923, //cribbed guest from OP
                           counter = 0xcf07309c, //cribbed guest from OP
@@ -40,7 +31,8 @@ namespace Palace.Messages
                           demoLimit = 0, //garbage
 
                           desiredRoom = desiredRoom,
-                          reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"), //PC4125
+                          //reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"), //PC4125
+                          reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("PC4125"),
                           ulRequestedProtocolVersion = 0,
                           ulUploadCaps = ulUploadCapsFlags.ASSETS_PALACE,
                           ulDownloadCaps = ulDownloadCapsFlags.ASSETS_PALACE | ulDownloadCapsFlags.FILES_PALACE | ulDownloadCapsFlags.FILES_HTTPSrvr,
@@ -53,20 +45,20 @@ namespace Palace.Messages
         public MH_Logon(IPalaceConnection con)
             : base(con)
         {
-            rec = Reader.ReadStruct<AuxRegistrationRec>();
+            Record = Reader.ReadStruct<AuxRegistrationRec>();
         }
 
         #region IOutgoingMessage Members
 
-        public void Write()
+        public virtual void Write()
         {
             Writer.WriteStruct(new ClientMessage
                                    {
                                        eventType = MessageTypes.LOGON,
-                                       length = 128,
+                                       length = AuxRegistrationRec.Size,
                                        refNum = 0, //intentional
                                    });
-            Writer.WriteStruct(rec);
+            Writer.WriteStruct(Record);
 
             Writer.Flush();
         }
