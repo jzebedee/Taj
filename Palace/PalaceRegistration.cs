@@ -12,8 +12,9 @@ namespace Palace
         //private const string[] codeAsc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789".Split();
         //private const string alphaTest = @"/[a-zA-Z]/";
 
-        private const uint CRC_MAGIC = 0xa95ade76;
-        private const uint MAGIC_LONG = 0x9602c9bf;
+        private const uint
+            CRC_MAGIC = 0xa95ade76,
+            MAGIC_LONG = 0x9602c9bf;
 
         private static readonly uint[] CRCMASK = new uint[] {
 			0xEBE19B94, 0x7604DE74, 0xE3F9D651, 0x604FD612, 0xE8897C2C, 0xADC40920, 0x37ECDFB7, 0x334989ED, 0x2834C33B, 0x8BD2FE15, 0xCBF001A7, 0xBD96B9D6, 0x315E2CE0, 0x4F167884, 0xA489B1B6, 0xA51C7A62,
@@ -36,8 +37,13 @@ namespace Palace
 
         #endregion
 
-        public class RegistrationCode
+        public struct RegistrationCode
         {
+            public RegistrationCode(uint Counter, uint CRC)
+            {
+                this.Counter = Counter;
+                this.CRC = CRC;
+            }
             internal RegistrationCode(uint seed)
             {
                 CRC = ComputeLicenseCRC(seed);
@@ -50,8 +56,7 @@ namespace Palace
         public static RegistrationCode Generate()
         {
             //uint seed = (uint)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime()).TotalMilliseconds;
-            uint seed = (uint)DateTime.Now.Ticks;
-            return new RegistrationCode(seed);
+            return new RegistrationCode((uint)DateTime.Now.Ticks);
         }
 
         public static uint ComputeLicenseCRC(uint seed)

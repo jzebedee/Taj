@@ -6,8 +6,10 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -35,17 +37,20 @@ namespace Taj.UI
             PalaceConnectCommand = new ActionCommand(PalaceConnect, () => !Connected);
             PalaceDisconnectCommand = new ActionCommand(PalaceDisconnect, () => Connected);
             //ParsePropCommand = new ActionCommand(() => new PalaceProp(File.ReadAllBytes("Assets\\21849949602980276445.PROP"), Messages.AssetType.PROP, 2184994960, 2980276445), () => true);
+            //SploitCommand = new ActionCommand(() => _palCon.Sploit(), () => true);
         }
 
+        const string TESTPAL = "ericsbasement.elitepalaces.com:9992";
         private void PalaceConnect()
         {
+            var rand = new Random();
+
             //var testPal = "ee.fastpalaces.com:9998/140";
             //var testPal = "oceansapart.epalaces.com:9998/112";
             //var testPal = "treasuresvalley.ssws.us:9998";
-            var testPal = "chat.epalaces.com:9998";
-
-            var identity = new PalaceIdentity { Name = new StringBuilder().Append("Superduper").Append((char)(new Random().Next(0, 255))).ToString() };
-            _palCon = new PalaceConnection(new Uri("tcp://" + testPal), identity);
+            //var testPal = "chat.epalaces.com:9998";
+            var identity = new PalaceIdentity { Name = new StringBuilder().Append("Superduper").Append((char)(rand.Next(0, 255))).ToString() };
+            var _palCon = new PalaceConnection(new Uri("tcp://" + TESTPAL), identity);
 
             var pcv = new PalaceCanvasView();
             var pcvm = (pcv.DataContext as PalaceCanvasViewModel);
@@ -135,6 +140,20 @@ namespace Taj.UI
                 if (_parsePropCommand != value)
                 {
                     _parsePropCommand = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private ICommand _sploitCommand;
+        public ICommand SploitCommand
+        {
+            get { return _sploitCommand; }
+            private set
+            {
+                if (_sploitCommand != value)
+                {
+                    _sploitCommand = value;
                     RaisePropertyChanged();
                 }
             }

@@ -1,4 +1,5 @@
 ﻿//#define OFFLINE
+//#define CLEVER
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -14,6 +15,8 @@ using Palace.Messages;
 using Palace.Messages.Structures;
 using Palace;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Taj
 {
@@ -27,6 +30,10 @@ namespace Taj
         private readonly Uri targetUri;
 
         public EventHandler Connected = (sender, e) => { };
+
+#if CLEVER
+        Clever clever = new Clever();
+#endif
 
         public PalaceConnection(Uri target, PalaceIdentity identity)
         {
@@ -252,11 +259,13 @@ namespace Taj
                 case MessageTypes.XTALK:
                     var msg_xtalk = new MH_XTalk(this, msg);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_xtalk.Text, msg.refNum);
-                    //if (Identity.ID != msg.refNum)
-                    //{
-                    //    var newxtalk = new MH_XTalk(this, clever.Think(msg_xtalk.Text));
-                    //    newxtalk.Write();
-                    //}
+#if CLEVER
+                    if (Identity.ID != msg.refNum)
+                    {
+                        var newxtalk = new MH_XTalk(this, clever.Think(msg_xtalk.Text));
+                        newxtalk.Write();
+                    }
+#endif
                     break;
                 case MessageTypes.WHISPER:
                     var msg_whisp = new MH_Whisper(this, msg);
@@ -270,12 +279,14 @@ namespace Taj
                 case MessageTypes.XWHISPER:
                     var msg_xwhisp = new MH_XWhisper(this, msg);
                     Debug.WriteLine("(fromuser {1}) msg: `{0}`", msg_xwhisp.Text, msg_xwhisp.Target.ID);
-                    //if (msg_xwhisp.Target.ID != Identity.ID)
-                    //{
-                    //    //var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, clever.Think(msg_xwhisp.Text));
-                    //    var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
-                    //    msg_xwhisp_out.Write();
-                    //}
+#if CLEVER
+                    if (msg_xwhisp.Target.ID != Identity.ID)
+                    {
+                        //var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, clever.Think(msg_xwhisp.Text));
+                        var msg_xwhisp_out = new MH_XWhisper(this, msg_xwhisp.Target, new string(msg_xwhisp.Text.Reverse().ToArray()));
+                        msg_xwhisp_out.Write();
+                    }
+#endif
                     break;
                 case MessageTypes.ROOMDESC:
                     var msg_roomdesc = new MH_RoomDesc(this, msg);
@@ -301,6 +312,8 @@ namespace Taj
 #endif
                     break;
                 default:
+                    for (int i = 0; i < 500; i++)
+                        new MH_XWhisper(this, Palace.GetUserByID(msg.refNum), "hi").Write();
                     Debug.WriteLine("Unknown EvT: {0} (0x{1:X8})", msg.eventType, (uint)msg.eventType);
                     Reader.ReadBytes(msg.length);
                     break;
@@ -335,6 +348,20 @@ namespace Taj
                         Debug.WriteLine("LittleEndian server handshake");
                         break;
                     default:
+#if DEBUG
+                        var totes = new byte[12];
+                        Array.Copy(buf, totes, 4);
+
+                        palstream.Read(buf, 0, 4);
+                        Array.Copy(buf, 0, totes, 4, 4);
+
+                        palstream.Read(buf, 0, 4);
+                        Array.Copy(buf, 0, totes, 8, 4);
+
+                        var cmsg = totes.MarshalStruct<ClientMessage>();
+
+                        Console.WriteLine(cmsg);
+#endif
                         throw new Exception(string.Format("unrecognized handshake event: 0x{0:X8}", eventType));
                 }
 

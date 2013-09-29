@@ -1,45 +1,62 @@
-﻿using System.Text;
+﻿//#define OPENPALACE
+using System.Text;
 using Palace;
 using Palace.Messages.Flags;
 using Palace.Messages.Structures;
+using Regcode = Palace.PalaceRegistration.RegistrationCode;
 
 namespace Palace.Messages
 {
     public class MH_Logon : MessageHeader, IOutgoingMessage
     {
-        private const uint
-            guest_puidCtr = 0xf5dc385e,
-            guest_puidCRC = 0xc144c580;
+#if OPENPALACE
+        private static readonly Regcode
+            OPENPALACE_GUEST = new Regcode(0x5905f923, 0xcf07309c),
+            OPENPALACE_GUEST_PUID = new Regcode(0x5905f923, 0xcf07309c);
+#endif
 
         public AuxRegistrationRec Record { get; private set; }
 
-        public MH_Logon(IPalaceConnection con, string name, short desiredRoom = 0, uint puidCtr = guest_puidCtr, uint puidCRC = guest_puidCRC)
+        public MH_Logon(IPalaceConnection con, string name, short desiredRoom = 0)
             : base(con)
         {
+            var reg = PalaceRegistration.Generate();
+            var reg2 = PalaceRegistration.Generate(); //TODO: make perm
+
             Record = new AuxRegistrationRec
-                      {
-                          crc = 0x5905f923, //cribbed guest from OP
-                          counter = 0xcf07309c, //cribbed guest from OP
-                          userName = name.ToPString(31),
-                          wizPassword = string.Empty.ToPString(31),
-                          auxFlags = AuxFlags.Authenticate | AuxFlags.Win32,
-                          puidCtr = puidCtr, //cribbed guest from OP
-                          puidCRC = puidCRC, //cribbed guest from OP
+            {
+#if OPENPALACE
+                counter = OPENPALACE_GUEST.Counter,
+                crc = OPENPALACE_GUEST.CRC,
+#else
+                counter = reg.Counter, //cribbed guest from OP
+                crc = reg.CRC, //cribbed guest from OP
+#endif
+                userName = name.ToPString(31),
+                wizPassword = string.Empty.ToPString(31),
+                auxFlags = AuxFlags.Authenticate | AuxFlags.Win32,
+#if OPENPALACE
+                puidCtr = OPENPALACE_GUEST.Counter, //cribbed guest from OP
+                puidCRC = OPENPALACE_GUEST.CRC, //cribbed guest from OP
+#else
+                puidCtr = reg2.Counter,
+                puidCRC = reg2.CRC,
+#endif
 
-                          demoElapsed = 0, //garbage
-                          totalElapsed = 0, //garbage
-                          demoLimit = 0, //garbage
+                demoElapsed = 0, //garbage
+                totalElapsed = 0, //garbage
+                demoLimit = 0, //garbage
 
-                          desiredRoom = desiredRoom,
-                          //reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"), //PC4125
-                          reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("PC4125"),
-                          ulRequestedProtocolVersion = 0,
-                          ulUploadCaps = ulUploadCapsFlags.ASSETS_PALACE,
-                          ulDownloadCaps = ulDownloadCapsFlags.ASSETS_PALACE | ulDownloadCapsFlags.FILES_PALACE | ulDownloadCapsFlags.FILES_HTTPSrvr,
-                          ul2DEngineCaps = ul2DEngineCapsFlags.NONE, //PALACE
-                          ul2DGraphicsCaps = ul2DGraphicsCapsFlags.NONE, //GIF87
-                          ul3DEngineCaps = ul3DEngineCapsFlags.NONE,
-                      };
+                desiredRoom = desiredRoom,
+                //reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"), //PC4125
+                reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("PC4125"),
+                ulRequestedProtocolVersion = 0,
+                ulUploadCaps = ulUploadCapsFlags.ASSETS_PALACE,
+                ulDownloadCaps = ulDownloadCapsFlags.ASSETS_PALACE | ulDownloadCapsFlags.FILES_PALACE | ulDownloadCapsFlags.FILES_HTTPSrvr,
+                ul2DEngineCaps = ul2DEngineCapsFlags.NONE, //PALACE
+                ul2DGraphicsCaps = ul2DGraphicsCapsFlags.NONE, //GIF87
+                ul3DEngineCaps = ul3DEngineCapsFlags.NONE,
+            };
         }
 
         public MH_Logon(IPalaceConnection con)
