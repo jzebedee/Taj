@@ -14,7 +14,7 @@ namespace Palace
         string Name { get; set; }
         int UserCount { get; set; }
         Version Version { get; set; }
-        Uri HTTPServer { get; set; }
+        string HTTPServer { get; set; }
         ServerPermissionsFlags Permissions { get; set; }
         ObservableCollection<PalaceRoom> Rooms { get; }
         ObservableCollection<PalaceUser> Users { get; }

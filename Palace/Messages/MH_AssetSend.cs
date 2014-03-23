@@ -20,8 +20,8 @@ namespace Palace.Messages
     /// </summary>
     public class MH_AssetSend : MessageHeader
     {
-        private uint _ID;
-        private uint _CRC;
+        private int _ID;
+        private int _CRC;
 
         public MH_AssetSend(IPalaceConnection con, ClientMessage cmsg)
             : base(con, cmsg)
@@ -40,7 +40,7 @@ namespace Palace.Messages
 
             Assets.PutAsset(data, assetMsg.type, assetMsg.spec.id, assetMsg.spec.crc);
         }
-        public MH_AssetSend(IPalaceConnection con, uint ID, uint CRC = 0)
+        public MH_AssetSend(IPalaceConnection con, int ID, int CRC = 0)
             : base(con)
         {
             _ID = ID;

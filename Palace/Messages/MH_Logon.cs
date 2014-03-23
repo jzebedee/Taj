@@ -48,13 +48,15 @@ namespace Palace.Messages
                 demoLimit = 0, //garbage
 
                 desiredRoom = desiredRoom,
-                //reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"), //PC4125
+#if OPENPALACE
+                reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("OPNPAL"),
+#endif
                 reserved = Encoding.GetEncoding("iso-8859-1").GetBytes("PC4125"),
                 ulRequestedProtocolVersion = 0,
                 ulUploadCaps = ulUploadCapsFlags.ASSETS_PALACE,
                 ulDownloadCaps = ulDownloadCapsFlags.ASSETS_PALACE | ulDownloadCapsFlags.FILES_PALACE | ulDownloadCapsFlags.FILES_HTTPSrvr,
-                ul2DEngineCaps = ul2DEngineCapsFlags.NONE, //PALACE
-                ul2DGraphicsCaps = ul2DGraphicsCapsFlags.NONE, //GIF87
+                ul2DEngineCaps = ul2DEngineCapsFlags.PALACE, //PALACE
+                ul2DGraphicsCaps = ul2DGraphicsCapsFlags.GIF87, //GIF87
                 ul3DEngineCaps = ul3DEngineCapsFlags.NONE,
             };
         }

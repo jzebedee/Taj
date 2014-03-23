@@ -64,7 +64,7 @@ namespace Cotserve
             }
         }
 
-        public Uri HTTPServer
+        public string HTTPServer
         {
             get
             {

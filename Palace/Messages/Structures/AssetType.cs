@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Palace.Messages
+namespace Palace.Messages.Structures
 {
     public enum AssetType : int //sint32
     {

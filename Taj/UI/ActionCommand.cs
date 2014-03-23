@@ -26,13 +26,13 @@ namespace Taj.UI
             this.canExecute = canExecuteFunc;
         }
 
-        event EventHandler ICommand.CanExecuteChanged
+        public event EventHandler CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        bool ICommand.CanExecute(object parameter)
+        public bool CanExecute(object parameter)
         {
             if (this.canExecute != null)
             {
@@ -42,7 +42,7 @@ namespace Taj.UI
             return true;
         }
 
-        void ICommand.Execute(object parameter)
+        public void Execute(object parameter)
         {
             if (this.execute != null)
             {

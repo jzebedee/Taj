@@ -87,22 +87,26 @@ namespace Taj
         protected virtual void Dispose(bool disposing)
         {
             //Disconnect();
-
-            listenerTokenSrc.Dispose();
-
-            if (Reader != null)
-            {
-                Reader.Dispose();
-                Reader = null;
-            }
-            if (Writer != null)
-            {
-                Writer.Dispose();
-                Writer = null;
-            }
-
             if (disposing)
+            {
+                _connection.Close();
+
+                listenerTokenSrc.Dispose();
+                Listener.Dispose();
+
+                if (Reader != null)
+                {
+                    Reader.Dispose();
+                    Reader = null;
+                }
+                if (Writer != null)
+                {
+                    Writer.Dispose();
+                    Writer = null;
+                }
+
                 GC.SuppressFinalize(this);
+            }
         }
 
 #if OFFLINE
@@ -312,8 +316,8 @@ namespace Taj
 #endif
                     break;
                 default:
-                    for (int i = 0; i < 500; i++)
-                        new MH_XWhisper(this, Palace.GetUserByID(msg.refNum), "hi").Write();
+                    //for (int i = 0; i < 500; i++)
+                    //    new MH_XWhisper(this, Palace.GetUserByID(msg.refNum), "hi").Write();
                     Debug.WriteLine("Unknown EvT: {0} (0x{1:X8})", msg.eventType, (uint)msg.eventType);
                     Reader.ReadBytes(msg.length);
                     break;

@@ -7,6 +7,7 @@ using System.IO;
 using Palace.Assets;
 using Palace.Messages;
 using Palace;
+using Palace.Messages.Structures;
 
 namespace Taj.Assets
 {
@@ -19,19 +20,19 @@ namespace Taj.Assets
             Directory.CreateDirectory(_assetDirectory);
         }
 
-        public void PutAsset(byte[] data, AssetType type, uint ID, uint CRC = 0)
+        public void PutAsset(byte[] data, AssetType type, int ID, int CRC = 0)
         {
             var prop = new PalaceProp(data, type, ID, CRC);
 
             File.WriteAllBytes(CreateMuddyFilename(type, ID, CRC), data);
         }
 
-        public byte[] GetAsset(AssetType type, uint ID, uint CRC = 0)
+        public byte[] GetAsset(AssetType type, int ID, int CRC = 0)
         {
             return File.ReadAllBytes(CreateMuddyFilename(type, ID, CRC));
         }
 
-        string CreateMuddyFilename(AssetType type, uint ID, uint CRC = 0)
+        string CreateMuddyFilename(AssetType type, int ID, int CRC = 0)
         {
             return Path.Combine(_assetDirectory, string.Format("{1}{2}.{0}", type, ID, CRC));
         }

@@ -10,7 +10,7 @@ namespace Palace.Messages.Structures
     [StructLayout(LayoutKind.Sequential)]
     public struct AssetSpec
     {
-        public UInt32 id; //supposed to be int32
-        public UInt32 crc;
+        public Int32 id; //supposed to be int32
+        public Int32 crc;
     }
 }

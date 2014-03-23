@@ -1,5 +1,9 @@
 ﻿using System.Diagnostics;
 using Palace.Messages.Structures;
+using System;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Palace.Messages
 {
@@ -24,8 +28,35 @@ namespace Palace.Messages
                 var spec = Reader.ReadStruct<AssetSpec>();
 
                 Debug.WriteLine("{0}th Prop spec: ID {1} CRC {2}", numProps, spec.id, spec.crc);
+
+                Debug.WriteLine("Issuing prop request to palace server");
                 var MHx = new MH_AssetQuery(con, spec.id, spec.crc);
                 MHx.Write();
+
+                var httpsrv = Palace.HTTPServer;
+                if (!string.IsNullOrWhiteSpace(httpsrv))
+                {
+                    Debug.WriteLine("Issuing prop request to HTTP server " + httpsrv);
+
+                    Download(spec.id);
+                }
+            }
+        }
+
+        private async Task<PalaceProp> Download(int id)
+        {
+            try
+            {
+                var WCPropFetch = new WebClient();
+                var propuri = Palace.HTTPServer + @"/webservice/storage/" + id;
+
+                var propDLTask = WCPropFetch.DownloadDataTaskAsync(propuri);
+
+                return new PalaceProp(await propDLTask, AssetType.PROP, id, skip: true);
+            }
+            catch (WebException)
+            {
+                return null;
             }
         }
     }

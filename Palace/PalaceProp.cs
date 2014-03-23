@@ -12,16 +12,17 @@ using System.Threading.Tasks;
 using System.Windows;
 using Palace.Messages;
 using Palace.Messages.Flags;
+using Palace.Messages.Structures;
 
 namespace Palace
 {
-	public class PalaceProp
-	{
-		#region Consts and palette
-		const int dither20bit = 255 / 63;
-		const int ditherS20Bit = 255 / 31;
+    public class PalaceProp
+    {
+        #region Consts and palette
+        const int dither20bit = 255 / 63;
+        const int ditherS20Bit = 255 / 31;
 
-		static uint[] clutARGB = new uint[] {
+        static uint[] clutARGB = new uint[] {
 			0xffffffff, 0xffccffff, 0xff99ffff, 0xff66ffff, 0xff33ffff, 0xff00ffff, 0xffffdfff, 0xffccdfff, 
 			0xff99dfff, 0xff66dfff, 0xff33dfff, 0xff00dfff, 0xffffbfff, 0xffccbfff, 0xff99bfff, 0xff66bfff, 
 			0xff33bfff, 0xff00bfff, 0xffff9fff, 0xffcc9fff, 0xff999fff, 0xff669fff, 0xff339fff, 0xff009fff, 
@@ -55,236 +56,245 @@ namespace Palace
 			0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 
 			0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000, 0xff000000,	
 		};
-		#endregion
+        #endregion
 
-		private static byte[] DeflateData(byte[] Data)
-		{
-			using (MemoryStream nbstream = new MemoryStream(Data.TrimBuffer(12)), dnbstream = new MemoryStream())
-			{
-				nbstream.Seek(2, SeekOrigin.Begin);
+        private static byte[] DeflateData(byte[] Data)
+        {
+            using (MemoryStream nbstream = new MemoryStream(Data.TrimBuffer(12)), dnbstream = new MemoryStream())
+            {
+                nbstream.Seek(2, SeekOrigin.Begin);
 
-				using (var dstream = new DeflateStream(nbstream, CompressionMode.Decompress))
-				{
-					dstream.CopyTo(dnbstream);
-				}
+                using (var dstream = new DeflateStream(nbstream, CompressionMode.Decompress))
+                {
+                    dstream.CopyTo(dnbstream);
+                }
 
-				return dnbstream.ToArray();
-			}
-		}
+                return dnbstream.ToArray();
+            }
+        }
 
-		private byte[] _data;
-		private int _width, _height, _horizontalOffset, _verticalOffset, _scriptOffset;
-		private PropFormatFlags _flags;
+        private byte[] _data;
+        private int _width, _height, _horizontalOffset, _verticalOffset, _scriptOffset;
+        private PropFormatFlags _flags;
 
-		public PalaceProp(byte[] data, AssetType type, uint ID, uint CRC = 0)
-		{
-			Process(data);
-		}
+        public PalaceProp(byte[] data, AssetType type, int ID, int CRC = 0, bool skip = false)
+        {
+            var tempfile = Path.GetTempFileName() + ".png";
 
-		void Process(byte[] data)
-		{
-			if (data[1] == 0)
-			{
-				_width = data[0] | data[1] << 8;
-				_height = data[2] | data[3] << 8;
-				_horizontalOffset = data[4] | data[5] << 8;
-				_verticalOffset = data[6] | data[7] << 8;
-				_scriptOffset = data[8] | data[9] << 8;
-				_flags = (PropFormatFlags)(data[10] | data[11] << 8);
-			}
-			else
-			{
-				_width = data[1] | data[0] << 8;
-				_height = data[3] | data[2] << 8;
-				_horizontalOffset = data[5] | data[4] << 8;
-				_verticalOffset = data[7] | data[6] << 8;
-				_scriptOffset = data[9] | data[8] << 8;
-				_flags = (PropFormatFlags)(data[11] | data[10] << 8);
-			}
+            if (!skip)
+            {
+                var bmap = Process(data);
+                bmap.Save(tempfile, ImageFormat.Png);
+            }
+            else
+            {
+                File.WriteAllBytes(tempfile, data);
+            }
 
-			//rect = new Rectangle(horizontalOffset, verticalOffset, width, height);
+            System.Diagnostics.Process.Start(tempfile);
+        }
 
-			var head = _flags.HasFlag(PropFormatFlags.HEAD);
-			var ghost = _flags.HasFlag(PropFormatFlags.GHOST);
-			var rare = _flags.HasFlag(PropFormatFlags.RARE);
-			var animate = _flags.HasFlag(PropFormatFlags.ANIMATE);
-			var bounce = _flags.HasFlag(PropFormatFlags.BOUNCE);
+        Bitmap Process(byte[] data)
+        {
+            if (data[1] == 0)
+            {
+                _width = data[0] | data[1] << 8;
+                _height = data[2] | data[3] << 8;
+                _horizontalOffset = data[4] | data[5] << 8;
+                _verticalOffset = data[6] | data[7] << 8;
+                _scriptOffset = data[8] | data[9] << 8;
+                _flags = (PropFormatFlags)(data[10] | data[11] << 8);
+            }
+            else
+            {
+                _width = data[1] | data[0] << 8;
+                _height = data[3] | data[2] << 8;
+                _horizontalOffset = data[5] | data[4] << 8;
+                _verticalOffset = data[7] | data[6] << 8;
+                _scriptOffset = data[9] | data[8] << 8;
+                _flags = (PropFormatFlags)(data[11] | data[10] << 8);
+            }
 
-			Bitmap decoded = null;
-			if (_flags.HasFlag(PropFormatFlags._32BIT))
-			{
-				_data = DeflateData(data);
-				decoded = decode32BitProp();
-			}
-			else if (_flags.HasFlag(PropFormatFlags._S20BIT))
-			{
-				_data = DeflateData(data);
-				decoded = decodeS20BitProp();
-			}
-			else if (_flags.HasFlag(PropFormatFlags._20BIT))
-			{
-				_data = DeflateData(data);
-				decoded = decode20BitProp();
-			}
-			else if (_flags.HasFlag(PropFormatFlags._16BIT))
-			{
-				_data = DeflateData(data);
-				decoded = decode16BitProp();
-			}
-			else //if (flags.HasFlag(PropFormatFlags._8BIT))
-			{
-				_data = data.TrimBuffer(12);
-				decoded = decode8BitProp();
-			}
+            //rect = new Rectangle(horizontalOffset, verticalOffset, width, height);
 
-			Debug.Assert(decoded != null);
+            var head = _flags.HasFlag(PropFormatFlags.HEAD);
+            var ghost = _flags.HasFlag(PropFormatFlags.GHOST);
+            var rare = _flags.HasFlag(PropFormatFlags.RARE);
+            var animate = _flags.HasFlag(PropFormatFlags.ANIMATE);
+            var bounce = _flags.HasFlag(PropFormatFlags.BOUNCE);
 
-			var tempfile = Path.GetTempFileName() + ".png";
-			decoded.Save(tempfile, ImageFormat.Png);
-			System.Diagnostics.Process.Start(tempfile);
-		}
+            Bitmap decoded = null;
+            if (_flags.HasFlag(PropFormatFlags._32BIT))
+            {
+                _data = DeflateData(data);
+                decoded = decode32BitProp();
+            }
+            else if (_flags.HasFlag(PropFormatFlags._S20BIT))
+            {
+                _data = DeflateData(data);
+                decoded = decodeS20BitProp();
+            }
+            else if (_flags.HasFlag(PropFormatFlags._20BIT))
+            {
+                _data = DeflateData(data);
+                decoded = decode20BitProp();
+            }
+            else if (_flags.HasFlag(PropFormatFlags._16BIT))
+            {
+                _data = DeflateData(data);
+                decoded = decode16BitProp();
+            }
+            else //if (flags.HasFlag(PropFormatFlags._8BIT))
+            {
+                _data = data.TrimBuffer(12);
+                decoded = decode8BitProp();
+            }
 
-		private Bitmap MarshalBitmap(int[] bitmapData)
-		{
-			var pin_bd = GCHandle.Alloc(bitmapData, GCHandleType.Pinned);
-			try
-			{
-				return new Bitmap(_width, _height, ((_width * 32 + 31) & ~31) / 8, PixelFormat.Format32bppArgb, pin_bd.AddrOfPinnedObject());
-			}
-			finally
-			{
-				pin_bd.Free();
-			}
-		}
+            Debug.Assert(decoded != null);
+            return decoded;
+        }
 
-		private Bitmap decode32BitProp()
-		{
-			int
-				ofst = 0, pos = 0,
-				A, R, G, B;
+        private Bitmap MarshalBitmap(int[] bitmapData)
+        {
+            var pin_bd = GCHandle.Alloc(bitmapData, GCHandleType.Pinned);
+            try
+            {
+                return new Bitmap(_width, _height, ((_width * 32 + 31) & ~31) / 8, PixelFormat.Format32bppArgb, pin_bd.AddrOfPinnedObject());
+            }
+            finally
+            {
+                pin_bd.Free();
+            }
+        }
 
-			var ba = new int[_width * _height];
-			for (var X = 0; X <= 1935; X++)
-			{
-				ofst = X * 4;
+        private Bitmap decode32BitProp()
+        {
+            int
+                ofst = 0, pos = 0,
+                A, R, G, B;
 
-				R = _data[ofst];
-				G = _data[ofst + 1];
-				B = _data[ofst + 2];
-				A = _data[ofst + 3];
+            var ba = new int[_width * _height];
+            for (var X = 0; X <= 1935; X++)
+            {
+                ofst = X * 4;
 
-				ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
-			}
+                R = _data[ofst];
+                G = _data[ofst + 1];
+                B = _data[ofst + 2];
+                A = _data[ofst + 3];
 
-			return MarshalBitmap(ba);
-		}
+                ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
+            }
 
-		private Bitmap decodeS20BitProp()
-		{
-			int
-				x = 0, y = 0, ofst = 0, pos = 0,
-				C, A, R, G, B;
+            return MarshalBitmap(ba);
+        }
 
-			var ba = new int[_width * _height];
-			for (var X = 0; X < 968; X++)
-			{
-				ofst = X * 5;
+        private Bitmap decodeS20BitProp()
+        {
+            int
+                x = 0, y = 0, ofst = 0, pos = 0,
+                C, A, R, G, B;
 
-				R = (((_data[ofst] >> 3) & 31) * ditherS20Bit) & 0xFF; //red
-				C = (_data[ofst] << 8) | _data[ofst + 1];
-				G = ((C >> 6 & 31) * ditherS20Bit) & 0xFF; //green
-				B = ((C >> 1 & 31) * ditherS20Bit) & 0xFF; //blue
-				C = (_data[ofst + 1] << 8) | _data[ofst + 2];
-				A = ((C >> 4 & 31) * ditherS20Bit) & 0xFF; //alpha
+            var ba = new int[_width * _height];
+            for (var X = 0; X < 968; X++)
+            {
+                ofst = X * 5;
 
-				ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
+                R = (((_data[ofst] >> 3) & 31) * ditherS20Bit) & 0xFF; //red
+                C = (_data[ofst] << 8) | _data[ofst + 1];
+                G = ((C >> 6 & 31) * ditherS20Bit) & 0xFF; //green
+                B = ((C >> 1 & 31) * ditherS20Bit) & 0xFF; //blue
+                C = (_data[ofst + 1] << 8) | _data[ofst + 2];
+                A = ((C >> 4 & 31) * ditherS20Bit) & 0xFF; //alpha
 
-				C = (_data[ofst + 2] << 8) | _data[ofst + 3];
-				R = ((C >> 7 & 31) * ditherS20Bit) & 0xFF; // << 3; //red
-				G = ((C >> 2 & 31) * ditherS20Bit) & 0xFF; // << 3; //green
-				C = (_data[ofst + 3] << 8) | _data[ofst + 4];
-				B = ((C >> 5 & 31) * ditherS20Bit) & 0xFF; // << 3; //blue
-				A = ((C & 31) * ditherS20Bit) & 0xFF; // << 3; //alpha				
+                ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
 
-				ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
+                C = (_data[ofst + 2] << 8) | _data[ofst + 3];
+                R = ((C >> 7 & 31) * ditherS20Bit) & 0xFF; // << 3; //red
+                G = ((C >> 2 & 31) * ditherS20Bit) & 0xFF; // << 3; //green
+                C = (_data[ofst + 3] << 8) | _data[ofst + 4];
+                B = ((C >> 5 & 31) * ditherS20Bit) & 0xFF; // << 3; //blue
+                A = ((C & 31) * ditherS20Bit) & 0xFF; // << 3; //alpha				
 
-				if (++x > 43)
-				{
-					x = 0;
-					y++;
-				}
-			}
+                ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
 
-			return MarshalBitmap(ba);
-		}
+                if (++x > 43)
+                {
+                    x = 0;
+                    y++;
+                }
+            }
 
-		private Bitmap decode20BitProp()
-		{
-			int
-				ofst = 0, pos = 0,
-				C, A, R, G, B;
+            return MarshalBitmap(ba);
+        }
 
-			var ba = new int[_width * _height];
-			for (var X = 0; X < 967; X++)
-			{
-				ofst = X * 5;
+        private Bitmap decode20BitProp()
+        {
+            int
+                ofst = 0, pos = 0,
+                C, A, R, G, B;
 
-				R = ((_data[ofst] >> 2) & 63) * dither20bit;
-				C = (_data[ofst] << 8) | _data[ofst + 1];
-				G = ((C >> 4) & 63) * dither20bit;
-				C = (_data[ofst + 1] << 8) | _data[ofst + 2];
-				B = ((C >> 6) & 63) * dither20bit;
-				A = (((C >> 4) & 3) * 85);
+            var ba = new int[_width * _height];
+            for (var X = 0; X < 967; X++)
+            {
+                ofst = X * 5;
 
-				ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
+                R = ((_data[ofst] >> 2) & 63) * dither20bit;
+                C = (_data[ofst] << 8) | _data[ofst + 1];
+                G = ((C >> 4) & 63) * dither20bit;
+                C = (_data[ofst + 1] << 8) | _data[ofst + 2];
+                B = ((C >> 6) & 63) * dither20bit;
+                A = (((C >> 4) & 3) * 85);
 
-				C = (_data[ofst + 2] << 8) | _data[ofst + 3];
-				R = ((C >> 6) & 63) * dither20bit;
-				G = (C & 63) * dither20bit;
-				C = _data[ofst + 4];
-				B = ((C >> 2) & 63) * dither20bit;
-				A = ((C & 3) * 85);
+                ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
 
-				ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
-			}
+                C = (_data[ofst + 2] << 8) | _data[ofst + 3];
+                R = ((C >> 6) & 63) * dither20bit;
+                G = (C & 63) * dither20bit;
+                C = _data[ofst + 4];
+                B = ((C >> 2) & 63) * dither20bit;
+                A = ((C & 3) * 85);
 
-			return MarshalBitmap(ba);
-		}
+                ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
+            }
 
-		private Bitmap decode16BitProp()
-		{
-			throw new NotImplementedException();
-		}
+            return MarshalBitmap(ba);
+        }
 
-		private Bitmap decode8BitProp()
-		{
-			var pixData = new int[_width * (_height + 1)];
-			int n = 0, index = _width;
-			for (int y = _height - 1; y >= 0; y--)
-			{
-				for (int x = _width; x > 0; )
-				{
-					int cb = _data[n++] & 0xff;
+        private Bitmap decode16BitProp()
+        {
+            throw new NotImplementedException();
+        }
 
-					int mc = cb >> 4;
-					int pc = cb & 0xF;
-					x -= mc + pc;
+        private Bitmap decode8BitProp()
+        {
+            var pixData = new int[_width * (_height + 1)];
+            int n = 0, index = _width;
+            for (int y = _height - 1; y >= 0; y--)
+            {
+                for (int x = _width; x > 0; )
+                {
+                    int cb = _data[n++] & 0xff;
 
-					Trace.Assert(x >= 0);
-					index += mc;
+                    int mc = cb >> 4;
+                    int pc = cb & 0xF;
+                    x -= mc + pc;
 
-					while (pc-- > 0)
-						if (_data.Length > n)
-							pixData[index++] = (int)clutARGB[_data[n++] & 0xff];
-				}
-			}
+                    Trace.Assert(x >= 0);
+                    index += mc;
 
-			var bitmapBytes = new int[_width * _height];
-			int pos = 0;
-			for (var y = 44; y < pixData.Length; y++)
-				bitmapBytes[pos++] = pixData[y];
+                    while (pc-- > 0)
+                        if (_data.Length > n)
+                            pixData[index++] = (int)clutARGB[_data[n++] & 0xff];
+                }
+            }
 
-			return MarshalBitmap(bitmapBytes);
-		}
-	}
+            var bitmapBytes = new int[_width * _height];
+            int pos = 0;
+            for (var y = 44; y < pixData.Length; y++)
+                bitmapBytes[pos++] = pixData[y];
+
+            return MarshalBitmap(bitmapBytes);
+        }
+    }
 }

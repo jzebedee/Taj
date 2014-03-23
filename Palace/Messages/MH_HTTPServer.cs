@@ -11,7 +11,7 @@ namespace Palace.Messages
             string uri_string = Reader.ReadCString();
             Debug.WriteLine("HTTPServer: " + uri_string);
 
-            Palace.HTTPServer = new Uri(uri_string);
+            Palace.HTTPServer = uri_string;
         }
     }
 }

@@ -39,8 +39,8 @@ namespace Taj
             }
         }
 
-        private Uri _httpServer;
-        public Uri HTTPServer
+        private string _httpServer;
+        public string HTTPServer
         {
             get
             {
