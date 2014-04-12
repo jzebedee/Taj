@@ -208,17 +208,18 @@ namespace Taj
                     r = new PalaceRoom(this) { ID = RoomID };
                     r.Users.CollectionChanged += (sender, e) =>
                     {
-                        switch (e.Action)
-                        {
-                            case NotifyCollectionChangedAction.Add:
-                                foreach (var pu in e.NewItems.Cast<PalaceUser>())
-                                    UI.MainView.UIContext.Send(x => r.Objects.Add(pu), null);
-                                break;
-                            case NotifyCollectionChangedAction.Remove:
-                                foreach (var pu in e.OldItems.Cast<PalaceUser>())
-                                    UI.MainView.UIContext.Send(x => r.Objects.Remove(pu), null);
-                                break;
-                        }
+                        //switch (e.Action)
+                        //{
+                        //TODO: redo
+                        //    case NotifyCollectionChangedAction.Add:
+                        //        foreach (var pu in e.NewItems.Cast<PalaceUser>())
+                        //            UI.MainView.UIContext.Send(x => r.Objects.Add(pu), null);
+                        //        break;
+                        //    case NotifyCollectionChangedAction.Remove:
+                        //        foreach (var pu in e.OldItems.Cast<PalaceUser>())
+                        //            UI.MainView.UIContext.Send(x => r.Objects.Remove(pu), null);
+                        //        break;
+                        //}
                     };
                     Rooms.Add(r);
                 }
