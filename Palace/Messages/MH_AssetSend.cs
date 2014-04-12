@@ -38,7 +38,8 @@ namespace Palace.Messages
             var data = Reader.ReadBytes(assetMsg.blockSize);
             Debug.WriteLine("Prop `{0}`", new[] { assetMsg.desc.name.MarshalPString() });
 
-            Assets.PutAsset(data, assetMsg.type, assetMsg.spec.id, assetMsg.spec.crc);
+            var prop = new PalaceProp(data, /*assetMsg.type, */assetMsg.spec.id, assetMsg.spec.crc);
+            prop.Save(Assets);
         }
         public MH_AssetSend(IPalaceConnection con, int ID, int CRC = 0)
             : base(con)

@@ -4,20 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:UI="clr-namespace:Taj.UI"
+             xmlns:med="clr-namespace:System.Windows.Media"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <med:ImageConverter x:Key="imageConverter" />
+    </UserControl.Resources>
     <UserControl.DataContext>
         <UI:PalaceCanvasViewModel />
     </UserControl.DataContext>
     <ItemsControl ItemsSource="{Binding Path=Palace.CurrentRoom.Objects}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <Canvas>
-                    <Canvas.Background>
-                        <!--<ImageBrush ImageSource="C:\\Dropbox\\Data\\crepe.png" />-->
-                        <ImageBrush ImageSource="{Binding DataContext.Background,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" />
-                    </Canvas.Background>
-                </Canvas>
+                <Canvas />
                 <!--Background="White" Width="500" Height="500"-->
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
@@ -30,6 +29,13 @@
             <Style>
                 <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />
                 <Setter Property="Canvas.Left" Value="{Binding Path=X}" />
+                <Setter Property="Canvas.Width" Value="100" />
+                <Setter Property="Canvas.Height" Value="100" />
+                <Setter Property="Canvas.Background">
+                    <Setter.Value>
+                        <ImageBrush ImageSource="{Binding Path=Showing, Converter={StaticResource imageConverter}}" />
+                    </Setter.Value>
+                </Setter>
             </Style>
         </ItemsControl.ItemContainerStyle>
     </ItemsControl>

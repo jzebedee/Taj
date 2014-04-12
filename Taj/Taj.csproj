@@ -93,6 +93,7 @@
     <Compile Include="UI\DebugView.xaml.cs">
       <DependentUpon>DebugView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\ImageConverter.cs" />
     <Compile Include="UI\PalaceObjectViewModel.cs" />
     <Compile Include="UI\PalaceCanvasViewModel.cs" />
     <Compile Include="UI\MainView.xaml.cs">

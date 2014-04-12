@@ -9,5 +9,6 @@ namespace Taj
 {
     public interface IClientPalaceConnection : IPalaceConnection
     {
+
     }
 }

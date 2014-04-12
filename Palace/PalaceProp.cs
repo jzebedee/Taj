@@ -13,6 +13,7 @@ using System.Windows;
 using Palace.Messages;
 using Palace.Messages.Flags;
 using Palace.Messages.Structures;
+using Palace.Assets;
 
 namespace Palace
 {
@@ -73,25 +74,35 @@ namespace Palace
             }
         }
 
-        private byte[] _data;
-        private int _width, _height, _horizontalOffset, _verticalOffset, _scriptOffset;
+        private Bitmap _propBmap;
+        public Bitmap PropBitmap
+        {
+            get { return _propBmap; }
+        }
+
+        private int _width, _height, _horizontalOffset, _verticalOffset, _scriptOffset, _ID, _CRC;
         private PropFormatFlags _flags;
 
-        public PalaceProp(byte[] data, AssetType type, int ID, int CRC = 0, bool skip = false)
+        PalaceProp(int ID, int CRC)
         {
-            var tempfile = Path.GetTempFileName() + ".png";
+            _ID = ID;
+            _CRC = CRC;
+        }
+        public PalaceProp(byte[] data, int ID, int CRC = 0, bool skip = false)
+            : this(ID, CRC)
+        {
+            _propBmap = skip ? BitmapFromBytes(data) : Process(data);
+        }
+        public PalaceProp(Bitmap propBmap, int ID, int CRC = 0)
+            : this(ID, CRC)
+        {
+            _propBmap = propBmap;
+        }
 
-            if (!skip)
-            {
-                var bmap = Process(data);
-                bmap.Save(tempfile, ImageFormat.Png);
-            }
-            else
-            {
-                File.WriteAllBytes(tempfile, data);
-            }
-
-            System.Diagnostics.Process.Start(tempfile);
+        public void Save(IAssetManager assetStore)
+        {
+            Trace.Assert(assetStore != null);
+            assetStore.PutAsset(_propBmap, _ID, _CRC);
         }
 
         Bitmap Process(byte[] data)
@@ -126,35 +137,46 @@ namespace Palace
             Bitmap decoded = null;
             if (_flags.HasFlag(PropFormatFlags._32BIT))
             {
-                _data = DeflateData(data);
-                decoded = decode32BitProp();
+                data = DeflateData(data);
+                decoded = decode32BitProp(data);
             }
             else if (_flags.HasFlag(PropFormatFlags._S20BIT))
             {
-                _data = DeflateData(data);
-                decoded = decodeS20BitProp();
+                data = DeflateData(data);
+                decoded = decodeS20BitProp(data);
             }
             else if (_flags.HasFlag(PropFormatFlags._20BIT))
             {
-                _data = DeflateData(data);
-                decoded = decode20BitProp();
+                data = DeflateData(data);
+                decoded = decode20BitProp(data);
             }
             else if (_flags.HasFlag(PropFormatFlags._16BIT))
             {
-                _data = DeflateData(data);
+                data = DeflateData(data);
                 decoded = decode16BitProp();
             }
             else //if (flags.HasFlag(PropFormatFlags._8BIT))
             {
-                _data = data.TrimBuffer(12);
-                decoded = decode8BitProp();
+                data = data.TrimBuffer(12);
+                decoded = decode8BitProp(data);
             }
 
             Debug.Assert(decoded != null);
             return decoded;
         }
 
-        private Bitmap MarshalBitmap(int[] bitmapData)
+        public static Bitmap BitmapFromBytes(byte[] baBmap)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ms.Write(baBmap, 0, baBmap.Length);
+                ms.Seek(0, SeekOrigin.Begin);
+
+                return new Bitmap(ms);
+            }
+        }
+
+        public Bitmap MarshalBitmap(int[] bitmapData)
         {
             var pin_bd = GCHandle.Alloc(bitmapData, GCHandleType.Pinned);
             try
@@ -167,7 +189,7 @@ namespace Palace
             }
         }
 
-        private Bitmap decode32BitProp()
+        private Bitmap decode32BitProp(byte[] data)
         {
             int
                 ofst = 0, pos = 0,
@@ -178,10 +200,10 @@ namespace Palace
             {
                 ofst = X * 4;
 
-                R = _data[ofst];
-                G = _data[ofst + 1];
-                B = _data[ofst + 2];
-                A = _data[ofst + 3];
+                R = data[ofst];
+                G = data[ofst + 1];
+                B = data[ofst + 2];
+                A = data[ofst + 3];
 
                 ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
             }
@@ -189,7 +211,7 @@ namespace Palace
             return MarshalBitmap(ba);
         }
 
-        private Bitmap decodeS20BitProp()
+        private Bitmap decodeS20BitProp(byte[] data)
         {
             int
                 x = 0, y = 0, ofst = 0, pos = 0,
@@ -200,19 +222,19 @@ namespace Palace
             {
                 ofst = X * 5;
 
-                R = (((_data[ofst] >> 3) & 31) * ditherS20Bit) & 0xFF; //red
-                C = (_data[ofst] << 8) | _data[ofst + 1];
+                R = (((data[ofst] >> 3) & 31) * ditherS20Bit) & 0xFF; //red
+                C = (data[ofst] << 8) | data[ofst + 1];
                 G = ((C >> 6 & 31) * ditherS20Bit) & 0xFF; //green
                 B = ((C >> 1 & 31) * ditherS20Bit) & 0xFF; //blue
-                C = (_data[ofst + 1] << 8) | _data[ofst + 2];
+                C = (data[ofst + 1] << 8) | data[ofst + 2];
                 A = ((C >> 4 & 31) * ditherS20Bit) & 0xFF; //alpha
 
                 ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
 
-                C = (_data[ofst + 2] << 8) | _data[ofst + 3];
+                C = (data[ofst + 2] << 8) | data[ofst + 3];
                 R = ((C >> 7 & 31) * ditherS20Bit) & 0xFF; // << 3; //red
                 G = ((C >> 2 & 31) * ditherS20Bit) & 0xFF; // << 3; //green
-                C = (_data[ofst + 3] << 8) | _data[ofst + 4];
+                C = (data[ofst + 3] << 8) | data[ofst + 4];
                 B = ((C >> 5 & 31) * ditherS20Bit) & 0xFF; // << 3; //blue
                 A = ((C & 31) * ditherS20Bit) & 0xFF; // << 3; //alpha				
 
@@ -228,7 +250,7 @@ namespace Palace
             return MarshalBitmap(ba);
         }
 
-        private Bitmap decode20BitProp()
+        private Bitmap decode20BitProp(byte[] data)
         {
             int
                 ofst = 0, pos = 0,
@@ -239,19 +261,19 @@ namespace Palace
             {
                 ofst = X * 5;
 
-                R = ((_data[ofst] >> 2) & 63) * dither20bit;
-                C = (_data[ofst] << 8) | _data[ofst + 1];
+                R = ((data[ofst] >> 2) & 63) * dither20bit;
+                C = (data[ofst] << 8) | data[ofst + 1];
                 G = ((C >> 4) & 63) * dither20bit;
-                C = (_data[ofst + 1] << 8) | _data[ofst + 2];
+                C = (data[ofst + 1] << 8) | data[ofst + 2];
                 B = ((C >> 6) & 63) * dither20bit;
                 A = (((C >> 4) & 3) * 85);
 
                 ba[pos++] = (A << 24 | R << 16 | G << 8 | B);
 
-                C = (_data[ofst + 2] << 8) | _data[ofst + 3];
+                C = (data[ofst + 2] << 8) | data[ofst + 3];
                 R = ((C >> 6) & 63) * dither20bit;
                 G = (C & 63) * dither20bit;
-                C = _data[ofst + 4];
+                C = data[ofst + 4];
                 B = ((C >> 2) & 63) * dither20bit;
                 A = ((C & 3) * 85);
 
@@ -266,7 +288,7 @@ namespace Palace
             throw new NotImplementedException();
         }
 
-        private Bitmap decode8BitProp()
+        private Bitmap decode8BitProp(byte[] data)
         {
             var pixData = new int[_width * (_height + 1)];
             int n = 0, index = _width;
@@ -274,7 +296,7 @@ namespace Palace
             {
                 for (int x = _width; x > 0; )
                 {
-                    int cb = _data[n++] & 0xff;
+                    int cb = data[n++] & 0xff;
 
                     int mc = cb >> 4;
                     int pc = cb & 0xF;
@@ -284,8 +306,8 @@ namespace Palace
                     index += mc;
 
                     while (pc-- > 0)
-                        if (_data.Length > n)
-                            pixData[index++] = (int)clutARGB[_data[n++] & 0xff];
+                        if (data.Length > n)
+                            pixData[index++] = (int)clutARGB[data[n++] & 0xff];
                 }
             }
 

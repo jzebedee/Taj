@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,20 @@ namespace Palace
                 if (value != _y)
                 {
                     _y = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private Bitmap _showing;
+        public virtual Bitmap Showing
+        {
+            get { return _showing; }
+            set
+            {
+                if (value != _showing)
+                {
+                    _showing = value;
                     RaisePropertyChanged();
                 }
             }

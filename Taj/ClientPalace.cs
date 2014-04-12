@@ -148,6 +148,24 @@ namespace Taj
                 {
                     u = new PalaceUser(this) { ID = UserID };
                     Users.Add(u);
+                    u.PropertyChanged += async (sender, e) =>
+                    {
+                        switch (e.PropertyName)
+                        {
+                            case "PropRecords":
+                                var props = new List<PalaceProp>();
+                                foreach (var pr in u.PropRecords)
+                                {
+                                    var prop = new PalaceProp(
+                                            await Connection.AssetStore.GetAssetAsync(pr.id, pr.crc),
+                                            pr.id,
+                                            pr.crc);
+                                    props.Add(prop);
+                                }
+                                u.Props = props;
+                                break;
+                        }
+                    };
                 }
             }
 

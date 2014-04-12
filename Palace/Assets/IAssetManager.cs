@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Palace.Messages;
 using Palace.Messages.Structures;
+using System.Drawing;
 
 namespace Palace.Assets
 {
     public interface IAssetManager
     {
-        void PutAsset(byte[] data, AssetType type, int ID, int CRC = 0);
-        byte[] GetAsset(AssetType type, int ID, int CRC = 0);
+        void PutAsset(Bitmap bmap, int ID, int CRC = 0);
+        Bitmap GetAsset(int ID, int CRC = 0);
+        Task<Bitmap> GetAssetAsync(int ID, int CRC = 0);
     }
 }

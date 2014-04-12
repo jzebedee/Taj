@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Palace.Messages
 {
@@ -23,9 +24,11 @@ namespace Palace.Messages
             var numProps = Reader.ReadInt32();
             Debug.WriteLine("{0} changed props (new count: {1})", user, numProps);
 
+            var pSpecList = new List<AssetSpec>(9);
             while (numProps-- > 0)
             {
                 var spec = Reader.ReadStruct<AssetSpec>();
+                pSpecList.Add(spec);
 
                 Debug.WriteLine("{0}th Prop spec: ID {1} CRC {2}", numProps, spec.id, spec.crc);
 
@@ -33,17 +36,12 @@ namespace Palace.Messages
                 var MHx = new MH_AssetQuery(con, spec.id, spec.crc);
                 MHx.Write();
 
-                var httpsrv = Palace.HTTPServer;
-                if (!string.IsNullOrWhiteSpace(httpsrv))
-                {
-                    Debug.WriteLine("Issuing prop request to HTTP server " + httpsrv);
-
-                    Download(spec.id);
-                }
+                GetWebPropAsync(spec.id);
             }
+            user.PropRecords = pSpecList;
         }
 
-        private async Task<PalaceProp> Download(int id)
+        private async Task<PalaceProp> DownloadAsync(int id)
         {
             try
             {
@@ -52,11 +50,29 @@ namespace Palace.Messages
 
                 var propDLTask = WCPropFetch.DownloadDataTaskAsync(propuri);
 
-                return new PalaceProp(await propDLTask, AssetType.PROP, id, skip: true);
+                return new PalaceProp(await propDLTask, id, skip: true);
             }
             catch (WebException)
             {
                 return null;
+            }
+        }
+
+        private async void GetWebPropAsync(int id)
+        {
+            var httpsrv = Palace.HTTPServer;
+            if (!string.IsNullOrWhiteSpace(httpsrv))
+            {
+                Debug.WriteLine("Issuing prop request to HTTP server " + httpsrv);
+
+                var prop = await DownloadAsync(id);
+                if (prop != null)
+                {
+                    Debug.WriteLine("Received prop response from HTTP request");
+                    prop.Save(Assets);
+                }
+                else
+                    Debug.WriteLine("Null prop response for HTTP request");
             }
         }
     }
