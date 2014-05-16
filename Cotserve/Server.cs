@@ -53,34 +53,7 @@ namespace Cotserve
 
                 while (!Token.IsCancellationRequested)
                 {
-                    using (var client = await listener.AcceptTcpClientAsync())
-                    {
-                        using (var cstream = client.GetStream())
-                        {
-                            using (var Writer = new BinaryWriter(cstream))
-                            {
-                                var myID = Handshake(Writer);
-
-                                var buf = new byte[0x1000];
-                                int bytesRead;
-
-                                while ((bytesRead = await cstream.ReadAsync(buf, 0, ClientMessage.Size, Token)) > 0)
-                                {
-                                    var head = buf.MarshalStruct<ClientMessage>();
-                                    Trace.Assert(head.length + ClientMessage.Size < 0x1000);
-
-                                    if (await cstream.ReadAsync(buf, ClientMessage.Size, head.length, Token) != head.length)
-                                        break;
-
-                                    var outMsg = HandleMessage(myID, head, buf.TrimBuffer(ClientMessage.Size, head.length));
-                                    if (outMsg != null)
-                                    {
-                                        await cstream.WriteAsync(outMsg, 0, outMsg.Length, Token);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    HandleClient(await listener.AcceptTcpClientAsync());
                 }
             }
             finally
@@ -96,6 +69,36 @@ namespace Cotserve
                 throw new InvalidOperationException("Stop called before server was started");
 
             _cts.Cancel();
+        }
+
+        private async Task HandleClient(TcpClient client)
+        {
+            using (client)
+            using (var cstream = client.GetStream())
+            {
+                using (var Writer = new BinaryWriter(cstream))
+                {
+                    var myID = Handshake(Writer);
+
+                    var buf = new byte[0x1000];
+                    int bytesRead;
+
+                    while ((bytesRead = await cstream.ReadAsync(buf, 0, ClientMessage.Size, Token)) > 0)
+                    {
+                        var head = buf.MarshalStruct<ClientMessage>();
+                        Trace.Assert(head.length + ClientMessage.Size < 0x1000);
+
+                        if (await cstream.ReadAsync(buf, ClientMessage.Size, head.length, Token) != head.length)
+                            break;
+
+                        var outMsg = HandleMessage(myID, head, buf.TrimBuffer(ClientMessage.Size, head.length));
+                        if (outMsg != null)
+                        {
+                            await cstream.WriteAsync(outMsg, 0, outMsg.Length, Token);
+                        }
+                    }
+                }
+            }
         }
 
         private byte[] HandleMessage(int myID, ClientMessage head, byte[] backing)
