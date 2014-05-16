@@ -2,24 +2,28 @@
 using Palace.Messages.Structures;
 namespace Palace.Messages
 {
-    public class MH_Logoff : MessageHeader, IOutgoingMessage
+    public class MH_Logoff : MessageWriter
     {
-        public MH_Logoff(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_Logoff(ClientMessage cmsg, byte[] backing)
+            : base(cmsg, backing)
         {
-            Palace.RemoveUserByID(cmsg.refNum);
-
-            var UserCount = Reader.ReadInt32();
-            Palace.UserCount = UserCount;
+            LoggedOffID = cmsg.refNum;
+            NewUserCount = Reader.ReadInt32();
 
             Debug.WriteLine("Lost user {0}", cmsg.refNum);
-            Debug.WriteLine("New user count: {0}", UserCount);
+            Debug.WriteLine("New user count: {0}", NewUserCount);
         }
-        public MH_Logoff(IPalaceConnection con) : base(con) { }
+        public MH_Logoff()
+        {
+
+        }
+
+        public int LoggedOffID { get; private set; }
+        public int NewUserCount { get; private set; }
 
         #region IOutgoingMessage Members
 
-        public void Write()
+        public override byte[] Write()
         {
             Writer.WriteStruct(new ClientMessage
                                    {
@@ -28,6 +32,8 @@ namespace Palace.Messages
                                        refNum = 0, //intentional
                                    });
             Writer.Flush();
+
+            return base.Write();
         }
 
         #endregion

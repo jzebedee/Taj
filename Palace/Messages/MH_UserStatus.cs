@@ -8,14 +8,15 @@ using Palace.Messages.Structures;
 
 namespace Palace.Messages
 {
-    public class MH_UserStatus : MessageHeader
+    public class MH_UserStatus : MessageReader
     {
-        public MH_UserStatus(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_UserStatus(ClientMessage cmsg, byte[] backing)
+            : base(cmsg, backing)
         {
-            var Target = Palace.GetUserByID(cmsg.refNum, true);
-            Target.Flags = (UserFlags)Reader.ReadInt16();
+            UserID = cmsg.refNum;
+            UserFlags = (UserFlags)Reader.ReadInt16();
 
+            /*
             var unk1 = Reader.ReadInt16();
             var unk2_mnem = Encoding.ASCII.GetString(Reader.ReadBytes(4)); //dneS
             var unk3 = Reader.ReadInt32();
@@ -35,9 +36,13 @@ namespace Palace.Messages
 
             //var unk10 = Reader.ReadInt32();
             //var unk11 = Reader.ReadInt16();// 32();
+            */
 
-            Debug.WriteLine("Target: {0}", Target);
-            Debug.WriteLine("Flags: {0}", Target.Flags);
+            Debug.WriteLine("Target: {0}", UserID);
+            Debug.WriteLine("Flags: {0}", UserFlags);
         }
+
+        public int UserID { get; private set; }
+        public UserFlags UserFlags { get; private set; }
     }
 }

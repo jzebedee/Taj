@@ -7,18 +7,18 @@ namespace Palace.Messages
     /// This message is sent from the server to the client to describe a new user who has 
     /// entered the room.
     /// </summary>
-    public class MH_UserNew : MessageHeader
+    public class MH_UserNew : MessageReader
     {
-        public MH_UserNew(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_UserNew(ClientMessage cmsg, byte[] backing)
+            : base(cmsg, backing)
         {
-            var userID = cmsg.refNum; //The refnum field contains the UserID of the new user.
-            var userRec = Reader.ReadStruct<UserRec>(); //The msg field contains a UserRec struct describing the new user:
-            var user = Palace.GetUserByID(userID, true);
+            NewUserID = cmsg.refNum; //The refnum field contains the UserID of the new user.
+            NewUserRecord = Reader.ReadStruct<UserRec>(); //The msg field contains a UserRec struct describing the new user
 
-            userRec.Populate(user);
-
-            Debug.WriteLine("New user: " + user);
+            Debug.WriteLine("New user: " + NewUserID);
         }
+
+        public int NewUserID { get; private set; }
+        public UserRec NewUserRecord { get; private set; }
     }
 }

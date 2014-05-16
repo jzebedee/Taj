@@ -6,31 +6,25 @@ using System;
 
 namespace Palace.Messages
 {
-    public class MH_AltLogonReply : MH_Logon
+    public class MH_AltLogonReply : MessageWriter
     {
-        public PalaceUser User { get; set; }
-
-        public MH_AltLogonReply(IPalaceConnection con)
-            : base(con)
-        {
-        }
+        public MH_AltLogonReply(ClientMessage header, byte[] backing)
+            : base(header, backing) { }
 
         #region IOutgoingMessage Members
 
-        public override void Write()
+        public byte[] Write(int userID, AuxRegistrationRec Record)
         {
-            if (User == null)
-                throw new ArgumentNullException("User");
-
             Writer.WriteStruct(new ClientMessage
                                 {
                                     eventType = MessageTypes.ALTLOGONREPLY,
                                     length = AuxRegistrationRec.Size,
-                                    refNum = User.ID,
+                                    refNum = userID,
                                 });
             Writer.WriteStruct(Record);
-
             Writer.Flush();
+
+            return base.Write();
         }
 
         #endregion

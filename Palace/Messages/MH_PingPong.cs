@@ -1,19 +1,19 @@
 ﻿using Palace.Messages.Structures;
 namespace Palace.Messages
 {
-    public class MH_PingPong : MessageHeader, IOutgoingMessage
+    public class MH_PingPong : MessageWriter
     {
         private readonly int _pingNum;
 
-        public MH_PingPong(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_PingPong(ClientMessage cmsg, byte[] backing)
+            : base(cmsg, backing)
         {
             _pingNum = cmsg.refNum;
         }
 
         #region IOutgoingMessage Members
 
-        public void Write()
+        public override byte[] Write()
         {
             Writer.WriteStruct(new ClientMessage
                                    {
@@ -22,6 +22,8 @@ namespace Palace.Messages
                                        refNum = _pingNum,
                                    });
             Writer.Flush();
+
+            return base.Write();
         }
 
         #endregion

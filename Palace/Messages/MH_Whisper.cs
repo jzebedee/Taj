@@ -1,45 +1,46 @@
 ﻿using System.Text;
 using Palace.Messages.Structures;
+using System.Diagnostics;
 
 namespace Palace.Messages
 {
-    public class MH_Whisper : MessageHeader, IOutgoingMessage
+    public class MH_Whisper : MessageWriter
     {
-        public readonly PalaceUser Target;
-        public readonly string Text;
-
-        public MH_Whisper(IPalaceConnection con, PalaceUser target, string msg)
-            : base(con)
+        public MH_Whisper(PalaceUser target, string msg)
         {
-            if (msg.Length > 255)
-                msg = msg.Substring(0, 255);
+            Trace.Assert(msg.Length <= 255);
 
             Text = msg;
-            Target = target;
+            TargetID = target.ID;
         }
 
-        public MH_Whisper(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_Whisper(ClientMessage cmsg, byte[] backing)
+            : base(cmsg, backing)
         {
             Text = Reader.ReadCString();
-            Target = Palace.GetUserByID(cmsg.refNum, true);
+            TargetID = cmsg.refNum;
         }
+
+        public string Text { get; private set; }
+        public int TargetID { get; private set; }
 
         #region IOutgoingMessage Members
 
-        public void Write()
+        public byte[] Write(int myID)
         {
-            byte[] msgBytes = Encoding.GetEncoding("Windows-1252").GetBytes(Text + '\0');
+            byte[] msgBytes = Encoding.UTF8.GetBytes(Text + '\0');
 
             Writer.WriteStruct(new ClientMessage
                                    {
                                        eventType = MessageTypes.WHISPER,
                                        length = sizeof (int) + msgBytes.Length,
-                                       refNum = CurrentUser.ID,
+                                       refNum = myID,
                                    });
-            Writer.Write(Target.ID);
+            Writer.Write(TargetID);
             Writer.Write(msgBytes);
             Writer.Flush();
+
+            return base.Write();
         }
 
         #endregion

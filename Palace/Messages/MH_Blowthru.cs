@@ -5,20 +5,21 @@ using System.Linq;
 
 namespace Palace.Messages
 {
-    public class MH_Blowthru : MessageHeader, IOutgoingMessage
+    public class MH_Blowthru : MessageWriter
     {
         public byte[] Payload { get; private set; }
 
-        public MH_Blowthru(IPalaceConnection con, ClientMessage cmsg)
-            : base(con)
+        public MH_Blowthru(ClientMessage cmsg, byte[] backing)
+            : base(cmsg, backing)
         {
             Payload = Reader.ReadBytes(cmsg.length);
             Debug.WriteLine("Blowthru (size {0}, refnum {1}): {2}", cmsg.length, cmsg.refNum, Payload.ToArrayString());
         }
 
-        public void Write()
+        public override byte[] Write()
         {
             throw new NotImplementedException();
+            return base.Write();
             //if (sploit)
             //{
             //    Writer.WriteStruct(new ClientMessage

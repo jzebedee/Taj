@@ -3,17 +3,18 @@ using Palace.Messages.Structures;
 
 namespace Palace.Messages
 {
-    public class MH_UserLog : MessageHeader
+    public class MH_UserLog : MessageReader
     {
-        public MH_UserLog(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_UserLog(ClientMessage cmsg, byte[] backing)
+            : base(cmsg, backing)
         {
-            var NewUser = Palace.GetUserByID(cmsg.refNum, true);
-            var UserCount = Reader.ReadInt32();
+            NewUserID = cmsg.refNum;
+            NewUserCount = Reader.ReadInt32();
 
-            Palace.UserCount = UserCount;
-
-            Debug.WriteLine("{0} users, {1} joined", UserCount, NewUser);
+            Debug.WriteLine("{0} users, {1} joined", NewUserCount, NewUserID);
         }
+
+        public int NewUserID { get; private set; }
+        public int NewUserCount { get; private set; }
     }
 }

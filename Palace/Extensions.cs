@@ -9,6 +9,20 @@ namespace Palace
 {
     public static class Extensions
     {
+        public static byte[] ChainAppendBuffer(params byte[][] buffers)
+        {
+            var allBytes = new byte[buffers.Sum(buf => buf.Length)];
+
+            int i = 0;
+            foreach (var buf in buffers)
+            {
+                Buffer.BlockCopy(buf, 0, allBytes, i, buf.Length);
+                i += buf.Length;
+            }
+
+            return allBytes;
+        }
+
         public static string ReadCString(this EndianBinaryReader reader)
         {
             var builder = new StringBuilder();
@@ -133,7 +147,7 @@ namespace Palace
             var ret = new byte[length + 1];
             ret[0] = Convert.ToByte(str.Length);
 
-            Array.Copy(Encoding.GetEncoding("Windows-1252").GetBytes(str), 0, ret, 1, str.Length);
+            Array.Copy(Encoding.UTF8.GetBytes(str), 0, ret, 1, str.Length);
             return ret;
         }
 

@@ -28,11 +28,44 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.btnOpen = new System.Windows.Forms.Button();
+            this.btnExit = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // btnOpen
+            // 
+            this.btnOpen.Location = new System.Drawing.Point(12, 12);
+            this.btnOpen.Name = "btnOpen";
+            this.btnOpen.Size = new System.Drawing.Size(75, 23);
+            this.btnOpen.TabIndex = 0;
+            this.btnOpen.Text = "button1";
+            this.btnOpen.UseVisualStyleBackColor = true;
+            // 
+            // btnExit
+            // 
+            this.btnExit.Location = new System.Drawing.Point(107, 12);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(75, 23);
+            this.btnExit.TabIndex = 1;
+            this.btnExit.Text = "button2";
+            this.btnExit.UseVisualStyleBackColor = true;
+            // 
+            // Splash
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(194, 41);
+            this.Controls.Add(this.btnExit);
+            this.Controls.Add(this.btnOpen);
+            this.Name = "Splash";
             this.Text = "Splash";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Button btnOpen;
+        private System.Windows.Forms.Button btnExit;
     }
 }

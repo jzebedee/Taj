@@ -3,10 +3,9 @@ using Palace.Messages.Structures;
 
 namespace Palace.Messages
 {
-    public class MH_Talk : MessageHeader, IOutgoingMessage
+    public class MH_Talk : MessageWriter
     {
-        public MH_Talk(IPalaceConnection con, string msg)
-            : base(con)
+        public MH_Talk(string msg)
         {
             if (msg.Length > 255)
                 msg = msg.Substring(0, 255);
@@ -14,8 +13,8 @@ namespace Palace.Messages
             Text = msg;
         }
 
-        public MH_Talk(IPalaceConnection con)
-            : base(con)
+        public MH_Talk(ClientMessage header, byte[] backing)
+            : base(header, backing)
         {
             Text = Reader.ReadCString();
         }
@@ -29,18 +28,20 @@ namespace Palace.Messages
 
         #region IOutgoingMessage Members
 
-        public void Write()
+        public byte[] Write(int myID)
         {
-            byte[] msgBytes = Encoding.GetEncoding("Windows-1252").GetBytes(Text + '\0');
+            byte[] msgBytes = Encoding.UTF8.GetBytes(Text + '\0');
 
             Writer.WriteStruct(new ClientMessage
                                    {
                                        eventType = MH_EventType,
                                        length = msgBytes.Length,
-                                       refNum = CurrentUser.ID,
+                                       refNum = myID,
                                    });
             Writer.Write(msgBytes);
             Writer.Flush();
+
+            return base.Write();
         }
 
         #endregion

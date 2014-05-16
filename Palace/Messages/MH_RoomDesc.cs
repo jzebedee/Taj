@@ -8,20 +8,20 @@ using Palace.Messages.Structures;
 
 namespace Palace.Messages
 {
-    public class MH_RoomDesc : MessageHeader
+    public class MH_RoomDesc : MessageReader
     {
-        public MH_RoomDesc(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_RoomDesc(ClientMessage cmsg, byte[] backing)
+            : base(cmsg, backing)
         {
             var roomrec = Reader.ReadStruct<RoomRec>();
-            var room = Palace.GetRoomByID(roomrec.roomID, true);
+            CurrentRoom = new PalaceRoom() { ID = roomrec.roomID };
 
-            room.Flags = roomrec.roomFlags;
-            room.FacesID = roomrec.facesID;
+            CurrentRoom.Flags = roomrec.roomFlags;
+            CurrentRoom.FacesID = roomrec.facesID;
 
             var varbuf = Reader.ReadBytes(roomrec.lenVars); //varBuf is an array of lenVars bytes of variable-length data associated with the RoomRec, as described above
 
-            room.Name = varbuf.MarshalPString(roomrec.roomNameOfst); //roomNameOfst is the index into varBuf of a PString that is the name of the room.
+            CurrentRoom.Name = varbuf.MarshalPString(roomrec.roomNameOfst); //roomNameOfst is the index into varBuf of a PString that is the name of the room.
 
             var pictName = varbuf.MarshalPString(roomrec.pictNameOfst); //pictNameOfst is the index into varBuf of a PString that is the filename of a picture to use as the room background.
 
@@ -57,13 +57,14 @@ namespace Palace.Messages
                 props[i] = curPropRec;
                 propStructOffset = curPropRec.link.nextOfst;
 
-                var MHx = new MH_AssetQuery(con, props[i].propSpec.id, props[i].propSpec.crc);
-                MHx.Write();
+                //TODO: finish
+                //var MHx = new MH_AssetQuery();
+                //MHx.Write(props[i].propSpec.id, props[i].propSpec.crc);
             }
 
-            var finalread = Reader.ReadInt32();
-
-            Palace.CurrentRoom = room;
+            //var finalread = Reader.ReadInt32();
         }
+
+        public PalaceRoom CurrentRoom { get; private set; }
     }
 }

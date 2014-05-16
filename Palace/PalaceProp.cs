@@ -13,7 +13,6 @@ using System.Windows;
 using Palace.Messages;
 using Palace.Messages.Flags;
 using Palace.Messages.Structures;
-using Palace.Assets;
 
 namespace Palace
 {
@@ -99,11 +98,11 @@ namespace Palace
             _propBmap = propBmap;
         }
 
-        public void Save(IAssetManager assetStore)
-        {
-            Trace.Assert(assetStore != null);
-            assetStore.PutAsset(_propBmap, _ID, _CRC);
-        }
+        //public void Save(IAssetManager assetStore)
+        //{
+        //    Trace.Assert(assetStore != null);
+        //    assetStore.PutAsset(_propBmap, _ID, _CRC);
+        //}
 
         Bitmap Process(byte[] data)
         {

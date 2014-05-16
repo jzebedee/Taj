@@ -18,13 +18,10 @@ namespace Palace.Messages
     /// to size, blockOffset is always 0, blockNbr is always 0, and nbrBlocks 
     /// is always 1.
     /// </summary>
-    public class MH_AssetSend : MessageHeader
+    public class MH_AssetSend : MessageReader
     {
-        private int _ID;
-        private int _CRC;
-
-        public MH_AssetSend(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_AssetSend(byte[] backing)
+            : base(backing)
         {
             var assetMsg = Reader.ReadStruct<AssetSend>();
 
@@ -38,14 +35,10 @@ namespace Palace.Messages
             var data = Reader.ReadBytes(assetMsg.blockSize);
             Debug.WriteLine("Prop `{0}`", new[] { assetMsg.desc.name.MarshalPString() });
 
-            var prop = new PalaceProp(data, /*assetMsg.type, */assetMsg.spec.id, assetMsg.spec.crc);
-            prop.Save(Assets);
+            Prop = new PalaceProp(data, /*assetMsg.type, */assetMsg.spec.id, assetMsg.spec.crc);
+            //prop.Save(Assets);
         }
-        public MH_AssetSend(IPalaceConnection con, int ID, int CRC = 0)
-            : base(con)
-        {
-            _ID = ID;
-            _CRC = CRC;
-        }
+
+        public PalaceProp Prop { get; private set; }
     }
 }

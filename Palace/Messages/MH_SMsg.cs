@@ -1,14 +1,15 @@
-﻿namespace Palace.Messages
+﻿using Palace.Messages.Structures;
+namespace Palace.Messages
 {
     public class MH_SMsg : MH_Talk
     {
-        public MH_SMsg(IPalaceConnection con, string msg)
-            : base(con, msg)
+        public MH_SMsg(string msg)
+            : base(msg)
         {
         }
 
-        public MH_SMsg(IPalaceConnection con)
-            : base(con)
+        public MH_SMsg(ClientMessage header, byte[] backing)
+            : base(header, backing)
         {
         }
 

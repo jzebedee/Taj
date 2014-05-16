@@ -7,7 +7,7 @@ using Regcode = Palace.PalaceRegistration.RegistrationCode;
 
 namespace Palace.Messages
 {
-    public class MH_Logon : MessageHeader, IOutgoingMessage
+    public class MH_Logon : MessageWriter
     {
 #if OPENPALACE
         private static readonly Regcode
@@ -17,8 +17,8 @@ namespace Palace.Messages
 
         public AuxRegistrationRec Record { get; private set; }
 
-        public MH_Logon(IPalaceConnection con, string name, short desiredRoom = 0)
-            : base(con)
+        public MH_Logon(string name, short desiredRoom = 0)
+            : base()
         {
             var reg = PalaceRegistration.Generate();
             var reg2 = PalaceRegistration.Generate(); //TODO: make perm
@@ -61,15 +61,15 @@ namespace Palace.Messages
             };
         }
 
-        public MH_Logon(IPalaceConnection con)
-            : base(con)
+        public MH_Logon(ClientMessage header, byte[] backing)
+            : base(header, backing)
         {
             Record = Reader.ReadStruct<AuxRegistrationRec>();
         }
 
         #region IOutgoingMessage Members
 
-        public virtual void Write()
+        public override byte[] Write()
         {
             Writer.WriteStruct(new ClientMessage
                                    {
@@ -78,8 +78,9 @@ namespace Palace.Messages
                                        refNum = 0, //intentional
                                    });
             Writer.WriteStruct(Record);
-
             Writer.Flush();
+
+            return base.Write();
         }
 
         #endregion

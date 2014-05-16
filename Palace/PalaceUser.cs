@@ -10,9 +10,6 @@ namespace Palace
 {
     public class PalaceUser : PalaceObject
     {
-        public IPalace Host { get; protected set; }
-
-
         string _name;
         public string Name
         {
@@ -49,20 +46,8 @@ namespace Palace
             {
                 if (value != _roomID)
                 {
-                    if (_roomID != default(short))
-                    {
-                        var oldRoom = Host.GetRoomByID(_roomID);
-                        oldRoom.Users.Remove(this);
-                    }
-
                     _roomID = value;
                     RaisePropertyChanged();
-
-                    if (value != default(short))
-                    {
-                        var room = Host.GetRoomByID(value);
-                        room.Users.Add(this);
-                    }
                 }
             }
         }
@@ -128,18 +113,14 @@ namespace Palace
                     }
                     basic.DrawRectangle(Pens.Azure, 0f, 0f, width, height);
 
-                    if (basic != null) {
+                    if (basic != null)
+                    {
                         Showing = new Bitmap(width, height, basic);
                     }
 
                     RaisePropertyChanged();
                 }
             }
-        }
-
-        public PalaceUser(IPalace host)
-        {
-            Host = host;
         }
 
         public override string ToString()

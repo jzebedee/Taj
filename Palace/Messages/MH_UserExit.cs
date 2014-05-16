@@ -7,17 +7,16 @@ namespace Palace.Messages
     /// This message is sent from the server to the client to inform the client that a
     /// (different) user has left the room that the client is in.
     /// </summary>
-    public class MH_UserExit : MessageHeader
+    public class MH_UserExit : MessageReader
     {
-        public MH_UserExit(IPalaceConnection con, ClientMessage cmsg)
-            : base(con, cmsg)
+        public MH_UserExit(ClientMessage cmsg)
+            : base(cmsg)
         {
-            var userID = cmsg.refNum; //The refnum field contains the UserID of the user who left the room.
-            var user = Palace.GetUserByID(userID, true);
+            ExitingUserID = cmsg.refNum; //The refnum field contains the UserID of the user who left the room.
 
-            Debug.WriteLine("User left current room: " + user);
-
-            Palace.RemoveUser(user);
+            Debug.WriteLine("User left current room: " + ExitingUserID);
         }
+
+        public int ExitingUserID { get; private set; }
     }
 }

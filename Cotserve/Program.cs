@@ -13,14 +13,14 @@ namespace Cotserve
     {
         static void Main(string[] args)
         {
-            using (var palace = new Palace(new IPEndPoint(IPAddress.Loopback, 9991)))
+            using (var serv = new Server())
             {
                 Console.WriteLine("Starting server...");
-                palace.StartServer();
+                serv.Start();
                 Console.WriteLine("Listening. Press any key to stop.");
                 Console.ReadKey();
                 Console.WriteLine("Stopping server...");
-                palace.StopServer();
+                serv.Stop();
                 Console.WriteLine("Stopped.");
             }
 

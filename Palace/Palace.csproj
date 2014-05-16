@@ -30,7 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MiscUtil">
+    <Reference Include="MiscUtil, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3c42c4bfacf7596, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MiscUtil-Src-r285\MiscUtil\MiscUtil\bin\Release\MiscUtil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -43,11 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\IAssetManager.cs" />
     <Compile Include="BaseNotificationModel.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="IPalace.cs" />
-    <Compile Include="IPalaceConnection.cs" />
+    <Compile Include="Messages\MessageReader.cs" />
+    <Compile Include="Messages\MessageWriter.cs" />
     <Compile Include="Messages\Structures\AssetType.cs" />
     <Compile Include="Messages\MH_AltLogonReply.cs" />
     <Compile Include="Messages\MH_UserExit.cs" />
@@ -64,9 +64,6 @@
     <Compile Include="Messages\Flags\ulDownloadCapsFlags.cs" />
     <Compile Include="Messages\Flags\ulUploadCapsFlags.cs" />
     <Compile Include="Messages\Flags\UserFlags.cs" />
-    <Compile Include="Messages\IClientMessage.cs" />
-    <Compile Include="Messages\IOutgoingMessage.cs" />
-    <Compile Include="Messages\MessageHeader.cs" />
     <Compile Include="Messages\MessageTypes.cs" />
     <Compile Include="Messages\MH_AssetQuery.cs" />
     <Compile Include="Messages\MH_AssetSend.cs" />
@@ -101,7 +98,6 @@
     <Compile Include="Messages\Structures\PictureRec.cs" />
     <Compile Include="Messages\Structures\Point.cs" />
     <Compile Include="Messages\Structures\RoomRec.cs" />
-    <Compile Include="Messages\Structures\StructExtensions.cs" />
     <Compile Include="Messages\Structures\UserRec.cs" />
     <Compile Include="PalaceEncryption.cs" />
     <Compile Include="PalaceObject.cs" />

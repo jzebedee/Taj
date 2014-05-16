@@ -12,7 +12,6 @@ namespace Palace
 {
     public class PalaceRoom : BaseNotificationModel
     {
-        public IPalace Host { get; protected set; }
         /// <summary>
         /// Visible identifier of the room on a palace
         /// </summary>
@@ -72,10 +71,8 @@ namespace Palace
             }
         }
 
-        public PalaceRoom(IPalace host)
+        public PalaceRoom()
         {
-            Host = host;
-
             Users = new ObservableCollection<PalaceUser>();
             Objects = new ObservableCollection<PalaceObject>();
         }

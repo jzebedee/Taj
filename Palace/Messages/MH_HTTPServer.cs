@@ -3,15 +3,15 @@ using System.Diagnostics;
 
 namespace Palace.Messages
 {
-    public class MH_HTTPServer : MessageHeader
+    public class MH_HTTPServer : MessageReader
     {
-        public MH_HTTPServer(IPalaceConnection con)
-            : base(con)
+        public MH_HTTPServer(byte[] backing)
+            : base(backing)
         {
-            string uri_string = Reader.ReadCString();
-            Debug.WriteLine("HTTPServer: " + uri_string);
-
-            Palace.HTTPServer = uri_string;
+            HTTPServer = Reader.ReadCString();
+            Debug.WriteLine("HTTPServer: " + HTTPServer);
         }
+
+        public string HTTPServer { get; private set; }
     }
 }
