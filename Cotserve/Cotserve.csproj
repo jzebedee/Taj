@@ -41,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LooseObject.cs" />
+    <Compile Include="Palace.cs" />
+    <Compile Include="PalaceRoom.cs" />
+    <Compile Include="PalaceUser.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

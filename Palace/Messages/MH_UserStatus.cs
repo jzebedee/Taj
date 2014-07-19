@@ -8,7 +8,7 @@ using Palace.Messages.Structures;
 
 namespace Palace.Messages
 {
-    public class MH_UserStatus : MessageReader
+    public class MH_UserStatus : MessageWriter
     {
         public MH_UserStatus(ClientMessage cmsg, byte[] backing)
             : base(cmsg, backing)
@@ -41,8 +41,26 @@ namespace Palace.Messages
             Debug.WriteLine("Target: {0}", UserID);
             Debug.WriteLine("Flags: {0}", UserFlags);
         }
+        public MH_UserStatus(int UserID, UserFlags Flags)
+        {
+            this.UserID = UserID;
+            this.UserFlags = Flags;
+        }
 
         public int UserID { get; private set; }
         public UserFlags UserFlags { get; private set; }
+
+        public override byte[] Write()
+        {
+            Writer.WriteStruct(new ClientMessage
+            {
+                eventType = MessageTypes.USERSTATUS,
+                length = sizeof(Int16),
+                refNum = UserID,
+            });
+            Writer.Write((Int16)UserFlags);
+
+            return base.Write();
+        }
     }
 }

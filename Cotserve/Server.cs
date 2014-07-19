@@ -16,15 +16,21 @@ namespace Cotserve
 {
     public class Server : IDisposable
     {
+        const string
+            SERVER_NAME = "Test",
+            SERVER_VERSION = "1.23";
+
         private int _idCtr = 0;
         private int NewID { get { return ++_idCtr; } }
 
         private CancellationTokenSource _cts = null;
         private CancellationToken Token { get { return _cts.Token; } }
 
+        private readonly Palace Palace;
+
         public Server()
         {
-
+            Palace = new Palace();
         }
         ~Server()
         {
@@ -38,7 +44,8 @@ namespace Cotserve
         }
         protected virtual void Dispose(bool disposing)
         {
-
+            if (disposing)
+                Palace.Dispose();
         }
 
         public async void Start()
@@ -118,9 +125,10 @@ namespace Cotserve
                     //};
 
                     var ALRbytes = new MH_AltLogonReply(head, backing).Write(myID, clientRec);
-                    var Vbytes = new MH_ServerVersion(Version.Parse("6.66")).Write();
-                    var SIbytes = new MH_ServerInfo("Hoboville", ServerPermissionsFlags.AllowGuests | ServerPermissionsFlags.DeathPenalty).Write(myID);
-                    return Extensions.ChainAppendBuffer(ALRbytes, Vbytes, SIbytes);
+                    var Vbytes = new MH_ServerVersion(Version.Parse(SERVER_VERSION)).Write();
+                    var SIbytes = new MH_ServerInfo(SERVER_NAME, ServerPermissionsFlags.AllowGuests | ServerPermissionsFlags.DeathPenalty).Write(myID);
+                    var USbytes = new MH_UserStatus(myID, UserFlags.God).Write();
+                    return Extensions.ChainAppendBuffer(ALRbytes, Vbytes, SIbytes, USbytes);
                 default:
                     System.Diagnostics.Debugger.Break();
                     throw new ArgumentException("Unhandled protocol.");
